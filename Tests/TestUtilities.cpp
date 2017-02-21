@@ -244,24 +244,21 @@ TEST("Random")
 	// Start test
 	U32 count = 100000;
 
-	I32 sumU = 0;
+	oe::Average avgI;
+	oe::Average avgF;
 	for (U32 i = 0; i < count; i++)
 	{
-		sumU += oe::Random::getI32(-1, 1);
+		avgI.add((F32)oe::Random::getI32(-1, 1));
 	}
 
 	F32 sumF = 0.f;
 	for (U32 i = 0; i < count; i++)
 	{
-		sumF += oe::Random::getF32(-1.f, 1.f);
+		avgF.add(oe::Random::getF32(-1.f, 1.f));
 	}
 
-	F32 cF = (F32)count;
-	F32 avgU = ((F32)sumU) / cF;
-	F32 avgF = sumF / cF;
-
-	oe::info("AvgU : " + oe::toString(avgU));
-	oe::info("AvgF : " + oe::toString(avgF));
+	oe::info("AvgU : " + oe::toString(avgI.get()));
+	oe::info("AvgF : " + oe::toString(avgF.get()));
 
 	// End test
 }

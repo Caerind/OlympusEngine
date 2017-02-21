@@ -2,6 +2,7 @@
 #define OE_COLOR_HPP
 
 #include "../Config.hpp"
+#include "String.hpp"
 
 namespace oe
 {
@@ -104,6 +105,16 @@ Color operator*(const Color& left, const Color& right);
 Color& operator+=(Color& left, const Color& right);
 Color& operator-=(Color& left, const Color& right);
 Color& operator*=(Color& left, const Color& right);
+
+template <> inline std::string toString<Color>(const Color& value)
+{
+	return value.toString();
+}
+
+template <> inline Color fromString<Color>(const std::string& string)
+{
+	return Color(string);
+}
 
 } // namespace oe
 

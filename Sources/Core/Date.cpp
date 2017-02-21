@@ -220,16 +220,4 @@ Date& operator-=(Date& left, const Time& right)
 	return left = left - right;
 }
 
-std::string toString(const Date& value)
-{
-	std::ostringstream oss;
-	oss << value.toString();
-	return oss.str();
-}
-
-Date fromString(const std::string& string)
-{
-	return Date(string);
-}
-
 } // namespace oe

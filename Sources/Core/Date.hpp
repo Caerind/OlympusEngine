@@ -3,6 +3,7 @@
 
 #include "../Config.hpp"
 #include "Time.hpp"
+#include "String.hpp"
 #include <ctime>
 
 namespace oe
@@ -60,9 +61,15 @@ Date operator+(const Time& left, const Date& right);
 Date& operator+=(Date& left, const Time& right);
 Date& operator-=(Date& left, const Time& right);
 
-std::string toString(const Date& value);
+template <> inline std::string toString<Date>(const Date& value)
+{
+	return value.toString();
+}
 
-Date fromString(const std::string& string);
+template <> inline Date fromString<Date>(const std::string& string)
+{
+	return Date(string);
+}
 
 } // namespace oe
 
