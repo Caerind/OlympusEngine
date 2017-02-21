@@ -6,24 +6,6 @@
 namespace oe
 {
 
-template <class T>
-T min(const T& a, const T& b)
-{
-	return std::min<T>(a, b);
-}
-
-template <class T>
-T max(const T& a, const T& b)
-{
-	return std::max<T>(a, b);
-}
-
-template <class T>
-T clamp(const T& value, const T& lower, const T& upper)
-{
-	return std::max<T>(lower, std::min<T>(value, upper));
-}
-
 template <class T, class T2>
 T lerp(const T& start, const T& end, const T2& percent) 
 {

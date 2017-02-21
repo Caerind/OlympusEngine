@@ -31,7 +31,7 @@ Time Time::getCurrentTime()
 		static mach_timebase_info_data_t frequency = { 0, 0 };
 		if (frequency.denom == 0)
 			mach_timebase_info(&frequency);
-		Uint64 nanoseconds = mach_absolute_time() * frequency.numer / frequency.denom;
+		U64 nanoseconds = mach_absolute_time() * frequency.numer / frequency.denom;
 		return microseconds(nanoseconds / 1000);
 	#elif defined(OE_PLATFORM_WINDOWS)
 		HANDLE currentThread = GetCurrentThread(); // Force the following code to run on first core (see http://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx)

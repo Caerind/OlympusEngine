@@ -361,7 +361,7 @@ class OE_API Matrix
 
 		static inline Matrix<T, rows> fromScaleVector(const Vector<T, rows - 1>& v) 
 		{
-			// TODO OPT: Use a helper function in a similar way to Identity to
+			// OPT: Use a helper function in a similar way to Identity to
 			// construct the matrix for the specialized cases 2, 3, 4, and only run
 			// this method in the general case. This will also allow you to use the
 			// helper methods from specialized classes like Matrix<T, 4, 4>.

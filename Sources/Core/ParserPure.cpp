@@ -25,8 +25,8 @@ bool ParserPure::loadFromFile(const std::string& filename)
 	{
 		mFilename = filename;
 		std::string line;
-		unsigned int space;
-		unsigned int actualSpace(0);
+		U32 space;
+		U32 actualSpace(0);
 		std::string actualProperty("");
 		while (file.read(line))
 		{

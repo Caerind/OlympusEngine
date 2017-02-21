@@ -4,8 +4,6 @@
 #include "../Config.hpp"
 #include "NonCopyable.hpp"
 
-// TODO : Move maxBytes as member
-
 namespace oe
 {
 

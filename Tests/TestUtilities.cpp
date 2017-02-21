@@ -1,26 +1,5 @@
 #include "../Sources/Config.hpp"
-#include "../Sources/Utilities/Date.hpp"
-#include "../Sources/Utilities/File.hpp"
-#include "../Sources/Utilities/Localization.hpp"
-#include "../Sources/Utilities/Log.hpp"
-#include "../Sources/Utilities/Math.hpp"
-#include "../Sources/Utilities/Matrix.hpp"
-#include "../Sources/Utilities/ParserCsv.hpp"
-#include "../Sources/Utilities/ParserIni.hpp"
-#include "../Sources/Utilities/ParserPure.hpp"
-#include "../Sources/Utilities/ParserXml.hpp"
-#include "../Sources/Utilities/PoolAllocator.hpp"
-#include "../Sources/Utilities/Profiler.hpp"
-#include "../Sources/Utilities/Quaternion.hpp"
-#include "../Sources/Utilities/Random.hpp"
-#include "../Sources/Utilities/Serialization.hpp"
-#include "../Sources/Utilities/StackAllocator.hpp"
-#include "../Sources/Utilities/String.hpp"
-#include "../Sources/Utilities/Thread.hpp"
-#include "../Sources/Utilities/Time.hpp"
-#include "../Sources/Utilities/UniqueId.hpp"
-#include "../Sources/Utilities/UnitTest.hpp"
-#include "../Sources/Utilities/Vector.hpp"
+#include "../Sources/Core.hpp"
 
 BEGIN_UNIT_TEST;
 
@@ -40,6 +19,12 @@ TEST("Config")
 	CHECK(oe::getPlatformName() == "Windows");
 
 	// End test
+}
+
+TEST("Color")
+{
+	oe::Color color;
+	// TODO : Test color
 }
 
 TEST("Date")
@@ -207,7 +192,7 @@ TEST("ParserXml")
 
 TEST("PoolAllocator")
 {
-	//oe::PoolAllocator<1024> a;
+	oe::PoolAllocator<1024> a;
 }
 
 TEST("Profiler")

@@ -22,67 +22,67 @@ Date::Date(const std::string& str, const std::string& format)
 	fromString(str, format);
 }
 
-int Date::getYear() const
+U32 Date::getYear() const
 {
 	return mTime.tm_year + 1900;
 }
 
-void Date::setYear(int year)
+void Date::setYear(U32 year)
 {
 	mTime.tm_year = year - 1900;
 	update();
 }
 
-int Date::getMonth() const
+U32 Date::getMonth() const
 {
 	return mTime.tm_mon + 1;
 }
 
-void Date::setMonth(int month)
+void Date::setMonth(U32 month)
 {
 	mTime.tm_mon = month - 1;
 	update();
 }
 
-int Date::getDay() const
+U32 Date::getDay() const
 {
 	return mTime.tm_mday;
 }
 
-void Date::setDay(int day)
+void Date::setDay(U32 day)
 {
 	mTime.tm_mday = day;
 	update();
 }
 
-int Date::getHours() const
+U32 Date::getHours() const
 {
 	return mTime.tm_hour;
 }
 
-void Date::setHours(int hours)
+void Date::setHours(U32 hours)
 {
 	mTime.tm_hour = hours;
 	update();
 }
 
-int Date::getMinutes() const
+U32 Date::getMinutes() const
 {
 	return mTime.tm_min;
 }
 
-void Date::setMinutes(int minutes)
+void Date::setMinutes(U32 minutes)
 {
 	mTime.tm_min = minutes;
 	update();
 }
 
-int Date::getSeconds() const
+U32 Date::getSeconds() const
 {
 	return mTime.tm_sec;
 }
 
-void Date::setSeconds(int seconds)
+void Date::setSeconds(U32 seconds)
 {
 	mTime.tm_sec = seconds;
 	update();

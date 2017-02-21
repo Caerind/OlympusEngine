@@ -14,23 +14,23 @@ class OE_API Date
 
 		Date(const std::string& str, const std::string& format = "%d-%m-%Y %H-%M-%S");
 
-		int getYear() const;
-		void setYear(int year);
+		U32 getYear() const;
+		void setYear(U32 year);
 
-		int getMonth() const;
-		void setMonth(int month);
+		U32 getMonth() const;
+		void setMonth(U32 month);
 
-		int getDay() const;
-		void setDay(int day);
+		U32 getDay() const;
+		void setDay(U32 day);
 
-		int getHours() const;
-		void setHours(int hours);
+		U32 getHours() const;
+		void setHours(U32 hours);
 
-		int getMinutes() const;
-		void setMinutes(int minutes);
+		U32 getMinutes() const;
+		void setMinutes(U32 minutes);
 
-		int getSeconds() const;
-		void setSeconds(int seconds);
+		U32 getSeconds() const;
+		void setSeconds(U32 seconds);
 
 		std::string toString(const std::string& format = "%d-%m-%Y %H-%M-%S") const;
 		void fromString(const std::string& str, const std::string& format = "%d-%m-%Y %H-%M-%S");

@@ -4,14 +4,6 @@
 #include "../Config.hpp"
 #include "NonCopyable.hpp"
 
-#define MAXBLOCKSIZE 640
-#define BLOCKSIZES 14
-#define CHUNKARRAYINCREMENT 128
-
-// TODO : Fix bugs
-// TODO : Move const define as const static 
-// TODO : Move maxBytes as member
-
 namespace oe
 {
 
@@ -21,10 +13,10 @@ class OE_API PoolAllocator : private NonCopyable
 	public:
 		PoolAllocator()
 		{
-			ASSERT(BLOCKSIZES < UCHAR_MAX);
-			mChunkSpace = CHUNKARRAYINCREMENT;
+			ASSERT(BlockSizes < UCHAR_MAX);
+			mChunkSpace = ChunkArrayIncrement;
 			mChunkCount = 0;
-			mChunks = (Chunk*)oe::alloc(mChunkSpace * sizeof(Chunk));
+			mChunks = (Chunk*)malloc(mChunkSpace * sizeof(Chunk));
 			memset(mChunks, 0, mChunkSpace * sizeof(Chunk));
 			memset(mFreeLists, 0, sizeof(mFreeLists));
 
@@ -32,7 +24,7 @@ class OE_API PoolAllocator : private NonCopyable
 			if (!mBlockSizeLookupInitialized)
 			{
 				U32 j = 0;
-				for (U32 i = 1; i <= MAXBLOCKSIZE; i++)
+				for (U32 i = 1; i <= MaxBlockSize; i++)
 				{
 					if (i <= mBlockSizes[j])
 					{
@@ -41,7 +33,7 @@ class OE_API PoolAllocator : private NonCopyable
 					else
 					{
 						j++;
-						ASSERT(j < BLOCKSIZES);
+						ASSERT(j < BlockSizes);
 						mBlockSizeLookup[i] = (U8)j;
 					}
 				}
@@ -53,23 +45,23 @@ class OE_API PoolAllocator : private NonCopyable
 		{
 			for (U32 i = 0; i < mChunkCount; i++)
 			{
-				oe::free(mChunks[i].blocks);
+				::free(mChunks[i].blocks);
 			}
-			oe::free(mChunks);
+			::free(mChunks);
 		}
 
-		/// Allocate memory. This will use alloc if the size is larger than MAXBLOCKSIZE.
+		/// Allocate memory. This will use alloc if the size is larger than MaxBlockSize.
 		template <typename T, typename ... Args>
 		T* alloc(Args&& ... args)
 		{
 			const U32 size = sizeof(T);
 			ASSERT(size > 0);
-			if (size > MAXBLOCKSIZE)
+			if (size > MaxBlockSize)
 			{
 				return new (oe::alloc(size)) T(std::forward<Args>(args)...);
 			}
 			U32 index = mBlockSizeLookup[size];
-			ASSERT(0 <= index && index < BLOCKSIZES);
+			ASSERT(0 <= index && index < BlockSizes);
 			if (mFreeLists[index] != nullptr)
 			{
 				Block* block = mFreeLists[index];
@@ -81,11 +73,11 @@ class OE_API PoolAllocator : private NonCopyable
 				if (mChunkCount == mChunkSpace)
 				{
 					Chunk* oldChunks = mChunks;
-					mChunkSpace += CHUNKARRAYINCREMENT;
+					mChunkSpace += ChunkArrayIncrement;
 					mChunks = (Chunk*)oe::alloc(mChunkSpace * sizeof(Chunk));
 					memcpy(mChunks, oldChunks, mChunkCount * sizeof(Chunk));
-					memset(mChunks + mChunkCount, 0, CHUNKARRAYINCREMENT * sizeof(Chunk));
-					oe::free(oldChunks);
+					memset(mChunks + mChunkCount, 0, ChunkArrayIncrement * sizeof(Chunk));
+					::free(oldChunks);
 				}
 				Chunk* chunk = mChunks + mChunkCount;
 				chunk->blocks = (Block*)oe::alloc(chunkSize);
@@ -109,19 +101,19 @@ class OE_API PoolAllocator : private NonCopyable
 			}
 		}
 
-		/// Free memory. This will use free if the size is larger than MAXBLOCKSIZE.
+		/// Free memory. This will use free if the size is larger than MaxBlockSize.
 		template <typename T>
 		void free(void* p)
 		{
 			const U32 size = sizeof(T);
 			ASSERT(size > 0);
-			if (size > MAXBLOCKSIZE)
+			if (size > MaxBlockSize)
 			{
-				oe::free(p);
+				::free(p);
 				return;
 			}
 			U32 index = mBlockSizeLookup[size];
-			ASSERT(0 <= index && index < BLOCKSIZES);
+			ASSERT(0 <= index && index < BlockSizes);
 			#ifdef OE_DEBUG
 				// Verify the memory address and size is valid.
 				U32 blockSize = mBlockSizes[index];
@@ -153,7 +145,7 @@ class OE_API PoolAllocator : private NonCopyable
 		{
 			for (U32 i = 0; i < mChunkCount; i++)
 			{
-				oe::free(mChunks[i].blocks);
+				::free(mChunks[i].blocks);
 			}
 			mChunkCount = 0;
 			memset(mChunks, 0, mChunkSpace * sizeof(Chunk));
@@ -171,20 +163,23 @@ class OE_API PoolAllocator : private NonCopyable
 			U32 blockSize;
 			Block* blocks;
 		};
+		
+		static const U32 MaxBlockSize = 640;
+		static const U32 BlockSizes = 14;
+		static const U32 ChunkArrayIncrement = 128;
+		static U32 mBlockSizes[BlockSizes];
+		static U8 mBlockSizeLookup[MaxBlockSize + 1];
 
 	private:
 		Chunk* mChunks;
 		U32 mChunkCount;
 		U32 mChunkSpace;
 
-		Block* mFreeLists[BLOCKSIZES];
-
-		static U32 mBlockSizes[BLOCKSIZES];
-		static U8 mBlockSizeLookup[MAXBLOCKSIZE + 1];
+		Block* mFreeLists[BlockSizes];
 };
 
 template <U32 chunkSize>
-U32 PoolAllocator<chunkSize>::mBlockSizes[BLOCKSIZES] =
+U32 PoolAllocator<chunkSize>::mBlockSizes[BlockSizes] =
 {
 	16,		// 0
 	32,		// 1
@@ -203,13 +198,9 @@ U32 PoolAllocator<chunkSize>::mBlockSizes[BLOCKSIZES] =
 };
 
 template <U32 chunkSize>
-U8 PoolAllocator<chunkSize>::mBlockSizeLookup[MAXBLOCKSIZE + 1];
+U8 PoolAllocator<chunkSize>::mBlockSizeLookup[MaxBlockSize + 1];
 
 using DefaultPoolAllocator = PoolAllocator<16 * 1024>;
-
-#undef MAXBLOCKSIZE
-#undef BLOCKSIZES
-#undef CHUNKARRAYINCREMENT
 
 } // namespace oe
 
