@@ -2,6 +2,7 @@
 #define OE_DATE_HPP
 
 #include "../Config.hpp"
+#include "Time.hpp"
 #include <ctime>
 
 namespace oe
@@ -53,7 +54,11 @@ bool operator>(const Date& left, const Date& right);
 bool operator>=(const Date& left, const Date& right);
 bool operator<=(const Date& left, const Date& right);
 
-// TODO : Operator Date & Time
+Date operator+(const Date& left, const Time& right);
+Date operator-(const Date& left, const Time& right);
+Date operator+(const Time& left, const Date& right);
+Date& operator+=(Date& left, const Time& right);
+Date& operator-=(Date& left, const Time& right);
 
 std::string toString(const Date& value);
 

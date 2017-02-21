@@ -189,6 +189,37 @@ bool operator<=(const Date& left, const Date& right)
 	return !(left > right);
 }
 
+Date operator+(const Date& left, const Time& right)
+{
+	Date date(left);
+	date.setSeconds(left.getSeconds() + (U32)right.asSeconds());
+	return date;
+}
+
+Date operator-(const Date& left, const Time& right)
+{
+	Date date(left);
+	date.setSeconds(left.getSeconds() - (U32)right.asSeconds());
+	return date;
+}
+
+Date operator+(const Time& left, const Date& right)
+{
+	Date date(right);
+	date.setSeconds(right.getSeconds() + (U32)left.asSeconds());
+	return date;
+}
+
+Date& operator+=(Date& left, const Time& right)
+{
+	return left = left + right;
+}
+
+Date& operator-=(Date& left, const Time& right)
+{
+	return left = left - right;
+}
+
 std::string toString(const Date& value)
 {
 	std::ostringstream oss;
