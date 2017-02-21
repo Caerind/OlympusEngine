@@ -25,11 +25,11 @@ bool inRange(const T& value, const T& start, const T& end)
 	return value >= start && value < end;
 }
 
-F32 floor(F32 value);
-F32 ceil(F32 value);
-F32 abs(F32 value);
-F32 sqrt(F32 value);
-bool equals(F32 a, F32 b, F32 epsilon = 0.f);
+template <class T>
+bool equals(T a, T b, T epsilon = 0.f)
+{
+	return b - epsilon <= a && a <= b + epsilon;
+}
 
 template <class T>
 T roundUpToPowerOf2(T value)
@@ -68,25 +68,23 @@ F32 asin(F32 value);
 F32 atan(F32 value);
 F32 atan2(F32 valY, F32 valX);
 
-template <typename T>
 class Average
 {
 	public:
 		Average()
-			: mAverage(T())
+			: mAverage()
 			, mCount(0)
 		{
 		}
 
-		T add(T term)
+		F32 add(F32 term)
 		{
-			mAverage = ((mAverage * mCount) + term);
-			//*1.f / (mCount + 1);
+			mAverage = ((mAverage * mCount) + term) * (1.f / (mCount + 1));
 			mCount++;
 			return mAverage;
 		}
 
-		T get() const
+		F32 get() const
 		{
 			return mAverage;
 		}
@@ -97,7 +95,7 @@ class Average
 		}
 
 	private:
-		T mAverage;
+		F32 mAverage;
 		U32 mCount;
 };
 

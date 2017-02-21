@@ -5,31 +5,6 @@
 namespace oe
 {
 
-F32 floor(F32 value)
-{
-	return floorf(value);
-}
-
-F32 ceil(F32 value)
-{
-	return ceilf(value);
-}
-
-F32 abs(F32 value)
-{
-	return fabs(value);
-}
-
-F32 sqrt(F32 value)
-{
-	return std::sqrt(value);
-}
-
-bool equals(F32 a, F32 b, F32 epsilon)
-{
-	return fabs(a - b) < epsilon;
-}
-
 F32 pi()
 {
 	return 3.141592653589793f;
