@@ -27,6 +27,11 @@ TEST("Color")
 	// TODO : Test color
 }
 
+TEST("Compression")
+{
+	// TODO : Test Compression
+}
+
 TEST("Date")
 {
 	// Start test

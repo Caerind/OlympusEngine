@@ -2,6 +2,7 @@
 #define OE_CORE_HPP
 
 #include "Core/Color.hpp"
+#include "Core/Compression.hpp"
 #include "Core/Connection.hpp"
 #include "Core/Date.hpp"
 #include "Core/File.hpp"
