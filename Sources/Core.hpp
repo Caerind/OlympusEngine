@@ -31,4 +31,28 @@
 #include "Core/Updatable.hpp"
 #include "Core/Vector.hpp"
 
+namespace oe
+{
+
+/// Just a class to initialize all singleton
+class OE_API Core : public Singleton<Core>
+{
+	public:
+		Core();
+		~Core();
+
+		static Core& getSingleton();
+		static Core* getSingletonPtr();
+
+	private:
+		OConsole* mOutputConsole;
+		IConsole* mInputConsole;
+		Log* mLog;
+		Profiler* mProfiler;
+		Localization* mLocalization;
+		UniqueIdManager* mUniqueIdManager;
+};
+
+} // namespace oe
+
 #endif // OE_CORE_HPP

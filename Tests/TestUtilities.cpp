@@ -3,6 +3,8 @@
 
 BEGIN_UNIT_TEST;
 
+oe::Core core;
+
 TEST("Config")
 {
 	// Start test
@@ -39,8 +41,18 @@ TEST("Date")
 	oe::Date currentDate;
 	oe::info("Current date : " + currentDate.toString());
 	oe::Date d;
-	d.setDay(currentDate.getDay() - 20);
+	d.setDay(currentDate.getDay() - 10);
 	CHECK(d.passed());
+
+	oe::Date d2("23-02-1996 12-46-12");
+	CHECK(d2.getDay() == 23);
+	CHECK(d2.getMonth() == 2);
+	CHECK(d2.getYear() == 1996);
+	CHECK(d2.getHours() == 12);
+	CHECK(d2.getMinutes() == 46);
+	CHECK(d2.getSeconds() == 12);
+	d2 += oe::seconds(10.f);
+	CHECK(d2.getSeconds() == 22);
 
 	oe::Date birth; // 23 jan 1996 - 3:33:34
 	birth.setDay(23);
@@ -111,10 +123,8 @@ TEST("Localization")
 {
 	// Start test
 
-	oe::Localization localization;
-
-	// Add languages using instance and singleton
-	localization.addLanguage(oe::Localization::Language::English, [](oe::Localization::LanguageTable& table)
+	// Add languages
+	oe::Localization::getSingleton().addLanguage(oe::Localization::Language::English, [](oe::Localization::LanguageTable& table)
 	{
 		table.push_back(oe::StringHash::hash("EnglishTest1"));
 		table.push_back(oe::StringHash::hash("EnglishTest2"));
@@ -127,16 +137,14 @@ TEST("Localization")
 		return true;
 	});
 
-	// Use english using instance
-	CHECK(localization.useLanguage(oe::Localization::Language::English) == true);
-	CHECK(localization.getCurrentLanguage() == oe::Localization::getSingleton().getCurrentLanguage());
-	CHECK(localization.getToken(0) == "EnglishTest1");
+	// Use english
+	CHECK(oe::Localization::getSingleton().useLanguage(oe::Localization::Language::English) == true);
+	CHECK(oe::Localization::getSingleton().getToken(0) == "EnglishTest1");
 	CHECK(oe::Localization::getSingleton().getToken(1) == "EnglishTest2");
 
-	// USe french using singleton
+	// USe french
 	CHECK(oe::Localization::getSingleton().useLanguage(oe::Localization::Language::French) == true);
-	CHECK(localization.getCurrentLanguage() == oe::Localization::getSingleton().getCurrentLanguage());
-	CHECK(localization.getToken(0) == "FrancaisTest1");
+	CHECK(oe::Localization::getSingleton().getToken(0) == "FrancaisTest1");
 	CHECK(oe::Localization::getSingleton().getToken(1) == "FrancaisTest2");
 
 	// End test
@@ -148,18 +156,12 @@ TEST("Log")
 
 	oe::log("pretest");
 
-	oe::Log log;
-	log.useConsole(true);
-
 	oe::Log::getSingleton().log("test1");
 	oe::log("test2");
-	log.log("test3");
 
 	oe::info("i");
 	oe::warning("w");
 	oe::error("e");
-
-	// TODO : Check ?
 
 	// End test
 }
@@ -204,7 +206,6 @@ TEST("Profiler")
 {
 	// Start test
 
-	oe::Profiler pInstance;
 	for (U32 i = 0; i < 30; i++)
 	{
 		ProfileBegin("MainLoop");
@@ -229,7 +230,7 @@ TEST("Profiler")
 		}
 		ProfileEnd("MainLoop");
 	}
-	pInstance.display();
+	oe::Profiler::getSingleton().display();
 
 	// End test
 }
@@ -342,10 +343,9 @@ TEST("UniqueId")
 {
 	// Start test
 
-	oe::UniqueIdManager idManager;
 	oe::UID id1 = oe::UniqueIdManager::getSingleton().createUID();
 	oe::UID id2 = oe::UniqueIdManager::getSingleton().createUID();
-	oe::UID id3 = idManager.createUID(1);
+	oe::UID id3 = oe::UniqueIdManager::getSingleton().createUID(1);
 	CHECK(id1 != id2);
 	CHECK(id1 != 0);
 	CHECK(id2 != 0);
