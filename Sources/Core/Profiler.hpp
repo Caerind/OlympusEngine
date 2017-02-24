@@ -3,7 +3,7 @@
 
 #include "../Config.hpp"
 #include "Time.hpp"
-#include "Math.hpp"
+#include "../Math/Math.hpp"
 #include "Singleton.hpp"
 #include <map>
 #include <vector>

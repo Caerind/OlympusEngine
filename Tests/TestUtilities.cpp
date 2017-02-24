@@ -1,9 +1,32 @@
 #include "../Sources/Config.hpp"
-#include "../Sources/Core.hpp"
+#include "../Sources/Core/Color.hpp"
+#include "../Sources/Core/Compression.hpp"
+#include "../Sources/Core/Connection.hpp"
+#include "../Sources/Core/Date.hpp"
+#include "../Sources/Core/File.hpp"
+#include "../Sources/Core/Id.hpp"
+#include "../Sources/Core/Localization.hpp"
+#include "../Sources/Core/Log.hpp"
+#include "../Sources/Core/NonCopyable.hpp"
+#include "../Sources/Core/ParserCsv.hpp"
+#include "../Sources/Core/ParserIni.hpp"
+#include "../Sources/Core/ParserIni.hpp"
+#include "../Sources/Core/ParserPure.hpp"
+#include "../Sources/Core/ParserXml.hpp"
+#include "../Sources/Core/PoolAllocator.hpp"
+#include "../Sources/Core/Profiler.hpp"
+#include "../Sources/Core/ResourceHolder.hpp"
+#include "../Sources/Core/Serialization.hpp"
+#include "../Sources/Core/Singleton.hpp"
+#include "../Sources/Core/StackAllocator.hpp"
+#include "../Sources/Core/String.hpp"
+#include "../Sources/Core/Thread.hpp"
+#include "../Sources/Core/Time.hpp"
+#include "../Sources/Core/UnitTest.hpp"
+#include "../Sources/Core/Updatable.hpp"
+
 
 BEGIN_UNIT_TEST;
-
-oe::Core core;
 
 TEST("Config")
 {
@@ -119,9 +142,27 @@ TEST("File")
 	// End test
 }
 
+TEST("Id")
+{
+	// Start test
+
+	oe::UID id1 = oe::Id::generate<I32>();
+	oe::UID id2 = oe::Id::generate<I32>();
+	oe::UID id3 = oe::Id::generate<U32>();
+	CHECK(id1 != id2);
+	CHECK(id1 != 0);
+	CHECK(id2 != 0);
+	CHECK(id3 != 0);
+	CHECK(id1 == id3);
+
+	// End test
+}
+
 TEST("Localization")
 {
 	// Start test
+
+	oe::Localization localization;
 
 	// Define the identifiers
 	enum class LangId : U32
@@ -176,6 +217,8 @@ TEST("Log")
 
 	oe::log("pretest");
 
+	oe::Log log;
+
 	oe::Log::getSingleton().log("test1");
 	oe::log("test2");
 
@@ -189,11 +232,6 @@ TEST("Log")
 TEST("Math")
 {
 
-}
-
-TEST("Matrix")
-{
-	oe::Matrix4 m;
 }
 
 TEST("ParserCsv")
@@ -226,6 +264,8 @@ TEST("Profiler")
 {
 	// Start test
 
+	oe::Profiler p;
+
 	for (U32 i = 0; i < 30; i++)
 	{
 		ProfileBegin("MainLoop");
@@ -251,35 +291,6 @@ TEST("Profiler")
 		ProfileEnd("MainLoop");
 	}
 	oe::Profiler::getSingleton().display();
-
-	// End test
-}
-
-TEST("Quaternion")
-{
-	oe::Quat q;
-}
-
-TEST("Random")
-{
-	// Start test
-	U32 count = 100000;
-
-	oe::Average avgI;
-	oe::Average avgF;
-	for (U32 i = 0; i < count; i++)
-	{
-		avgI.add((F32)oe::Random::getI32(-1, 1));
-	}
-
-	F32 sumF = 0.f;
-	for (U32 i = 0; i < count; i++)
-	{
-		avgF.add(oe::Random::getF32(-1.f, 1.f));
-	}
-
-	oe::info("AvgU : " + oe::toString(avgI.get()));
-	oe::info("AvgF : " + oe::toString(avgF.get()));
 
 	// End test
 }
@@ -375,27 +386,6 @@ TEST("Time")
 
 
 	// End test
-}
-
-TEST("UniqueId")
-{
-	// Start test
-
-	oe::UID id1 = oe::UniqueIdManager::getSingleton().createUID();
-	oe::UID id2 = oe::UniqueIdManager::getSingleton().createUID();
-	oe::UID id3 = oe::UniqueIdManager::getSingleton().createUID(1);
-	CHECK(id1 != id2);
-	CHECK(id1 != 0);
-	CHECK(id2 != 0);
-	CHECK(id3 != 0);
-	CHECK(id1 == id3);
-
-	// End test
-}
-
-TEST("Vector")
-{
-	oe::Vector3 v;
 }
 
 END_UNIT_TEST;
