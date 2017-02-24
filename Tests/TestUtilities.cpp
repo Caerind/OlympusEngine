@@ -284,6 +284,24 @@ TEST("Random")
 	// End test
 }
 
+TEST("ResourceHolder")
+{
+	oe::ResourceHolder<oe::ParserXml> parsers;
+	CHECK(!parsers.has("test"));
+	oe::ResourceId r = parsers.create("test", "test.xml");
+	CHECK(parsers.has(r));
+	CHECK(parsers.has("test"));
+	CHECK(parsers.size() == 1);
+	{
+		oe::ParserXml& x1 = parsers.get(r);
+		oe::ParserXml& x2 = parsers.get("test");
+	}
+	parsers.release(r);
+	CHECK(!parsers.has(r));
+	CHECK(!parsers.has("test"));
+	CHECK(parsers.size() == 0);
+}
+
 TEST("Serialization")
 {
 	// Start test

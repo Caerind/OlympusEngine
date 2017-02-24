@@ -20,6 +20,7 @@
 #include "Core/Profiler.hpp"
 #include "Core/Quaternion.hpp"
 #include "Core/Random.hpp"
+#include "Core/ResourceHolder.hpp"
 #include "Core/Serialization.hpp"
 #include "Core/Singleton.hpp"
 #include "Core/StackAllocator.hpp"
