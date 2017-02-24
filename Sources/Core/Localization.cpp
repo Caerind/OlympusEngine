@@ -40,6 +40,25 @@ void Localization::addLanguage(Language language, LanguageStrategy loadingStrate
 	}
 }
 
+bool Localization::useLanguage(Language language, LanguageStrategy loadingStrategy)
+{
+	mTokens.clear();
+	mCurrentLanguage = language;
+	for (U32 i = 0; i < mLanguages.size(); i++)
+	{
+		if (mLanguages[i].id == language)
+		{
+			return mLanguages[i].strategy(mTokens);
+		}
+	}
+	if (loadingStrategy)
+	{
+		mLanguages.emplace_back(language, loadingStrategy);
+		return mLanguages.back().strategy(mTokens);
+	}
+	return false;
+}
+
 bool Localization::useLanguage(Language language)
 {
 	for (U32 i = 0; i < mLanguages.size(); i++)
@@ -61,7 +80,7 @@ Localization::Language Localization::getCurrentLanguage() const
 
 const std::string& Localization::getToken(U32 token)
 {
-	return StringHash::get(mTokens[token]);
+	return StringHash::get(mTokens.at(token));
 }
 
 bool Localization::loadLanguageFromFile(LanguageTable& table, const std::string& filename)
@@ -72,7 +91,7 @@ bool Localization::loadLanguageFromFile(LanguageTable& table, const std::string&
 		U32 size = iniParser.getSize();
 		for (U32 i = 0; i < size; i++)
 		{
-			// TODO : Load from file
+			table.add(iniParser.getValue(i));
 		}
 		return true;
 	}
@@ -83,6 +102,30 @@ Localization::LanguageData::LanguageData(Language index, LanguageStrategy loadin
 	: id(index)
 	, strategy(loadingStrategy)
 {
+}
+
+Localization::LanguageTable::LanguageTable()
+{
+}
+
+void Localization::LanguageTable::add(const std::string& string)
+{
+	mTable.push_back(StringHash::hash(string));
+}
+
+StringId Localization::LanguageTable::at(U32 index) const
+{
+	return mTable[index];
+}
+
+U32 Localization::LanguageTable::size() const
+{
+	return mTable.size();
+}
+
+void Localization::LanguageTable::clear()
+{
+	mTable.clear();
 }
 
 } // namespace oe

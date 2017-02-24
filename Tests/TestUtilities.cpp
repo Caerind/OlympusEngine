@@ -123,29 +123,49 @@ TEST("Localization")
 {
 	// Start test
 
+	// Define the identifiers
+	enum class LangId : U32
+	{
+		Test1 = 0,
+		Test2 = 1
+	};
+
 	// Add languages
 	oe::Localization::getSingleton().addLanguage(oe::Localization::Language::English, [](oe::Localization::LanguageTable& table)
 	{
-		table.push_back(oe::StringHash::hash("EnglishTest1"));
-		table.push_back(oe::StringHash::hash("EnglishTest2"));
+		table.add("EnglishTest1");
+		table.add("EnglishTest2");
 		return true;
 	});
 	oe::Localization::getSingleton().addLanguage(oe::Localization::Language::French, [](oe::Localization::LanguageTable& table)
 	{
-		table.push_back(oe::StringHash::hash("FrancaisTest1"));
-		table.push_back(oe::StringHash::hash("FrancaisTest2"));
+		table.add("FrancaisTest1");
+		table.add("FrancaisTest2");
 		return true;
 	});
 
 	// Use english
 	CHECK(oe::Localization::getSingleton().useLanguage(oe::Localization::Language::English) == true);
-	CHECK(oe::Localization::getSingleton().getToken(0) == "EnglishTest1");
-	CHECK(oe::Localization::getSingleton().getToken(1) == "EnglishTest2");
+	CHECK(oe::Localization::getSingleton().getToken((U32)LangId::Test1) == "EnglishTest1");
+	CHECK(oe::Localization::getSingleton().getToken((U32)LangId::Test2) == "EnglishTest2");
 
-	// USe french
+	// Use french
 	CHECK(oe::Localization::getSingleton().useLanguage(oe::Localization::Language::French) == true);
-	CHECK(oe::Localization::getSingleton().getToken(0) == "FrancaisTest1");
-	CHECK(oe::Localization::getSingleton().getToken(1) == "FrancaisTest2");
+	CHECK(oe::Localization::getSingleton().getToken((U32)LangId::Test1) == "FrancaisTest1");
+	CHECK(oe::Localization::getSingleton().getToken((U32)LangId::Test2) == "FrancaisTest2");
+
+	/* Load spanish from INI file
+	// 1- check that spanish is defined in the enum in localization
+	// 2- create your ini in the same order as the other language
+	// 3- use this pre-defnied function :
+	oe::Localization::getSingleton().addLanguage(oe::Localization::Language::Spanish, [](oe::Localization::LanguageTable& table)
+	{
+		return oe::Localization::loadLanguageFromFile(table, "spanish.lang");
+	});
+	// 4- CHECK(oe::Localization::getSingleton().useLanguage(oe::Localization::Language::Spanish) == true);
+	// 5- CHECK(oe::Localization::getSingleton().getToken((U32)LangId::Test1) == "SpanolTest1");
+	// 6- CHECK(oe::Localization::getSingleton().getToken((U32)LangId::Test2) == "SpanolTest2");
+	*/
 
 	// End test
 }

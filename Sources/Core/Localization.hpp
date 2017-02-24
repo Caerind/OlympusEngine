@@ -18,9 +18,26 @@ class OE_API Localization : public Singleton<Localization>
 		{
 			English = 0,
 			French = 1,
+			Spanish = 2
 		};
 
-		using LanguageTable = std::vector<StringId>;
+		class LanguageTable
+		{
+			public:
+				LanguageTable();
+
+				void add(const std::string& string);
+
+				StringId at(U32 index) const;
+
+				U32 size() const;
+
+				void clear();
+
+			private:
+				std::vector<StringId> mTable;
+		};
+
 		using LanguageStrategy = std::function<bool(LanguageTable& table)>;
 		
 	public:
@@ -30,6 +47,7 @@ class OE_API Localization : public Singleton<Localization>
 		static Localization* getSingletonPtr();
 
 		void addLanguage(Language language, LanguageStrategy loadingStrategy);
+		bool useLanguage(Language language, LanguageStrategy loadingStrategy);
 		bool useLanguage(Language language);
 		
 		Language getCurrentLanguage() const;
