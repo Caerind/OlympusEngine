@@ -2,7 +2,7 @@
 #define OE_PARSERXML_HPP
 
 #include "../Config.hpp"
-#include "../ExtLibs/pugixml.hpp"
+#include "../ExtLibs/pugixml/pugixml.hpp"
 
 namespace oe
 {

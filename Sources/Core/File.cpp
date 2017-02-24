@@ -1,6 +1,6 @@
 #include "File.hpp"
 
-#include "../ExtLibs/dirent.h"
+#include "../ExtLibs/dirent/dirent.h"
 
 namespace oe
 {

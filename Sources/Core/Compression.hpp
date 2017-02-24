@@ -3,8 +3,6 @@
 
 #include "../Config.hpp"
 
-#include "../ExtLibs/pugixml.hpp"
-
 namespace oe
 {
 
