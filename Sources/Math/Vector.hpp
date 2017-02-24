@@ -2,7 +2,7 @@
 #define OE_VECTOR_HPP
 
 #include "../Config.hpp"
-#include "String.hpp"
+#include "../Core/String.hpp"
 #include "Math.hpp"
 
 namespace oe 
