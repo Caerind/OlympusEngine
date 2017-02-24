@@ -59,7 +59,7 @@ void UnitTest::print()
 	{
 		printf("FAILED\n");
 	}
-	printf("====================================\n");
+	printf("====================================\n\n\n");
 }
 
 UnitTest::Test::Test(char* pTitle)
