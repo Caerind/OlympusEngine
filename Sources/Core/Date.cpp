@@ -97,10 +97,22 @@ std::string Date::toString(const std::string& format) const
 
 void Date::fromString(const std::string& str, const std::string& format)
 {
+	ASSERT(format == "%d-%m-%Y %H-%M-%S" && "Unsupported date format");
+
+	setDay(oe::fromString<U32>(str.substr(0, 2)));
+	setMonth(oe::fromString<U32>(str.substr(3, 2)));
+	setYear(oe::fromString<U32>(str.substr(6, 4)));
+
+	setHours(oe::fromString<U32>(str.substr(11, 2)));
+	setMinutes(oe::fromString<U32>(str.substr(14, 2)));
+	setSeconds(oe::fromString<U32>(str.substr(17, 2)));
+
+	// Good method which doesn't require the specific format, but doesn't work with MinGW
+	/*
 	std::istringstream iss(str);
 	iss >> std::get_time(&mTime, format.c_str());
-	// TODO : Find cross compile alternative (Support on MinGW)
 	update();
+	*/
 }
 
 bool Date::passed() const
