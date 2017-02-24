@@ -27,7 +27,7 @@ bool ParserXml::loadFromFile(const std::string& filename)
 
 bool ParserXml::saveToFile(const std::string& filename)
 {
-	if (filename != "")
+	if (!filename.empty())
 	{
 		return mDocument.save_file(filename.c_str());
 	}
@@ -93,7 +93,7 @@ void ParserXml::getAttribute(const std::string& attributeName, std::string& valu
 	}
 	else
 	{
-		value = "";
+		value.clear();
 	}
 }
 

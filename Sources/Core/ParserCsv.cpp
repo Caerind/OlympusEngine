@@ -41,7 +41,7 @@ bool ParserCsv::loadFromFile(const std::string& filename)
 
 bool ParserCsv::saveToFile(const std::string& filename)
 {
-	OFile file((filename != "") ? filename : mFilename);
+	OFile file((!filename.empty()) ? filename : mFilename);
 	if (file)
 	{
 		for (U32 i = 0; i < mValues.size(); i++)

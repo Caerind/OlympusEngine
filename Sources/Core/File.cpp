@@ -5,9 +5,10 @@
 namespace oe
 {
 
-bool Path::isDirectory(std::string path)
+bool Path::isDirectory(const std::string& path)
 {
-	return extractName(path);
+	std::string p(path);
+	return extractName(p);
 }
 
 std::string Path::getDirectoryName(std::string path)
@@ -22,7 +23,6 @@ std::vector<std::string> Path::getDirectoryList(std::string path)
 	DIR* dir = opendir(path.c_str());
 	if (dir != nullptr)
 	{
-		std::string name;
 		dirent* file = nullptr;
 		while ((file = readdir(dir)) != nullptr)
 		{
@@ -32,7 +32,7 @@ std::vector<std::string> Path::getDirectoryList(std::string path)
 	return ret;
 }
 
-bool Path::isFile(std::string path)
+bool Path::isFile(const std::string& path)
 {
 	return !isDirectory(path);
 }
@@ -48,7 +48,7 @@ std::string Path::getFileName(std::string path)
 		std::size_t found = path.find_first_of('.');
 		return (found != std::string::npos) ? path.substr(0, found) : path;
 	}
-	return false;
+	return "";
 }
 
 std::string Path::getExtesionName(std::string path)
@@ -62,7 +62,7 @@ std::string Path::getExtesionName(std::string path)
 		std::size_t found = path.find_first_of('.');
 		return (found != std::string::npos) ? path.substr(found + 1) : "";
 	}
-	return false;
+	return "";
 }
 
 void Path::unify(std::string& path)
@@ -156,7 +156,7 @@ void Path::removeCurrent(std::string& path)
 	}
 	if (path.size() == 1 && path[0] == '.')
 	{
-		path = "";
+		path.clear();
 	}
 }
 
@@ -314,7 +314,7 @@ IFile::operator bool() const
 void IFile::close()
 {
 	mFile.close();
-	mFilename = "";
+	mFilename.clear();
 }
 
 const std::string& IFile::getFilename() const
@@ -373,7 +373,7 @@ OFile::operator bool() const
 void OFile::close()
 {
 	mFile.close();
-	mFilename = "";
+	mFilename.clear();
 }
 
 const std::string& OFile::getFilename() const

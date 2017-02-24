@@ -289,7 +289,7 @@ namespace priv
 			void call(Trigger event, Parameter arg) const
 			{
 				std::pair<ConstIterator, ConstIterator> range = mListeners.equal_range(event);
-				for (ConstIterator itr = range.first; itr != range.second; itr++)
+				for (ConstIterator itr = range.first; itr != range.second; ++itr)
 				{
 					itr->second.call(arg);
 				}

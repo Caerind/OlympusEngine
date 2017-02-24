@@ -37,7 +37,7 @@ void UnitTest::print()
 	printf("====================================\n");
 	for (U32 i = 0; i < mTests.size(); i++)
 	{
-		printf("%s : %d passed | %d failed ---> ", mTests[i].title, mTests[i].passed, mTests[i].failed);
+		printf("%s : %u passed | %u failed ---> ", mTests[i].title, mTests[i].passed, mTests[i].failed);
 		if (mTests[i].failed == 0)
 		{
 			printf("SUCCESS\n");
@@ -50,7 +50,7 @@ void UnitTest::print()
 		}
 	}
 	printf("====================================\n");
-	printf("%d tests : %d passed | %d failed ---> ", success + failed, success, failed);
+	printf("%u tests : %u passed | %u failed ---> ", success + failed, success, failed);
 	if (failed == 0)
 	{
 		printf("SUCCESS\n");

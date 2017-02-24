@@ -14,10 +14,10 @@ namespace oe
 class OE_API Path
 {
 	public:
-		static bool isDirectory(std::string path);
+		static bool isDirectory(const std::string& path);
 		static std::string getDirectoryName(std::string path);
 		static std::vector<std::string> getDirectoryList(std::string path);
-		static bool isFile(std::string path);
+		static bool isFile(const std::string& path);
 		static std::string getFileName(std::string path);
 		static std::string getExtesionName(std::string path);
 

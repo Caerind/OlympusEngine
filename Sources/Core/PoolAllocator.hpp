@@ -61,7 +61,7 @@ class OE_API PoolAllocator : private NonCopyable
 				return new (oe::alloc(size)) T(std::forward<Args>(args)...);
 			}
 			U32 index = mBlockSizeLookup[size];
-			ASSERT(0 <= index && index < BlockSizes);
+			ASSERT(index < BlockSizes);
 			if (mFreeLists[index] != nullptr)
 			{
 				Block* block = mFreeLists[index];
@@ -113,7 +113,7 @@ class OE_API PoolAllocator : private NonCopyable
 				return;
 			}
 			U32 index = mBlockSizeLookup[size];
-			ASSERT(0 <= index && index < BlockSizes);
+			ASSERT(index < BlockSizes);
 			#ifdef OE_DEBUG
 				// Verify the memory address and size is valid.
 				U32 blockSize = mBlockSizes[index];

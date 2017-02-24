@@ -38,7 +38,7 @@ bool ParserIni::loadFromFile(const std::string& filename)
 				{
 					index = line.substr(0, found);
 					value = line.substr(found + 1);
-					if (currentSection != "")
+					if (!currentSection.empty())
 					{
 						index.insert(0, 1, ':');
 						index.insert(0, currentSection);
@@ -55,7 +55,7 @@ bool ParserIni::loadFromFile(const std::string& filename)
 
 bool ParserIni::saveToFile(const std::string& filename)
 {
-	OFile file((filename != "") ? filename : mFilename);
+	OFile file((!filename.empty()) ? filename : mFilename);
 	if (file)
 	{
 		std::string currentSection("");
@@ -90,7 +90,7 @@ bool ParserIni::saveToFile(const std::string& filename)
 
 void ParserIni::set(const std::string& index, const std::string& value, const std::string& section)
 {
-	if (section == "")
+	if (!section.empty())
 	{
 		mValues[index] = value;
 	}
@@ -102,7 +102,7 @@ void ParserIni::set(const std::string& index, const std::string& value, const st
 
 std::string ParserIni::get(const std::string& index, const std::string& section)
 {
-	if (section == "")
+	if (!section.empty())
 	{
 		return mValues[index];
 	}

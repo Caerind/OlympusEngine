@@ -16,7 +16,7 @@ Profiler::~Profiler()
 
 void Profiler::beginProfile(const std::string& profileName)
 {
-	ASSERT(profileName != "");
+	ASSERT(!profileName.empty());
 	
 	U32 index = 0;
 	bool found = false;
@@ -39,7 +39,7 @@ void Profiler::beginProfile(const std::string& profileName)
 void Profiler::endProfile(const std::string& profileName)
 {
 	const Time end = Time::getCurrentTime();
-	ASSERT(profileName != "");
+	ASSERT(!profileName.empty());
 	U32 index = 0;
 	bool found = false;
 	for (U32 i = 0; i < mProfiles.size(); i++)
@@ -108,7 +108,7 @@ Profiler::ProfileInstance::ProfileInstance(const std::string& profileName)
 
 void Profiler::ProfileInstance::display()
 {
-	printf("[%s] c:%d -:%d +:%d ~:%d\n", mName.c_str(), mCalls, mMin.asMilliseconds(), mMax.asMilliseconds(), (mSumm.asMilliseconds()/mCalls));
+	printf("[%s] c:%u -:%d +:%d ~:%u\n", mName.c_str(), mCalls, mMin.asMilliseconds(), mMax.asMilliseconds(), (mSumm.asMilliseconds()/mCalls));
 }
 
 } // namespace oe

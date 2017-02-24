@@ -6,6 +6,9 @@ namespace oe
 template<> Localization* Singleton<Localization>::mSingleton = nullptr;
 
 Localization::Localization()
+	: mLanguages()
+	, mTokens()
+	, mCurrentLanguage(Language::English)
 {
 }
 

@@ -14,7 +14,7 @@ namespace oe
 class OE_API Localization : public Singleton<Localization>
 {
 	public:
-		enum class Language : U32
+		enum class Language : U8
 		{
 			English = 0,
 			French = 1,

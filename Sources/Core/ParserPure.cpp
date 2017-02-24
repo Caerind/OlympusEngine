@@ -58,17 +58,17 @@ bool ParserPure::loadFromFile(const std::string& filename)
 			// Handle specific case
 			if (space == 0)
 			{
-				actualProperty = "";
+				actualProperty.clear();
 				actualSpace = 0;
 			}
 
 			// Get back on the chain of properties
 			while (space <= actualSpace && actualSpace > 0)
 			{
-				std::size_t found2(actualProperty.find_last_of("."));
+				std::size_t found2(actualProperty.find_last_of('.'));
 				if (found2 == std::string::npos)
 				{
-					actualProperty = "";
+					actualProperty.clear();
 					actualSpace = 0;
 				}
 				else
@@ -85,8 +85,8 @@ bool ParserPure::loadFromFile(const std::string& filename)
 				// If the line has a value
 				std::string name(line.substr(0, found));
 				std::string value(line.substr(found + 3));
-				std::size_t found2(line.find_first_of("."));
-				if (found2 == std::string::npos && actualProperty != "") // Normal case
+				std::size_t found2(line.find_first_of('.'));
+				if (found2 == std::string::npos && !actualProperty.empty()) // Normal case
 				{
 					set(actualProperty + "." + name, value);
 				}
@@ -115,7 +115,7 @@ bool ParserPure::loadFromFile(const std::string& filename)
 
 bool ParserPure::saveToFile(const std::string& filename)
 {
-	OFile file(((filename == "") ? mFilename : filename));
+	OFile file(((!filename.empty()) ? mFilename : filename));
 	if (file)
 	{
 		for (const PureProperty& p : mProperties)
@@ -131,11 +131,11 @@ bool ParserPure::saveToFile(const std::string& filename)
 
 void ParserPure::set(const std::string& name, const std::string& value)
 {
-	if (name != "")
+	if (!name.empty())
 	{
 		std::string pname(name);
 		std::string subname("");
-		std::size_t found(name.find_first_of("."));
+		std::size_t found(name.find_first_of('.'));
 		if (found != std::string::npos)
 		{
 			pname = name.substr(0, found);
@@ -161,11 +161,11 @@ void ParserPure::set(const std::string& name, const std::string& value)
 
 const std::string& ParserPure::get(const std::string& name) const
 {
-	if (name != "")
+	if (!name.empty())
 	{
 		std::string pname(name);
 		std::string subname("");
-		std::size_t found(name.find_first_of("."));
+		std::size_t found(name.find_first_of('.'));
 		if (found != std::string::npos)
 		{
 			pname = name.substr(0, found);
@@ -207,11 +207,11 @@ ParserPure::PureProperty::PureProperty(const std::string& name, const std::strin
 
 void ParserPure::PureProperty::set(const std::string& name, const std::string& value)
 {
-	if (name != "")
+	if (!name.empty())
 	{
 		std::string pname(name);
 		std::string subname("");
-		std::size_t found(name.find_first_of("."));
+		std::size_t found(name.find_first_of('.'));
 		if (found != std::string::npos)
 		{
 			pname = name.substr(0, found);
@@ -241,11 +241,11 @@ void ParserPure::PureProperty::set(const std::string& name, const std::string& v
 
 const std::string& ParserPure::PureProperty::get(const std::string& name) const
 {
-	if (name != "")
+	if (!name.empty())
 	{
 		std::string pname(name);
 		std::string subname("");
-		std::size_t found(name.find_first_of("."));
+		std::size_t found(name.find_first_of('.'));
 		if (found != std::string::npos)
 		{
 			pname = name.substr(0, found);
@@ -269,7 +269,7 @@ void ParserPure::PureProperty::write(OFile& file, U32 space) const
 		file << " ";
 	}
 	file << mName;
-	if (mValue != "")
+	if (!mValue.empty())
 	{
 		file << " = " << mValue;
 	}

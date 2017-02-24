@@ -37,7 +37,7 @@ void Log::useFile(bool use, const std::string& filename)
 {
 	mUseFile = false;
 	mFile.close();
-	if (use && filename != "")
+	if (use && !filename.empty())
 	{
 		mFile.open(filename);
 		if (mFile.isOpen())
