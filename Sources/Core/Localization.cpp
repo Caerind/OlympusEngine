@@ -1,4 +1,5 @@
 #include "Localization.hpp"
+#include "ParserIni.hpp"
 
 namespace oe
 {
@@ -63,7 +64,20 @@ const std::string& Localization::getToken(U32 token)
 	return StringHash::get(mTokens[token]);
 }
 
-
+bool Localization::loadLanguageFromFile(LanguageTable& table, const std::string& filename)
+{
+	ParserIni iniParser;
+	if (iniParser.loadFromFile(filename))
+	{
+		U32 size = iniParser.getSize();
+		for (U32 i = 0; i < size; i++)
+		{
+			// TODO : Load from file
+		}
+		return true;
+	}
+	return false;
+}
 
 Localization::LanguageData::LanguageData(Language index, LanguageStrategy loadingStrategy)
 	: id(index)

@@ -35,6 +35,8 @@ class OE_API Localization : public Singleton<Localization>
 		Language getCurrentLanguage() const;
 		const std::string& getToken(U32 token);
 
+		static bool loadLanguageFromFile(LanguageTable& table, const std::string& filename);
+
 	private:
 		struct LanguageData
 		{
