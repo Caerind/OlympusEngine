@@ -1,13 +1,12 @@
 #ifndef OE_COLOR_HPP
 #define OE_COLOR_HPP
 
-#include "../Config.hpp"
-#include "String.hpp"
+#include "Prerequisites.hpp"
 
 namespace oe
 {
 
-class OE_API Color
+class Color
 {
 	public:
 		Color();

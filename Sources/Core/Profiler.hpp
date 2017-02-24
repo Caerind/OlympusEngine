@@ -1,7 +1,7 @@
 #ifndef OE_PROFILER_HPP
 #define OE_PROFILER_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "Time.hpp"
 #include "../Math/Math.hpp"
 #include "Singleton.hpp"
@@ -22,7 +22,7 @@
 namespace oe
 {
 
-class OE_API Profiler : public Singleton<Profiler>
+class Profiler : public Singleton<Profiler>
 {
 	public:
 		Profiler();

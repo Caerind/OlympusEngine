@@ -1,8 +1,7 @@
 #ifndef OE_RESOURCEHOLDER_HPP
 #define OE_RESOURCEHOLDER_HPP
 
-#include "../Config.hpp"
-#include "String.hpp"
+#include "NonCopyable.hpp"
 #include <map>
 
 namespace oe
@@ -11,7 +10,7 @@ namespace oe
 using ResourceId = StringId;
 
 template <typename T>
-class ResourceHolder
+class ResourceHolder : private NonCopyable
 {
 	public:
 		ResourceHolder();

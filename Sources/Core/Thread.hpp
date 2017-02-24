@@ -1,8 +1,7 @@
 #ifndef OE_THREAD_HPP
 #define OE_THREAD_HPP
 
-#include "../Config.hpp"
-
+#include "Prerequisites.hpp"
 #include "Time.hpp"
 
 #include <mutex>
@@ -11,7 +10,7 @@
 namespace oe
 {
 
-class OE_API Thread
+class Thread
 {
 	public:
 		template <typename Fn, typename ... Args>
@@ -45,7 +44,7 @@ class OE_API Thread
 		static U32 mMainThreadId;
 };
 
-class OE_API Mutex
+class Mutex
 {
 	public:
 		Mutex();
@@ -56,7 +55,7 @@ class OE_API Mutex
 		std::mutex mMutex;
 };
 
-class OE_API Lock
+class Lock
 {
 	public:
 		Lock(Mutex& mutex);

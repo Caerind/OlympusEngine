@@ -1,20 +1,20 @@
-#ifndef OE_SERIALIZATION_HPP
-#define OE_SERIALIZATION_HPP
+#ifndef OE_UPDATABLE_HPP
+#define OE_UPDATABLE_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 
 namespace oe
 {
 
-class OE_API Updatable
+class Updatable
 {
 	public:
-		Updatable() = default;
+		Updatable() {}
 		virtual ~Updatable() {}
 		
 		virtual void update() = 0;
-}
+};
 
 } // namespace oe
 
-#endif // OE_SERIALIZATION_HPP
+#endif // OE_UPDATABLE_HPP

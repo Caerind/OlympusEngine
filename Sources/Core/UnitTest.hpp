@@ -1,13 +1,12 @@
 #ifndef OE_UNITTEST_HPP
 #define OE_UNITTEST_HPP
 
-#include "../Config.hpp"
-
+#include "Prerequisites.hpp"
 #include "Time.hpp"
 
 #define RUN_TEST(name) Test##name();
 
-#define BEGIN_TEST(name) void Test##name() { oe::UnitTest unitTest;
+#define BEGIN_TEST(name) void Test##name() { oe::UnitTest unitTest(#name);
 #define END_TEST unitTest.print(); }
 
 #define TEST(title) unitTest.start(title);
@@ -19,7 +18,7 @@ namespace oe
 class UnitTest
 {
 	public:
-		UnitTest();
+		UnitTest(char* name);
 		~UnitTest();
 
 		void start(char* title);
@@ -38,6 +37,7 @@ class UnitTest
 			U32 failed;
 		};
 
+		char* mName;
 		std::vector<Test> mTests;
 };
 

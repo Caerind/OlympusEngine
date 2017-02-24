@@ -1,7 +1,7 @@
 #ifndef OE_STRING_HPP
 #define OE_STRING_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include <map>
 #include <vector>
 #include <sstream>
@@ -11,7 +11,7 @@ namespace oe
 
 using StringId = U32;
 
-class OE_API StringHash
+class StringHash
 {
 	public:
 		static const StringId hash(const std::string& str);

@@ -1,7 +1,7 @@
 #ifndef OE_MATH
 #define OE_MATH
 
-#include "../Config.hpp"
+#include "../Core/Prerequisites.hpp"
 
 namespace oe
 {

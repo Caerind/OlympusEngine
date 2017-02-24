@@ -1,12 +1,12 @@
 #ifndef OE_NONCOPYABLE_HPP
 #define OE_NONCOPYABLE_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 
 namespace oe
 {
 
-class OE_API NonCopyable
+class NonCopyable
 {
 	protected:
 		NonCopyable() {}

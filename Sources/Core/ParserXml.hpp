@@ -1,13 +1,13 @@
 #ifndef OE_PARSERXML_HPP
 #define OE_PARSERXML_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "../ExtLibs/pugixml/pugixml.hpp"
 
 namespace oe
 {
 
-class OE_API ParserXml
+class ParserXml
 {
 	public:
 		ParserXml();

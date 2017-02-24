@@ -6,16 +6,11 @@
 namespace oe
 {
 
-const std::string base64Table = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                "abcdefghijklmnopqrstuvwxyz"
-                                "0123456789+/";
+const std::string Compression::mBase64Table = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                              "abcdefghijklmnopqrstuvwxyz"
+                                              "0123456789+/";
 
-bool isBase64(unsigned char c)
-{
-	return (isalnum(c) || (c == '+') || (c == '/'));
-}
-
-bool encode64(std::string& data)
+bool Compression::encode64(std::string& data)
 {
     U32 count = 0;
     U8 input_bytes[3] = { '\0', '\0', '\0' };
@@ -33,7 +28,7 @@ bool encode64(std::string& data)
             memset(input_bytes, '\0', 3);
 			for (U32 j = 0; j < count + 1; j++)
 			{
-				result += base64Table[byte_array[j]];
+				result += mBase64Table[byte_array[j]];
 			}
 			if (count != 3)
 			{
@@ -52,7 +47,7 @@ bool encode64(std::string& data)
     return true;
 }
 
-bool decode64(std::string& data)
+bool Compression::decode64(std::string& data)
 {
     U32 count = 0;
     U8 input_bytes[4] = { '\0', '\0', '\0', '\0' };
@@ -62,7 +57,7 @@ bool decode64(std::string& data)
     {
 		if (isBase64(data[i]))
 		{
-			input_bytes[count++] = static_cast<U8>(base64Table.find(data[i]));
+			input_bytes[count++] = static_cast<U8>(mBase64Table.find(data[i]));
 		}
         if (count == 4 || data[i] == '=')
         {
@@ -88,7 +83,7 @@ bool decode64(std::string& data)
     return true;
 }
 
-bool decompress(std::string& data)
+bool Compression::decompress(std::string& data)
 {
     mz_stream zstream;
     zstream.zalloc = 0;
@@ -132,7 +127,7 @@ bool decompress(std::string& data)
     return true;
 }
 
-bool compress(std::string& data)
+bool Compression::compress(std::string& data)
 {
     mz_stream zs; // z_stream is zlib's control structure
     memset(&zs, 0, sizeof(zs));
@@ -166,7 +161,7 @@ bool compress(std::string& data)
     return true;
 }
 
-bool compress64(std::string& data)
+bool Compression::compress64(std::string& data)
 {
     std::string d(data);
     if (compress(d))
@@ -180,7 +175,7 @@ bool compress64(std::string& data)
     return false;
 }
 
-bool decompress64(std::string& data)
+bool Compression::decompress64(std::string& data)
 {
     std::string d(data);
     if (decode64(d))
@@ -192,6 +187,11 @@ bool decompress64(std::string& data)
         }
     }
     return false;
+}
+
+bool Compression::isBase64(U8 c)
+{
+	return (isalnum(c) || (c == '+') || (c == '/'));
 }
 
 } // namespace oe

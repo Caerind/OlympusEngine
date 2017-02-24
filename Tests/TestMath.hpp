@@ -1,5 +1,7 @@
-#include "../Sources/Config.hpp"
+#include "../Sources/Core/Prerequisites.hpp"
 #include "../Sources/Core/UnitTest.hpp"
+#include "../Sources/Core/Profiler.hpp"
+
 #include "../Sources/Math/Math.hpp"
 #include "../Sources/Math/Matrix.hpp"
 #include "../Sources/Math/Quaternion.hpp"

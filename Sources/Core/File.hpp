@@ -6,14 +6,13 @@
 #include <string>
 #include <vector>
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "Stream.hpp"
-#include "String.hpp"
 
 namespace oe
 {
 
-class OE_API Path
+class Path
 {
 	public:
 		static bool isDirectory(const std::string& path);
@@ -34,7 +33,7 @@ class OE_API Path
 		static void removeEnd(std::string& path);
 };
 
-class OE_API File
+class File
 {
 	public:
 		static bool exists(const std::string& filename);
@@ -42,7 +41,7 @@ class OE_API File
 		static bool rename(const std::string& oldFilename, const std::string& newFilename);
 };
 
-class OE_API IFile : public IStream
+class IFile : public IStream
 {
 	public:
 		IFile();
@@ -62,7 +61,7 @@ class OE_API IFile : public IStream
 		std::string mFilename;
 };
 
-class OE_API OFile : public OStream
+class OFile : public OStream
 {
 	public:
 		OFile();

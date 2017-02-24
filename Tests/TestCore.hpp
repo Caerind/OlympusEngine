@@ -1,4 +1,7 @@
-#include "../Sources/Config.hpp"
+#include "../Sources/Core/Prerequisites.hpp"
+#include "../Sources/Core/UnitTest.hpp"
+#include "../Sources/Core/Profiler.hpp"
+
 #include "../Sources/Core/Color.hpp"
 #include "../Sources/Core/Compression.hpp"
 #include "../Sources/Core/Connection.hpp"
@@ -16,7 +19,6 @@
 #include "../Sources/Core/PoolAllocator.hpp"
 #include "../Sources/Core/Profiler.hpp"
 #include "../Sources/Core/ResourceHolder.hpp"
-#include "../Sources/Core/Serialization.hpp"
 #include "../Sources/Core/Singleton.hpp"
 #include "../Sources/Core/StackAllocator.hpp"
 #include "../Sources/Core/String.hpp"

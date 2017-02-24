@@ -1,14 +1,14 @@
 #ifndef OE_PARSERCSV_HPP
 #define OE_PARSERCSV_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "File.hpp"
 #include <vector>
 
 namespace oe
 {
 
-class OE_API ParserCsv
+class ParserCsv
 {
 	public:
 		ParserCsv(const U32 elementsPerLine);

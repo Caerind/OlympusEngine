@@ -1,18 +1,28 @@
 #ifndef OE_COMPRESSION_HPP
 #define OE_COMPRESSION_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 
 namespace oe
 {
 
-bool encode64(std::string& data);
-bool decode64(std::string& data);
-bool decompress(std::string& data);
-bool compress(std::string& data);
+class Compression
+{
+	public:
+		static bool encode64(std::string& data);
+		static bool decode64(std::string& data);
+		static bool decompress(std::string& data);
+		static bool compress(std::string& data);
 
-bool compress64(std::string& data);
-bool decompress64(std::string& data);
+		static bool compress64(std::string& data);
+		static bool decompress64(std::string& data);
+
+	private:
+		static const std::string mBase64Table;
+
+		static bool isBase64(U8 c);
+
+};
 
 } // namespace oe
 

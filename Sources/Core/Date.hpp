@@ -1,15 +1,14 @@
 #ifndef OE_DATE_HPP
 #define OE_DATE_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "Time.hpp"
-#include "String.hpp"
 #include <ctime>
 
 namespace oe
 {
 
-class OE_API Date
+class Date
 {
 	public:
 		Date();

@@ -7,7 +7,7 @@ namespace oe
 {
 
 template <class T>
-class OE_API Quaternion 
+class Quaternion 
 {
 	public:
 		inline Quaternion()

@@ -11,7 +11,7 @@ namespace oe
 {
 
 template <typename T> 
-class OE_API Singleton : private NonCopyable
+class Singleton : private NonCopyable
 {
 	public:
 		Singleton()

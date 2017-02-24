@@ -1,13 +1,13 @@
 #ifndef OE_PARSERPURE_HPP
 #define OE_PARSERPURE_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "File.hpp"
 
 namespace oe
 {
 
-class OE_API ParserPure
+class ParserPure
 {
 	public:
 		ParserPure();

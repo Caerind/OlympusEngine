@@ -1,9 +1,8 @@
 #ifndef OE_LOCALIZATION_HPP
 #define OE_LOCALIZATION_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "Singleton.hpp"
-#include "String.hpp"
 
 #include <functional>
 #include <vector>
@@ -11,7 +10,7 @@
 namespace oe
 {
 
-class OE_API Localization : public Singleton<Localization>
+class Localization : public Singleton<Localization>
 {
 	public:
 		enum class Language : U8

@@ -1,13 +1,13 @@
 #ifndef OE_STREAM_HPP
 #define OE_STREAM_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "Singleton.hpp"
 
 namespace oe
 {
 
-class OE_API OStream
+class OStream
 {
 	public:
 		OStream();
@@ -15,7 +15,7 @@ class OE_API OStream
 		virtual void write(const std::string& value) = 0;
 };
 
-class OE_API IStream
+class IStream
 {
 	public:
 		IStream();
@@ -23,7 +23,7 @@ class OE_API IStream
 		virtual bool read(std::string& value) = 0;
 };
 
-class OE_API OConsole : public OStream
+class OConsole : public OStream
 {
 	public:
 		OConsole();
@@ -38,7 +38,7 @@ class OE_API OConsole : public OStream
 		}
 };
 
-class OE_API IConsole : public IStream
+class IConsole : public IStream
 {
 	public:
 		IConsole();

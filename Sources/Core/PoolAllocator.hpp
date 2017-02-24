@@ -1,14 +1,14 @@
 #ifndef OE_POOLALLOCATOR_HPP
 #define OE_POOLALLOCATOR_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "NonCopyable.hpp"
 
 namespace oe
 {
 
 template <U32 chunkSize>
-class OE_API PoolAllocator : private NonCopyable
+class PoolAllocator : private NonCopyable
 {
 	public:
 		PoolAllocator()

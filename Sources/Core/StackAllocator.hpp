@@ -1,14 +1,13 @@
 #ifndef OE_STACKALLOCATOR_HPP
 #define OE_STACKALLOCATOR_HPP
 
-#include "../Config.hpp"
 #include "NonCopyable.hpp"
 
 namespace oe
 {
 
 template <U32 maxBytes>
-class OE_API StackAllocator : private NonCopyable
+class StackAllocator : private NonCopyable
 {
 	public:
 		StackAllocator()
@@ -84,7 +83,7 @@ class OE_API StackAllocator : private NonCopyable
 };
 
 template <U32 maxBytes>
-class OE_API DoubleBufferAllocator : private NonCopyable
+class DoubleBufferAllocator : private NonCopyable
 {
 	public:
 		DoubleBufferAllocator()

@@ -3,9 +3,11 @@
 namespace oe
 {
 
-UnitTest::UnitTest()
+UnitTest::UnitTest(char* name)
+	: mName(name)
+	, mTests()
 {
-	printf("====================================\n");
+	printf("===== Starting the test of %s =====\n", mName);
 }
 
 UnitTest::~UnitTest()
@@ -34,7 +36,7 @@ void UnitTest::print()
 {
 	U32 success = 0;
 	U32 failed = 0;
-	printf("====================================\n");
+	printf("===== Finished the test of %s =====\n", mName);
 	for (U32 i = 0; i < mTests.size(); i++)
 	{
 		printf("%s : %u passed | %u failed ---> ", mTests[i].title, mTests[i].passed, mTests[i].failed);
@@ -49,7 +51,7 @@ void UnitTest::print()
 			failed++;
 		}
 	}
-	printf("====================================\n");
+	printf("===== Final result of %s =====\n", mName);
 	printf("%u tests : %u passed | %u failed ---> ", success + failed, success, failed);
 	if (failed == 0)
 	{

@@ -1,18 +1,5 @@
-#ifndef OE_CONFIG_HPP
-#define OE_CONFIG_HPP
-
-////////////////////////////////////////////////////
-// Version
-////////////////////////////////////////////////////
-#define OE_VERSION_MAJOR 0
-#define OE_VERSION_MINOR 1
-
-////////////////////////////////////////////////////
-// Debug
-////////////////////////////////////////////////////
-#if !(defined(NDEBUG) || defined(_NDEBUG))
-	#define OE_DEBUG
-#endif
+#ifndef OE_PLATFORM_HPP
+#define OE_PLATFORM_HPP
 
 ////////////////////////////////////////////////////
 // Platform Detection
@@ -51,12 +38,16 @@
 	#define OE_DESKTOP
 #endif
 
+
+////////////////////////////////////////////////////
+// Platform Name
+////////////////////////////////////////////////////
+
 #include <string>
 
 namespace oe
 {
 
-// TODO : Move to another file
 inline const std::string& getPlatformName()
 {
 	#if defined(OE_PLATFORM_WINDOWS)
@@ -79,39 +70,6 @@ inline const std::string& getPlatformName()
 
 } // namespace oe
 
-#ifdef OE_DYNAMIC
-	#if OE_PLATFORM_WINDOWS
-		#ifdef OE_EXPORTS
-			#define OE_API __declspec(dllexport)
-		#else
-			#define OE_API __declspec(dllimport)
-		#endif
-	#else
-		#if __GNUC__ >= 4
-			#define OE_API __attribute__((__visibility__("default")))
-		#else
-			#define OE_API
-		#endif
-	#endif
-#else
-	#define OE_API
-#endif
-
-////////////////////////////////////////////////////
-// Assertions
-////////////////////////////////////////////////////
-#include <cstdio>
-#if !(defined(NASSERT) || defined(_NASSERT))
-#define ASSERT(expr) \
-	if (expr) {} \
-	else \
-	{ \
-		printf("Assertion !\n Expr : %s\n File : %s\n Line : %d\n", #expr, __FILE__, __LINE__); \
-		for (;;) {} \
-	}
-#else
-#define ASSERT(expr)
-#endif
 
 ////////////////////////////////////////////////////
 // Atomic Data Types
@@ -126,7 +84,4 @@ using I64 = signed long long;
 using U64 = unsigned long long;
 using F32 = float;
 
-
-#include <sstream>
-
-#endif // OE_CONFIG_HPP
+#endif // OE_PLATFORM_HPP

@@ -1,14 +1,14 @@
 #ifndef OE_PARSERINI_HPP
 #define OE_PARSERINI_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "File.hpp"
 #include <map>
 
 namespace oe
 {
 
-class OE_API ParserIni
+class ParserIni
 {
 	public:
 		ParserIni();

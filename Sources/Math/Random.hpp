@@ -3,12 +3,12 @@
 
 #include <random>
 
-#include "../Config.hpp"
+#include "../Core/Prerequisites.hpp"
 
 namespace oe
 {
 
-class OE_API Random
+class Random
 {
     public:
         static I32 getI32(I32 min, I32 max);
@@ -29,7 +29,7 @@ class OE_API Random
 };
 
 template <typename T>
-class OE_API RandomTable
+class RandomTable
 {
 	public:
 		RandomTable() : mTable(), mSum(0.f) 

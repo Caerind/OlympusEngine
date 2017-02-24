@@ -34,7 +34,7 @@ template <class T>
 static inline bool unProjectHelper(const Vector<T, 3>& window_coord, const Matrix<T, 4, 4>& model_view, const Matrix<T, 4, 4>& projection, const F32 window_width, const F32 window_height, Vector<T, 3>& result);
 
 template <class T, U8 rows, U8 columns>
-class OE_API Matrix 
+class Matrix 
 {
 	public:
 		inline Matrix()

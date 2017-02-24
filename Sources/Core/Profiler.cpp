@@ -1,5 +1,4 @@
 #include "Profiler.hpp"
-#include "Log.hpp"
 
 namespace oe
 {

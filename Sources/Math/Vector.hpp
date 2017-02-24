@@ -1,8 +1,7 @@
 #ifndef OE_VECTOR_HPP
 #define OE_VECTOR_HPP
 
-#include "../Config.hpp"
-#include "../Core/String.hpp"
+#include "../Core/Prerequisites.hpp"
 #include "Math.hpp"
 
 namespace oe 
@@ -21,7 +20,7 @@ template <class T>
 static inline T dotProductHelper(const Vector<T, 4>& v1, const Vector<T, 4>& v2);
 
 template <class T, U8 d>
-struct OE_API VectorPacked 
+struct VectorPacked 
 {
 	VectorPacked() 
 	{
@@ -42,7 +41,7 @@ struct OE_API VectorPacked
 };
 
 template <class T, U8 d>
-class OE_API Vector 
+class Vector 
 {
 	public:
 		using Scalar = T;

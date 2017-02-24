@@ -1,10 +1,9 @@
 #ifndef OE_LOG_HPP
 #define OE_LOG_HPP
 
-#include "../Config.hpp"
+#include "Prerequisites.hpp"
 #include "Singleton.hpp"
 #include "File.hpp"
-#include <stdarg.h>
 
 namespace oe
 {

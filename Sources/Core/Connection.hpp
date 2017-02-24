@@ -14,7 +14,7 @@ namespace oe
 
 namespace priv
 {
-	class OE_API AbstractConnectionImpl
+	class AbstractConnectionImpl
 	{
 		public:
 			virtual void disconnect() = 0;
@@ -24,7 +24,7 @@ namespace priv
 	};
 
 	template <typename List>
-	class OE_API IteratorConnectionImpl : public AbstractConnectionImpl
+	class IteratorConnectionImpl : public AbstractConnectionImpl
 	{
 		private:
 			using Iterator = typename List::Iterator;
@@ -47,7 +47,7 @@ namespace priv
 	};
 
 	template <typename Container>
-	class OE_API IdConnectionImpl : public AbstractConnectionImpl
+	class IdConnectionImpl : public AbstractConnectionImpl
 	{
 		private:
 			using ValueType = typename Container::value_type;
@@ -86,7 +86,7 @@ namespace priv
 
 } // namespace priv
 
-class OE_API Connection
+class Connection
 {
 	public:
 		Connection() : mWeakRef()
@@ -123,7 +123,7 @@ class OE_API Connection
 };
 
 
-class OE_API ScopedConnection : private NonCopyable
+class ScopedConnection : private NonCopyable
 {
 	public:
 		ScopedConnection()
@@ -166,7 +166,7 @@ class OE_API ScopedConnection : private NonCopyable
 namespace priv
 {
 	template <typename Parameter>
-	class OE_API Listener
+	class Listener
 	{
 		private:
 			using Function = std::function<void(Parameter)>;
@@ -206,7 +206,7 @@ namespace priv
 	};
 
 	template <typename Parameter>
-	class OE_API ListenerSequence
+	class ListenerSequence
 	{
 		public:
 			using ValueType = Listener<Parameter>;
@@ -250,7 +250,7 @@ namespace priv
 	};
 
 	template <typename Trigger, typename Parameter>
-	class OE_API ListenerMap
+	class ListenerMap
 	{
 		public:
 			using ValueType = Listener<Parameter>;

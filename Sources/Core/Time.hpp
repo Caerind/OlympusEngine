@@ -6,7 +6,7 @@
 namespace oe
 {
 
-class OE_API Time
+class Time
 {
 	public:
 		static Time getCurrentTime();
@@ -63,7 +63,7 @@ F32 operator /(Time left, Time right);
 Time operator %(Time left, Time right);
 Time& operator %=(Time& left, Time right);
 
-class OE_API Clock
+class Clock
 {
 	public:
 		Clock();
@@ -75,7 +75,7 @@ class OE_API Clock
 		Time mStart;
 };
 
-class OE_API StopWatch
+class StopWatch
 {
 	public:
 		StopWatch();
@@ -93,7 +93,7 @@ class OE_API StopWatch
 		bool mRunning;
 };
 
-class OE_API Timer
+class Timer
 {
 	public:
 		Timer();
@@ -112,7 +112,7 @@ class OE_API Timer
 		Time mLimit;
 };
 
-class OE_API CallbackTimer : public Timer
+class CallbackTimer : public Timer
 {
 	public:
 		CallbackTimer();
