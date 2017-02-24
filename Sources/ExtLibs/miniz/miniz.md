@@ -1,7 +1,7 @@
 # miniz
 Single C source file zlib-replacement library
 
-https://github.com/zeux/pugixml/
+https://code.google.com/archive/p/miniz/
 
 =============================================================================
 
