@@ -381,4 +381,9 @@ const std::string& OFile::getFilename() const
 	return mFilename;
 }
 
+void OFile::write(const std::string& value)
+{
+	mFile << value;
+}
+
 } // namespace oe

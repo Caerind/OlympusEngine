@@ -7,6 +7,8 @@
 #include <vector>
 
 #include "../Config.hpp"
+#include "Stream.hpp"
+#include "String.hpp"
 
 namespace oe
 {
@@ -40,7 +42,7 @@ class OE_API File
 		static bool rename(const std::string& oldFilename, const std::string& newFilename);
 };
 
-class OE_API IFile
+class OE_API IFile : public IStream
 {
 	public:
 		IFile();
@@ -53,14 +55,14 @@ class OE_API IFile
 		void close();
 		const std::string& getFilename() const;
 
-		bool read(std::string& line);
+		virtual bool read(std::string& line);
 
 	private:
 		std::ifstream mFile;
 		std::string mFilename;
 };
 
-class OE_API OFile
+class OE_API OFile : public OStream
 {
 	public:
 		OFile();
@@ -72,6 +74,8 @@ class OE_API OFile
 		operator bool() const;
 		void close();
 		const std::string& getFilename() const;
+
+		virtual void write(const std::string& value);
 
 		template <typename T>
 		friend OFile& operator<<(OFile& file, const T& value)
