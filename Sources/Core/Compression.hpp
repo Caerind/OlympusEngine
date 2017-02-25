@@ -21,7 +21,6 @@ class Compression
 		static const std::string mBase64Table;
 
 		static bool isBase64(U8 c);
-
 };
 
 } // namespace oe

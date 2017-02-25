@@ -11,13 +11,71 @@ namespace oe
 class Random
 {
     public:
-        static I32 getI32(I32 min, I32 max);
-        static U32 getU32(U32 min, U32 max);
-        static F32 getF32(F32 min, F32 max);
-		static F32 getF32Dev(F32 middle, F32 deviation);
-		static bool getBool();
-        static void setSeed(const std::string& seed);
-        static const std::string& getSeed();
+		template<typename T>
+		static T get(T min, T max)
+		{
+			return T();
+		}
+
+		template<>
+		static I32 get(I32 min, I32 max)
+		{
+			ASSERT(min <= max);
+			std::uniform_int_distribution<I32> distribution(min, max);
+			return distribution(mRandom.mGenerator);
+		}
+
+		template<>
+        static U32 get(U32 min, U32 max)
+		{
+			ASSERT(min <= max);
+			std::uniform_int_distribution<U32> distribution(min, max);
+			return distribution(mRandom.mGenerator);
+		}
+
+		template<>
+        static F32 get(F32 min, F32 max)
+		{
+			ASSERT(min <= max);
+			std::uniform_real_distribution<F32> distribution(min, max);
+			return distribution(mRandom.mGenerator);
+		}
+
+		template<typename T>
+		static T getDev(T middle, T deviation)
+		{
+			return T();
+		}
+
+		template<>
+		static I32 getDev(I32 middle, I32 deviation)
+		{
+			ASSERT(deviation >= 0);
+			return get(middle - deviation, middle + deviation);
+		}
+
+		template<>
+		static U32 getDev(U32 middle, U32 deviation)
+		{
+			ASSERT(deviation >= 0);
+			return get(middle - deviation, middle + deviation);
+		}
+
+		template<>
+		static F32 getDev(F32 middle, F32 deviation)
+		{
+			ASSERT(deviation >= 0.f);
+			return get(middle - deviation, middle + deviation);
+		}
+
+		static bool getBool()
+		{
+			return get<I32>(0, 1) == 1;
+		}
+
+		static void setSeed(const std::string& seed);
+
+		static const std::string& getSeed();
 		
 	private:
         Random();

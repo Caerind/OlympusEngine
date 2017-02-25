@@ -3,21 +3,60 @@
 #include "../Sources/Core/Profiler.hpp"
 
 #include "../Sources/Math/Math.hpp"
-#include "../Sources/Math/Matrix.hpp"
-#include "../Sources/Math/Quaternion.hpp"
+//#include "../Sources/Math/Matrix.hpp"
+//#include "../Sources/Math/Quaternion.hpp"
 #include "../Sources/Math/Random.hpp"
-#include "../Sources/Math/Vector.hpp"
+#include "../Sources/Math/Sphere.hpp"
+#include "../Sources/Math/Vector2.hpp"
+#include "../Sources/Math/Vector3.hpp"
+#include "../Sources/Math/Vector4.hpp"
 
 BEGIN_TEST(Math)
 {
+	TEST("Math")
+	{
+		CHECK(oe::Math::inRange(3, 2, 5));
+		CHECK(oe::Math::equals(1.f, 1.001f, 0.01f));
+		CHECK(oe::Math::roundUpToPowerOf2(13) == 16);
+		CHECK(oe::Math::cos(0.f) == 1.f);
+		CHECK(oe::Math::sin(0.f) == 0.f);
+		CHECK(oe::Math::tan(0.f) == 0.f);
+		CHECK(oe::Math::acos(1.f) == 0.f);
+		CHECK(oe::Math::asin(0.f) == 0.f);
+		CHECK(oe::Math::atan(1.f) == 45.f);
+		CHECK(oe::Math::atan2(10.f, 10.f) == 45.f);
+		oe::Math::Average avg;
+		avg.add(10);
+		avg.add(20);
+		avg.add(30);
+		CHECK(oe::Math::equals(avg.get(), 20.f, 0.1f));
+	}
+
 	TEST("Matrix")
 	{
-		oe::Matrix4 m;
+		//oe::Matrix4 m;
+	}
+
+	TEST("Quaternion")
+	{
+		//oe::Quaternion q;
+	}
+
+	TEST("Random")
+	{
+		oe::RandomTable<U32> t;
+	}
+
+	TEST("Sphere")
+	{
+		oe::Sphere s;
 	}
 
 	TEST("Vector")
 	{
-		oe::Vector3 v;
+		oe::Vector2 v2;
+		oe::Vector3 v3;
+		oe::Vector4 v4;
 	}
 	
 }
