@@ -21,9 +21,9 @@ class Math
 			return start <= value && value < end;
 		}
 
-		static inline bool equals(F32 a, F32 b, F32 epsilon = 0.f)
+		static inline bool equals(F32 a, F32 b, F32 epsilon = 1e-7f)
 		{
-			return b - epsilon <= a && a <= b + epsilon;
+			return fabs(a - b) < epsilon;
 		}
 
 		template <typename T>

@@ -57,7 +57,6 @@ class Random
 		template<>
 		static U32 getDev(U32 middle, U32 deviation)
 		{
-			ASSERT(deviation >= 0);
 			return get(middle - deviation, middle + deviation);
 		}
 
@@ -111,6 +110,7 @@ class RandomTable
 					return mTable[i].second;
 				}
 			}
+			return T();
 		}
 
 	private:

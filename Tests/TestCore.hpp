@@ -127,7 +127,7 @@ BEGIN_TEST(Core)
 				switch (i)
 				{
 				case 0: CHECK(line == "Test"); break;
-				case 1: CHECK(oe::fromString<F32>(line) == 3.14f); break;
+				case 1: CHECK(oe::Math::equals(oe::fromString<F32>(line), 3.14f)); break;
 				case 2: CHECK(oe::fromString<bool>(line) == true); break;
 				case 3: CHECK(oe::fromString<I32>(line) == 10); break;
 				default: CHECK(false);

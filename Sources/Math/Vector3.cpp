@@ -44,7 +44,7 @@ Vector3::Vector3(F32 s)
 	mData[2] = s;
 }
 
-Vector3::Vector3(F32* a)
+Vector3::Vector3(const F32* const a)
 {
 	mData[0] = a[0];
 	mData[1] = a[1];
@@ -169,7 +169,7 @@ Vector3& Vector3::operator=(const Vector3& v)
 
 bool Vector3::operator==(const Vector3& v) const
 {
-	return mData[0] == v.mData[0] && mData[1] == v.mData[1] && mData[2] == v.mData[2];
+	return Math::equals(mData[0], v.mData[0]) && Math::equals(mData[1], v.mData[1]) && Math::equals(mData[2], v.mData[2]);
 }
 
 bool Vector3::operator!=(const Vector3& v) const
@@ -286,9 +286,24 @@ Vector3& Vector3::operator-=(F32 s)
 	return *this;
 }
 
+Vector2 Vector3::toVector2() const
+{
+	return Vector2(mData[0], mData[1]);
+}
+
+Vector3 Vector3::toVector3() const
+{
+	return *this;
+}
+
+Vector4 Vector3::toVector4() const
+{
+	return Vector4(mData[0], mData[1], mData[2], 1.f);
+}
+
 bool Vector3::isZero() const
 {
-	return mData[0] == 0.f && mData[1] == 0.f && mData[2] == 0.f;
+	return Math::equals(mData[0], 0.f) && Math::equals(mData[1], 0.f) && Math::equals(mData[2], 0.f);
 }
 
 F32 Vector3::getLengthSquared() const

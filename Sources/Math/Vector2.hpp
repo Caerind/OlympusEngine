@@ -26,7 +26,7 @@ class Vector2
 		Vector2();
 		Vector2(const Vector2& v);
 		explicit Vector2(F32 s);
-		explicit Vector2(F32* a);
+		explicit Vector2(const F32* const a);
 		Vector2(F32 x, F32 y);
 		explicit Vector2(const VectorPacked2& vector);
 
@@ -64,6 +64,10 @@ class Vector2
 		Vector2& operator/=(F32 s);
 		Vector2& operator+=(F32 s);
 		Vector2& operator-=(F32 s);
+
+		Vector2 toVector2() const;
+		Vector3 toVector3() const;
+		Vector4 toVector4() const;
 		
 		bool isZero() const;
 		F32 getLengthSquared() const;

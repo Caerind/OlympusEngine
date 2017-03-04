@@ -26,7 +26,7 @@ class Vector4
 		Vector4();
 		Vector4(const Vector4& v);
 		explicit Vector4(F32 s);
-		explicit Vector4(F32* a);
+		explicit Vector4(const F32* const a);
 		Vector4(F32 x, F32 y, F32 z = 0.f, F32 w = 0.f);
 		Vector4(const Vector2& v, F32 z = 0.f, F32 w = 0.f);
 		Vector4(const Vector3& v, F32 w = 0.f);
@@ -81,6 +81,10 @@ class Vector4
 		Vector4& operator/=(F32 s);
 		Vector4& operator+=(F32 s);
 		Vector4& operator-=(F32 s);
+
+		Vector2 toVector2() const;
+		Vector3 toVector3() const;
+		Vector4 toVector4() const;
 		
 		bool isZero() const;
 		F32 getLengthSquared() const;

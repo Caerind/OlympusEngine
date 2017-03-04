@@ -26,7 +26,7 @@ class Vector3
 		Vector3();
 		Vector3(const Vector3& v);
 		explicit Vector3(F32 s);
-		explicit Vector3(F32* a);
+		explicit Vector3(const F32* const a);
 		Vector3(F32 x, F32 y, F32 z = 0.f);
 		Vector3(const Vector2& v, F32 z = 0.f);
 		explicit Vector3(const VectorPacked3& vector);
@@ -74,6 +74,10 @@ class Vector3
 		Vector3& operator/=(F32 s);
 		Vector3& operator+=(F32 s);
 		Vector3& operator-=(F32 s);
+
+		Vector2 toVector2() const;
+		Vector3 toVector3() const;
+		Vector4 toVector4() const;
 		
 		bool isZero() const;
 		F32 getLengthSquared() const;
