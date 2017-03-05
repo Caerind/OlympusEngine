@@ -1,4 +1,5 @@
 #include "Sphere.hpp"
+#include "Plane.hpp"
 
 namespace oe
 {
@@ -49,6 +50,21 @@ bool Sphere::intersects(const Vector3& point) const
 bool Sphere::intersects(const Sphere& sphere) const
 {
 	return (sphere.mCenter - mCenter).getLengthSquared() <= (sphere.mRadius + mRadius) * (sphere.mRadius + mRadius);
+}
+
+bool Sphere::intersects(const Plane& plane) const
+{
+	return plane.intersects(*this);
+}
+
+bool Sphere::operator==(const Sphere& p) const
+{
+	return mCenter == p.mCenter && Math::equals(mRadius, p.mRadius);
+}
+
+bool Sphere::operator!=(const Sphere& p) const
+{
+	return !operator==(p);
 }
 
 } // namespace oe

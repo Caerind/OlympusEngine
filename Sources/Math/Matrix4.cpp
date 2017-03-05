@@ -376,7 +376,6 @@ Matrix4 Matrix4::inversed() const
 	matrix += Matrix3::outerProduct(column, row);
 	Matrix3 mat_inverse(matrix.inversed());
 	Matrix3 error3(0.f);
-	// TODO : Invert 3x3
 	if (mat_inverse == error3)
 	{
 		return Matrix4(0.f);

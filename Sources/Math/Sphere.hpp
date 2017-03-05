@@ -6,6 +6,8 @@
 namespace oe 
 {
 
+class Plane;
+
 class Sphere
 {
 	public:
@@ -21,6 +23,10 @@ class Sphere
 
 		bool intersects(const Vector3& point) const;
 		bool intersects(const Sphere& sphere) const;
+		bool intersects(const Plane& plane) const;
+
+		bool operator==(const Sphere& p) const;
+		bool operator!=(const Sphere& p) const;
 		
 	private:
 		Vector3 mCenter;
@@ -29,4 +35,4 @@ class Sphere
 
 } // namespace oe
 
-#endif // OE_VECTOR4_HPP
+#endif // OE_SPHERE_HPP
