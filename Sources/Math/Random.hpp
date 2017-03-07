@@ -3,7 +3,7 @@
 
 #include <random>
 
-#include "../Core/Prerequisites.hpp"
+#include "Math.hpp"
 
 namespace oe
 {

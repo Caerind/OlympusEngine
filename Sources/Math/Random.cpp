@@ -1,6 +1,6 @@
 #include "Random.hpp"
 
-#include "../Core/Time.hpp"
+#include "../System/Time.hpp"
 
 #include <sstream>
 

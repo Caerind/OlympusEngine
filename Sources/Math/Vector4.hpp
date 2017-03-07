@@ -1,7 +1,6 @@
 #ifndef OE_VECTOR4_HPP
 #define OE_VECTOR4_HPP
 
-#include "../Core/Prerequisites.hpp"
 #include "Math.hpp"
 
 namespace oe 

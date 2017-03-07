@@ -1,7 +1,7 @@
 #ifndef OE_MATH
 #define OE_MATH
 
-#include "../Core/Prerequisites.hpp"
+#include "../System/Prerequisites.hpp"
 
 #include <cmath>
 
