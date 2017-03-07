@@ -394,6 +394,26 @@ const Vector3 Vector3::axisZ()
 	return Vector3(0.f, 0.f, 1.f);
 }
 
+Vector3 Vector3::min(const Vector3& a, const Vector3& b)
+{
+	Vector3 r;
+	for (U8 i = 0; i < 3; i++)
+	{
+		r.mData[i] = (a.mData[i] < b.mData[i]) ? a.mData[i] : b.mData[i];
+	}
+	return r;
+}
+
+Vector3 Vector3::max(const Vector3& a, const Vector3& b)
+{
+	Vector3 r;
+	for (U8 i = 0; i < 3; i++)
+	{
+		r.mData[i] = (a.mData[i] < b.mData[i]) ? b.mData[i] : a.mData[i];
+	}
+	return r;
+}
+
 Vector3 operator*(F32 s, const Vector3& v)
 {
 	return v * s;

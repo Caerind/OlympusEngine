@@ -1,5 +1,6 @@
 #include "Sphere.hpp"
 #include "Plane.hpp"
+#include "AABB.hpp"
 
 namespace oe
 {
@@ -42,6 +43,12 @@ void Sphere::setRadius(F32 radius)
 	mRadius = radius;
 }
 
+AABB Sphere::getAABB() const
+{
+	const Vector3 radius(mRadius);
+	return AABB(mCenter - radius, mCenter + radius);
+}
+
 bool Sphere::intersects(const Vector3& point) const
 {
 	return (point - mCenter).getLengthSquared() <= mRadius * mRadius;
@@ -55,6 +62,30 @@ bool Sphere::intersects(const Sphere& sphere) const
 bool Sphere::intersects(const Plane& plane) const
 {
 	return plane.intersects(*this);
+}
+
+bool Sphere::intersects(const AABB& box) const
+{
+	// Use splitting planes
+	const Vector3& min = box.getMinimum();
+	const Vector3& max = box.getMaximum();
+	// Arvo's algorithm
+	F32 s;
+	F32 d = 0.f;
+	for (U8 i = 0; i < 3; ++i)
+	{
+		if (mCenter[i] < min[i])
+		{
+			s = mCenter[i] - min[i];
+			d += s * s;
+		}
+		else if (mCenter[i] > max[i])
+		{
+			s = mCenter[i] - max[i];
+			d += s * s;
+		}
+	}
+	return d <= mRadius * mRadius;
 }
 
 bool Sphere::operator==(const Sphere& p) const

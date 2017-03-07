@@ -2,6 +2,7 @@
 #include "../Sources/Core/UnitTest.hpp"
 #include "../Sources/Core/Profiler.hpp"
 
+#include "../Sources/Math/AABB.hpp"
 #include "../Sources/Math/Math.hpp"
 #include "../Sources/Math/Matrix3.hpp"
 #include "../Sources/Math/Matrix4.hpp"
@@ -15,6 +16,11 @@
 
 BEGIN_TEST(Math)
 {
+	TEST("AABB")
+	{
+		oe::AABB box;
+	}
+
 	TEST("Math")
 	{
 		CHECK(oe::Math::inRange(3, 2, 5));

@@ -101,6 +101,9 @@ class Vector3
 		static const Vector3 axisY();
 		static const Vector3 axisZ();
 
+		static Vector3 min(const Vector3& a, const Vector3& b);
+		static Vector3 max(const Vector3& a, const Vector3& b);
+
 	private:
 		F32 mData[3];
 };

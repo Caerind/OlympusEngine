@@ -61,7 +61,6 @@ namespace priv
 
 			virtual void disconnect()
 			{
-				// TODO : Use binary search
 				auto found = std::find_if(mContainer->begin(), mContainer->end(), [this](ValueType& v) { return v.id == mId; });
 				if (found != mContainer->end())
 					mContainer->erase(found);

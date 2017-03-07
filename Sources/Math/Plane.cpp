@@ -1,5 +1,6 @@
 #include "Plane.hpp"
 #include "Sphere.hpp"
+#include "AABB.hpp"
 
 #include "Matrix3.hpp"
 
@@ -85,17 +86,11 @@ F32 Plane::getDistance(const Vector3& point) const
 
 Vector3 Plane::projectVector(const Vector3& vector) const
 {
-	Matrix3 xform;
-	xform(0, 0) = 1.f - mNormal.x() * mNormal.x();
-	xform(0, 1) = -mNormal.x() * mNormal.y();
-	xform(0, 2) = -mNormal.x() * mNormal.z();
-	xform(1, 0) = -mNormal.y() * mNormal.x();
-	xform(1, 1) = 1.f - mNormal.y() * mNormal.y();
-	xform(1, 2) = -mNormal.y() * mNormal.z();
-	xform(2, 0) = -mNormal.z() * mNormal.x();
-	xform(2, 1) = -mNormal.z() * mNormal.y();
-	xform(2, 2) = 1.f - mNormal.z() * mNormal.z();
-	return xform * vector;
+	F32 x = mNormal.x();
+	F32 y = mNormal.y();
+	F32 z = mNormal.z();
+	Matrix3 m(1.f - x * x, -x * y, -x * z, -y * x, 1.f - y * y, -y * z, -z * x, -z * y, 1.f - z * z);
+	return m * vector;
 }
 
 Plane::Side Plane::getSide(const Vector3& point) const
@@ -130,6 +125,17 @@ Plane::Side Plane::getSide(const Sphere& sphere) const
 	return Plane::None;
 }
 
+Plane::Side Plane::getSide(const AABB& box) const
+{
+	F32 dist = getDistance(box.getCenter());
+	F32 maxAbsDist = fabs(Vector3::dotProduct(mNormal, box.getHalfSize()));
+	if (dist < -maxAbsDist)
+		return Plane::Negative;
+	if (dist > +maxAbsDist)
+		return Plane::Positive;
+	return Plane::Both;
+}
+
 bool Plane::intersects(const Vector3& point) const
 {
 	return Math::equals(getDistance(point), 0.f);
@@ -143,6 +149,11 @@ bool Plane::intersects(const Plane& plane) const
 bool Plane::intersects(const Sphere& sphere) const
 {
 	return Math::equals(getDistance(sphere.getCenter()), sphere.getRadius());
+}
+
+bool Plane::intersects(const AABB& box) const
+{
+	return getSide(box) == Plane::Both;
 }
 
 Plane Plane::operator-() const

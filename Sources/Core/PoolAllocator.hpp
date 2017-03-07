@@ -17,7 +17,7 @@ class PoolAllocator : private NonCopyable
 			mChunkSpace = ChunkArrayIncrement;
 			mChunkCount = 0;
 			mChunks = (Chunk*)malloc(mChunkSpace * sizeof(Chunk));
-			memset(mChunks, 0, mChunkSpace * sizeof(Chunk));
+			memset(mChunks, 0, mChunkSpace * sizeof(Chunk)); //-V575
 			memset(mFreeLists, 0, sizeof(mFreeLists));
 
 			static bool mBlockSizeLookupInitialized = false;

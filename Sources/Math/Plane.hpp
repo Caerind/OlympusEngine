@@ -7,6 +7,7 @@ namespace oe
 {
 
 class Sphere;
+class AABB;
 
 class Plane
 {
@@ -41,10 +42,12 @@ class Plane
 		};
 		Side getSide(const Vector3& point) const;
 		Side getSide(const Sphere& sphere) const;
+		Side getSide(const AABB& box) const;
 
 		bool intersects(const Vector3& point) const;
 		bool intersects(const Plane& plane) const;
 		bool intersects(const Sphere& sphere) const;
+		bool intersects(const AABB& box) const;
 
 		Plane operator-() const;
 		bool operator==(const Plane& p) const;

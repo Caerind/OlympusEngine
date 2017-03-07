@@ -7,6 +7,7 @@ namespace oe
 {
 
 class Plane;
+class AABB;
 
 class Sphere
 {
@@ -21,9 +22,12 @@ class Sphere
 		F32 getRadius() const;
 		void setRadius(F32 radius);
 
+		AABB getAABB() const;
+
 		bool intersects(const Vector3& point) const;
 		bool intersects(const Sphere& sphere) const;
 		bool intersects(const Plane& plane) const;
+		bool intersects(const AABB& box) const;
 
 		bool operator==(const Sphere& p) const;
 		bool operator!=(const Sphere& p) const;
