@@ -76,4 +76,4 @@ class AABB
 
 } // namespace oe
 
-#endif // OE_PLANE_HPP
+#endif // OE_AABB_HPP

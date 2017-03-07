@@ -143,12 +143,12 @@ bool Plane::intersects(const Vector3& point) const
 
 bool Plane::intersects(const Plane& plane) const
 {
-	return operator==(plane);
+	return operator!=(plane);
 }
 
 bool Plane::intersects(const Sphere& sphere) const
 {
-	return Math::equals(getDistance(sphere.getCenter()), sphere.getRadius());
+	return fabs(getDistance(sphere.getCenter())) <= sphere.getRadius();
 }
 
 bool Plane::intersects(const AABB& box) const

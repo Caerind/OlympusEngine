@@ -9,6 +9,7 @@
 #include "../Sources/Math/Plane.hpp"
 #include "../Sources/Math/Quaternion.hpp"
 #include "../Sources/Math/Random.hpp"
+#include "../Sources/Math/Ray.hpp"
 #include "../Sources/Math/Sphere.hpp"
 #include "../Sources/Math/Vector2.hpp"
 #include "../Sources/Math/Vector3.hpp"
@@ -59,6 +60,11 @@ BEGIN_TEST(Math)
 	TEST("Random")
 	{
 		oe::RandomTable<U32> t;
+	}
+
+	TEST("Ray")
+	{
+		oe::Ray ray;
 	}
 
 	TEST("Sphere")
