@@ -1,12 +1,14 @@
-#include "../Sources/Core/UnitTest.hpp"
+#include "../Sources/System/UnitTest.hpp"
 
-#include "TestCore.hpp"
+#include "TestSystem.hpp"
 #include "TestMath.hpp"
+#include "TestCore.hpp"
 
 int main()
 {
-	RUN_TEST(Core);
+	RUN_TEST(System);
 	RUN_TEST(Math);
+	RUN_TEST(Core);
 
 	getchar();
 	return 0;

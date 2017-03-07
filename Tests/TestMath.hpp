@@ -1,6 +1,6 @@
-#include "../Sources/Core/Prerequisites.hpp"
-#include "../Sources/Core/UnitTest.hpp"
-#include "../Sources/Core/Profiler.hpp"
+#include "../Sources/System/Prerequisites.hpp"
+#include "../Sources/System/UnitTest.hpp"
+#include "../Sources/System/Profiler.hpp"
 
 #include "../Sources/Math/AABB.hpp"
 #include "../Sources/Math/Math.hpp"
