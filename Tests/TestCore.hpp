@@ -3,20 +3,25 @@
 #include "../Sources/System/Profiler.hpp"
 
 #include "../Sources/Core/Application.hpp"
+#include "../Sources/Core/State.hpp"
 
 BEGIN_TEST(Core)
 {
 	TEST("Application")
 	{
-		oe::Application app;
-		U8 i = 0;
-		while (app.run())
+		class MyState : public oe::State
 		{
-			if (i++ > 10)
-			{
-				app.stop();
-			}
-		}
+			public:
+				MyState() { }
+				std::string getName() { return "MyState"; }
+				bool handleEvent(const sf::Event& event) { return false; }
+				bool update(oe::Time dt) { oe::log("ez"); return false; }
+				void render(sf::RenderTarget& target) { }
+		};
+
+		oe::Application app;
+		app.pushState<MyState>();
+		app.run();
 	}
 }
 END_TEST;
