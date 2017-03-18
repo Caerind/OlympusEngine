@@ -3,25 +3,12 @@
 namespace oe
 {
 
-template <> World* Singleton<World>::mSingleton = nullptr;
-
 World::World()
 {
 	for (U32 i = 0; i < mMaxEntities; i++)
 	{
 		mEntities[i] = nullptr;
 	}
-}
-
-World& World::getSingleton()
-{
-	ASSERT(mSingleton != nullptr);
-	return *mSingleton;
-}
-
-World* World::getSingletonPtr()
-{
-	return mSingleton;
 }
 
 void World::handleEvent(const sf::Event& event)
@@ -50,22 +37,9 @@ void World::update()
 
 void World::render(sf::RenderTarget& target)
 {
-}
-
-EntityHandle World::createEntity()
-{
-	Entity* entity = new Entity(*this); // TODO : Allocator
-	U32 index = getFreeHandleIndex();
-
-	ASSERT(entity != nullptr);
-	ASSERT(index < mMaxEntities);
-
-	mEntities[index] = entity;
-	entity->onCreate();
-
-	EntityHandle handle(this, *entity, index);
-	mEntitiesSpawning.insert(handle);
-	return handle;
+	mRenderSystem.preRender();
+	mRenderSystem.render();
+	mRenderSystem.postRender(target);
 }
 
 void World::killEntity(const EntityHandle& handle)
@@ -88,6 +62,11 @@ U32 World::getEntitiesPlaying() const
 	return mEntitiesPlaying.size();
 }
 
+RenderSystem& World::getRenderSystem()
+{
+	return mRenderSystem;
+}
+
 U32 World::getFreeHandleIndex() const
 {
 	for (U32 i = 0; i < mMaxEntities; i++)
@@ -99,6 +78,21 @@ U32 World::getFreeHandleIndex() const
 	}
 	ASSERT(false); // Max entities reached
 	return 0;
+}
+
+EntityHandle World::createEntity(Entity* entity)
+{
+	U32 index = getFreeHandleIndex();
+
+	ASSERT(entity != nullptr);
+	ASSERT(index < mMaxEntities);
+
+	mEntities[index] = entity;
+	entity->onCreate();
+
+	EntityHandle handle(this, *entity, index);
+	mEntitiesSpawning.insert(handle);
+	return handle;
 }
 
 void World::destroyEntities()

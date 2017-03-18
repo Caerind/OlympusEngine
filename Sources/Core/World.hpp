@@ -5,7 +5,8 @@
 #include "EntityHandle.hpp"
 #include "EntityList.hpp"
 
-#include "../System/Singleton.hpp"
+#include "Systems/RenderSystem.hpp"
+
 #include "../System/Time.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -14,26 +15,27 @@
 namespace oe
 {
 
-class World : public Singleton<World>
+class World
 {
 	public:
 		World();
-
-		static World& getSingleton();
-		static World* getSingletonPtr();
 
 		void handleEvent(const sf::Event& event);
 		void update(Time dt);
 		void update();
 		void render(sf::RenderTarget& target);
 
+		template <typename T = Entity>
 		EntityHandle createEntity();
 		void killEntity(const EntityHandle& handle);
 		U32 getEntitiesCount() const; // Spawning & Playing
 		U32 getEntitiesPlaying() const; // Playing only
 
+		RenderSystem& getRenderSystem();
+
 	private:
 		U32 getFreeHandleIndex() const;
+		EntityHandle createEntity(Entity* entity);
 
 		void destroyEntities();
 		void spawnEntities();
@@ -43,11 +45,22 @@ class World : public Singleton<World>
 
 	private:
 		static const U32 mMaxEntities = 1024;
+
+	private:
 		Entity* mEntities[mMaxEntities];
 		EntityList mEntitiesSpawning;
 		EntityList mEntitiesPlaying;
 		EntityList mEntitiesKilled;
+
+		RenderSystem mRenderSystem;
 };
+
+template <typename T>
+EntityHandle World::createEntity()
+{
+	Entity* entity = new T(*this); // TODO : Allocator
+	return createEntity(entity);
+}
 
 } // namespace oe
 
