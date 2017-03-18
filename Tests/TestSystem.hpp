@@ -27,6 +27,8 @@
 #include "../Sources/System/UnitTest.hpp"
 #include "../Sources/System/Updatable.hpp"
 
+#include "../Sources/Math/Random.hpp"
+
 
 BEGIN_TEST(System)
 {
@@ -57,7 +59,36 @@ BEGIN_TEST(System)
 
 	TEST("Compression")
 	{
-		// TODO : Test Compression
+		// Start test
+
+		std::string value;
+		for (U8 i = 0; i < 20; i++)
+		{
+			value += (char)oe::Random::get<U32>((U32)('a'), (U32)('z'));
+		}
+
+		// Test encode64
+		std::string data1 = value;
+		CHECK(oe::Compression::encode64(data1));
+		CHECK(data1 != value);
+		CHECK(oe::Compression::decode64(data1));
+		CHECK(data1 == value);
+
+		// Test compression
+		std::string data2 = value;
+		CHECK(oe::Compression::compress(data2));
+		CHECK(data2 != value);
+		CHECK(oe::Compression::decompress(data2));
+		CHECK(data2 == value);
+
+		// Test compression
+		std::string data3 = value;
+		CHECK(oe::Compression::compress64(data3));
+		CHECK(data3 != value);
+		CHECK(oe::Compression::decompress64(data3));
+		CHECK(data3 == value);
+
+		// End test
 	}
 
 	TEST("Date")

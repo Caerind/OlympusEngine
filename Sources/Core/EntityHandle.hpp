@@ -3,6 +3,8 @@
 
 #include "Entity.hpp"
 
+#include "../ExtLibs/FastDynamicCast/fast_dynamic_cast.h"
+
 namespace oe
 {
 
@@ -35,8 +37,6 @@ class EntityHandle
 		U32 mHandleIndex;
 		World* mWorld;
 };
-
-#include "../ExtLibs/FastDynamicCast/fast_dynamic_cast.h"
 
 template <typename T>
 T* EntityHandle::getAs() const

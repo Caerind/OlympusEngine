@@ -43,7 +43,8 @@ void EntityList::remove(const EntityHandle& handle)
 		{
 			if ((*itr) == handle)
 			{
-				itr = mEntities.erase(itr);
+				mEntities.erase(itr);
+				return;
 			}
 			else
 			{

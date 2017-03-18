@@ -1,27 +1,27 @@
-#ifndef OE_ENTITYLIST_HPP
-#define OE_ENTITYLIST_HPP
+#ifndef OE_COMPONENTLIST_HPP
+#define OE_COMPONENTLIST_HPP
 
-#include "EntityHandle.hpp"
+#include "Component.hpp"
+
+#include <vector>
 
 namespace oe
 {
 
-class EntityList
+class ComponentList
 {
 	public:
-		using Container = std::vector<EntityHandle>;
+		using Container = std::vector<Component*>;
 
-		EntityList();
+		ComponentList();
 
 		void clear();
 
-		bool has(const EntityHandle& entity);
+		bool has(Component* component);
+		bool insert(Component* component);
+		bool remove(Component* component);
 
-		void insert(const EntityHandle& handle);
-
-		void remove(const EntityHandle& handle);
-
-		// Remove invalid handle
+		// Remove invalid component
 		void update();
 
 		// STL API
@@ -41,9 +41,9 @@ class EntityList
 		bool empty() const;
 
 	private:
-		Container mEntities;
+		Container mComponents;
 };
 
 } // namespace oe
 
-#endif // OE_ENTITYLIST_HPP
+#endif // OE_COMPONENT_HPP

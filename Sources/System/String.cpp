@@ -116,4 +116,25 @@ std::string limitSize(const std::string& str, U32 size)
 	}
 }
 
+std::string toBoolString(const bool& value)
+{
+	return (value) ? "true" : "false";
+}
+
+bool fromBoolString(const std::string & string)
+{
+	if (string == "true")
+	{
+		return true;
+	}
+	else if (string == "false")
+	{
+		return false;
+	}
+	else
+	{
+		return fromString<bool>(string);
+	}
+}
+
 } // namespace oe

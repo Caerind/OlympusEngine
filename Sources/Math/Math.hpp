@@ -21,7 +21,7 @@ class Math
 			return start <= value && value < end;
 		}
 
-		static inline bool equals(F32 a, F32 b, F32 epsilon = 1e-7f)
+		static inline bool equals(F32 a, F32 b, F32 epsilon = 1e-5f)
 		{
 			return fabs(a - b) < epsilon;
 		}

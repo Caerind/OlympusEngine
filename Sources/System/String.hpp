@@ -38,6 +38,9 @@ bool contains(const std::string& str, const std::string& c);
 
 std::string limitSize(const std::string& str, U32 size);
 
+std::string toBoolString(const bool& value);
+bool fromBoolString(const std::string& string);
+
 template <typename T>
 std::string toString(const T& value)
 {

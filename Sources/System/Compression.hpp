@@ -11,8 +11,8 @@ class Compression
 	public:
 		static bool encode64(std::string& data);
 		static bool decode64(std::string& data);
-		static bool decompress(std::string& data);
 		static bool compress(std::string& data);
+		static bool decompress(std::string& data);
 
 		static bool compress64(std::string& data);
 		static bool decompress64(std::string& data);
