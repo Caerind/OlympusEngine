@@ -7,6 +7,8 @@
 
 #include "Systems/RenderSystem.hpp"
 
+#include "../System/ResourceHolder.hpp"
+#include "../System/SFMLResources.hpp"
 #include "../System/Time.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -33,6 +35,9 @@ class World
 
 		RenderSystem& getRenderSystem();
 
+		TextureHolder& getTextures();
+		FontHolder& getFonts();
+
 	private:
 		U32 getFreeHandleIndex() const;
 		EntityHandle createEntity(Entity* entity);
@@ -53,6 +58,9 @@ class World
 		EntityList mEntitiesKilled;
 
 		RenderSystem mRenderSystem;
+
+		TextureHolder mTextures;
+		FontHolder mFonts;
 };
 
 template <typename T>

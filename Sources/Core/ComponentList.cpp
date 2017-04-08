@@ -8,61 +8,6 @@ ComponentList::ComponentList()
 {
 }
 
-void ComponentList::clear()
-{
-	mComponents.clear();
-}
-
-bool ComponentList::has(Component* component)
-{
-	for (U32 i = 0; i < mComponents.size(); i++)
-	{
-		if (mComponents[i] == component)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ComponentList::insert(Component* component)
-{
-	if (!has(component))
-	{
-		mComponents.emplace_back(component);
-		return true;
-	}
-	return false;
-}
-
-bool ComponentList::remove(Component* component)
-{
-	for (auto itr = mComponents.begin(); itr != mComponents.end(); ++itr)
-	{
-		if (component == *itr)
-		{
-			mComponents.erase(itr);
-			return true;
-		}
-	}
-	return false;
-}
-
-void ComponentList::update()
-{
-	for (auto itr = mComponents.begin(); itr != mComponents.end(); )
-	{
-		if (*itr == nullptr)
-		{
-			itr = mComponents.erase(itr);
-		}
-		else
-		{
-			++itr;
-		}
-	}
-}
-
 ComponentList::Container::iterator ComponentList::begin()
 {
 	return mComponents.begin();
@@ -123,14 +68,134 @@ ComponentList::Container::const_reverse_iterator ComponentList::rend() const
 	return mComponents.rend();
 }
 
-ComponentList::Container::size_type ComponentList::size() const
+
+SceneComponentList::SceneComponentList()
 {
-	return mComponents.size();
 }
 
-bool ComponentList::empty() const
+SceneComponentList::Container::iterator SceneComponentList::begin()
 {
-	return mComponents.empty();
+	return mComponents.begin();
+}
+
+SceneComponentList::Container::const_iterator SceneComponentList::begin() const
+{
+	return mComponents.begin();
+}
+
+SceneComponentList::Container::iterator SceneComponentList::end()
+{
+	return mComponents.end();
+}
+
+SceneComponentList::Container::const_iterator SceneComponentList::end() const
+{
+	return mComponents.end();
+}
+
+SceneComponentList::Container::const_iterator SceneComponentList::cbegin() const
+{
+	return mComponents.cbegin();
+}
+
+SceneComponentList::Container::const_iterator SceneComponentList::cend() const
+{
+	return mComponents.cend();
+}
+
+SceneComponentList::Container::const_reverse_iterator SceneComponentList::crbegin() const
+{
+	return mComponents.crbegin();
+}
+
+SceneComponentList::Container::const_reverse_iterator SceneComponentList::crend() const
+{
+	return mComponents.crend();
+}
+
+SceneComponentList::Container::reverse_iterator SceneComponentList::rbegin()
+{
+	return mComponents.rbegin();
+}
+
+SceneComponentList::Container::const_reverse_iterator SceneComponentList::rbegin() const
+{
+	return mComponents.rbegin();
+}
+
+SceneComponentList::Container::reverse_iterator SceneComponentList::rend()
+{
+	return mComponents.rend();
+}
+
+SceneComponentList::Container::const_reverse_iterator SceneComponentList::rend() const
+{
+	return mComponents.rend();
+}
+
+
+RenderableComponentList::RenderableComponentList()
+{
+}
+
+RenderableComponentList::Container::iterator RenderableComponentList::begin()
+{
+	return mComponents.begin();
+}
+
+RenderableComponentList::Container::const_iterator RenderableComponentList::begin() const
+{
+	return mComponents.begin();
+}
+
+RenderableComponentList::Container::iterator RenderableComponentList::end()
+{
+	return mComponents.end();
+}
+
+RenderableComponentList::Container::const_iterator RenderableComponentList::end() const
+{
+	return mComponents.end();
+}
+
+RenderableComponentList::Container::const_iterator RenderableComponentList::cbegin() const
+{
+	return mComponents.cbegin();
+}
+
+RenderableComponentList::Container::const_iterator RenderableComponentList::cend() const
+{
+	return mComponents.cend();
+}
+
+RenderableComponentList::Container::const_reverse_iterator RenderableComponentList::crbegin() const
+{
+	return mComponents.crbegin();
+}
+
+RenderableComponentList::Container::const_reverse_iterator RenderableComponentList::crend() const
+{
+	return mComponents.crend();
+}
+
+RenderableComponentList::Container::reverse_iterator RenderableComponentList::rbegin()
+{
+	return mComponents.rbegin();
+}
+
+RenderableComponentList::Container::const_reverse_iterator RenderableComponentList::rbegin() const
+{
+	return mComponents.rbegin();
+}
+
+RenderableComponentList::Container::reverse_iterator RenderableComponentList::rend()
+{
+	return mComponents.rend();
+}
+
+RenderableComponentList::Container::const_reverse_iterator RenderableComponentList::rend() const
+{
+	return mComponents.rend();
 }
 
 } // namespace oe

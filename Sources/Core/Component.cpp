@@ -1,35 +1,46 @@
 #include "Component.hpp"
 #include "Entity.hpp"
+#include "World.hpp"
 
 namespace oe
 {
 
-Component::Component()
-	: mParent(nullptr)
+Component::Component(Entity* entity)
+	: mEntity(*entity)
+{
+	registerComponent();
+}
+
+void Component::onCreate()
 {
 }
 
-Entity* Component::getParent()
-{
-	return mParent;
-}
-
-bool Component::hasParent() const
-{
-	return mParent != nullptr;
-}
-
-void Component::setParent(Entity* parent)
-{
-	mParent = parent;
-}
-
-void Component::onAttach()
+void Component::onSpawn()
 {
 }
 
-void Component::onDetach()
+void Component::onDestroy()
 {
+}
+
+Entity& Component::getEntity()
+{
+	return mEntity;
+}
+
+World& Component::getWorld()
+{
+	return mEntity.getWorld();
+}
+
+void Component::registerComponent()
+{
+	mEntity.registerComponent(this);
+}
+
+void Component::unregisterComponent()
+{
+	mEntity.unregisterComponent(this);
 }
 
 } // namespace oe

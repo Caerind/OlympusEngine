@@ -8,4 +8,6 @@
 
 #define OE_ASSERT
 
+#define OE_SAFETY
+
 #endif // OE_CONFIG_HPP

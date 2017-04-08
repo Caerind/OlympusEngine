@@ -4,7 +4,6 @@
 
 #include "../Sources/System/Color.hpp"
 #include "../Sources/System/Compression.hpp"
-#include "../Sources/System/Connection.hpp"
 #include "../Sources/System/Date.hpp"
 #include "../Sources/System/File.hpp"
 #include "../Sources/System/Id.hpp"
@@ -19,6 +18,7 @@
 #include "../Sources/System/PoolAllocator.hpp"
 #include "../Sources/System/Profiler.hpp"
 #include "../Sources/System/ResourceHolder.hpp"
+#include "../Sources/System/Signal.hpp"
 #include "../Sources/System/Singleton.hpp"
 #include "../Sources/System/StackAllocator.hpp"
 #include "../Sources/System/String.hpp"

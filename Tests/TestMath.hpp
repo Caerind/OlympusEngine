@@ -4,7 +4,6 @@
 
 #include "../Sources/Math/AABB.hpp"
 #include "../Sources/Math/Math.hpp"
-#include "../Sources/Math/Matrix3.hpp"
 #include "../Sources/Math/Matrix4.hpp"
 #include "../Sources/Math/Plane.hpp"
 #include "../Sources/Math/Quaternion.hpp"
@@ -43,7 +42,6 @@ BEGIN_TEST(Math)
 
 	TEST("Matrix")
 	{
-		oe::Matrix3 m3;
 		oe::Matrix4 m4;
 	}
 

@@ -47,7 +47,6 @@ void World::killEntity(const EntityHandle& handle)
 	Entity* entity = handle.get();
 	if (entity != nullptr)
 	{
-		entity->onKill();
 		mEntitiesKilled.insert(handle);
 	}
 }
@@ -65,6 +64,16 @@ U32 World::getEntitiesPlaying() const
 RenderSystem& World::getRenderSystem()
 {
 	return mRenderSystem;
+}
+
+TextureHolder& World::getTextures()
+{
+	return mTextures;
+}
+
+FontHolder& World::getFonts()
+{
+	return mFonts;
 }
 
 U32 World::getFreeHandleIndex() const
@@ -89,6 +98,7 @@ EntityHandle World::createEntity(Entity* entity)
 
 	mEntities[index] = entity;
 	entity->onCreate();
+	entity->createComponents();
 
 	EntityHandle handle(this, *entity, index);
 	mEntitiesSpawning.insert(handle);
@@ -102,9 +112,12 @@ void World::destroyEntities()
 		Entity* entity = (*itr).get();
 		if (entity != nullptr)
 		{
+			entity->destroyComponents();
 			entity->onDestroy();
+
 			U32 index = (*itr).getHandleIndex();
 			ASSERT(index < mMaxEntities);
+
 			delete mEntities[index]; // TODO : Allocator
 			mEntities[index] = nullptr;
 		}
@@ -120,6 +133,7 @@ void World::spawnEntities()
 		if (entity != nullptr)
 		{
 			entity->onSpawn();
+			entity->spawnComponents();
 			mEntitiesPlaying.insert(*itr);
 		}
 	}

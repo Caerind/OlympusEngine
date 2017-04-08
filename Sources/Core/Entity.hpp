@@ -4,9 +4,9 @@
 #include "Component.hpp"
 #include "SceneComponent.hpp"
 #include "ComponentList.hpp"
-#include "Transformable.hpp"
 
 #include "../System/Id.hpp"
+#include "../System/Node.hpp"
 #include "../System/Time.hpp"
 
 #include "../ExtLibs/FastDynamicCast/fast_dynamic_cast.h"
@@ -15,8 +15,7 @@ namespace oe
 {
 
 class World;
-
-class Entity : public Transformable
+class Entity : public Node
 {
 	public:
 		Entity(World& world);
@@ -25,26 +24,29 @@ class Entity : public Transformable
 		World& getWorld();
 		UID getId() const;
 
-		void attachComponent(Component* component);
-		void detachComponent(Component* component);
-		void clearComponents();
-
 		const ComponentList& getComponents() const;
-		const ComponentList& getSceneComponents() const;
+		const SceneComponentList& getSceneComponents() const;
 
 	private:
 		friend class World;
 		virtual void onCreate();
+		void createComponents();
 		virtual void onSpawn();
-		virtual void onKill();
+		void spawnComponents();
 		virtual void onDestroy();
+		void destroyComponents();
 		virtual void update(Time dt);
 
 	private:
-		ComponentList mComponents;
-		ComponentList mSceneComponents;
+		friend class Component;
+		void registerComponent(Component* component);
+		void unregisterComponent(Component* component);
+
+	private:
 		World& mWorld;
 		UID mId;
+		ComponentList mComponents;
+		SceneComponentList mSceneComponents;
 };
 
 } // namespace oe

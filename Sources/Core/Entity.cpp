@@ -7,12 +7,13 @@ namespace oe
 Entity::Entity(World& world)
 	: mWorld(world)
 	, mId(Id::generate<Entity>())
+	, mComponents()
+	, mSceneComponents()
 {
 }
 
 Entity::~Entity()
 {
-	clearComponents();
 }
 
 World& Entity::getWorld()
@@ -29,67 +30,66 @@ void Entity::onCreate()
 {
 }
 
+void Entity::createComponents()
+{
+	for (auto itr = mComponents.begin(); itr != mComponents.end(); ++itr)
+	{
+		(*itr)->onCreate();
+	}
+}
+
 void Entity::onSpawn()
 {
 }
 
-void Entity::onKill()
+void Entity::spawnComponents()
 {
+	for (auto itr = mComponents.begin(); itr != mComponents.end(); ++itr)
+	{
+		(*itr)->onSpawn();
+	}
 }
 
 void Entity::onDestroy()
 {
 }
 
+void Entity::destroyComponents()
+{
+	for (auto itr = mComponents.begin(); itr != mComponents.end(); ++itr)
+	{
+		(*itr)->onDestroy();
+	}
+}
+
 void Entity::update(Time dt)
 {
 }
 
-void Entity::attachComponent(Component* component)
+void Entity::registerComponent(Component* component)
 {
-	if (component != nullptr && !component->hasParent())
+	ASSERT(component != nullptr);
+	if (mComponents.insert(component))
 	{
-		if (mComponents.insert(component))
+		SceneComponent* sc = fast_dynamic_cast<SceneComponent*>(component);
+		if (sc != nullptr)
 		{
-			component->setParent(this);
-			component->onAttach();
-
-			SceneComponent* sc = fast_dynamic_cast<SceneComponent*>(component);
-			if (sc != nullptr)
-			{
-				mSceneComponents.insert(sc);
-			}
+			mSceneComponents.insert(sc);
 		}
 	}
 }
 
-void Entity::detachComponent(Component* component)
+void Entity::unregisterComponent(Component* component)
 {
-	if (component != nullptr && component->hasParent())
+	ASSERT(component != nullptr);
+	if (mComponents.remove(component))
 	{
-		if (mComponents.remove(component))
+		SceneComponent* sc = fast_dynamic_cast<SceneComponent*>(component);
+		if (sc != nullptr)
 		{
-			SceneComponent* sc = fast_dynamic_cast<SceneComponent*>(component);
-			if (sc != nullptr)
-			{
-				mSceneComponents.remove(sc);
-			}
-
-			component->onDetach();
-			component->setParent(nullptr);
+			mSceneComponents.remove(sc);
 		}
 	}
-}
-
-void Entity::clearComponents()
-{
-	mSceneComponents.clear();
-	for (auto itr = mComponents.begin(); itr != mComponents.end(); ++itr)
-	{
-		(*itr)->onDetach();
-		(*itr)->setParent(nullptr);
-	}
-	mComponents.clear();
 }
 
 const ComponentList& Entity::getComponents() const
@@ -97,7 +97,7 @@ const ComponentList& Entity::getComponents() const
 	return mComponents;
 }
 
-const ComponentList& Entity::getSceneComponents() const
+const SceneComponentList& Entity::getSceneComponents() const
 {
 	return mSceneComponents;
 }

@@ -307,6 +307,11 @@ Timer::~Timer()
 {
 }
 
+Time Timer::getLimit() const
+{
+	return mLimit;
+}
+
 Time Timer::getRemainingTime() const
 {
 	Time t = mLimit - mStopWatch.getElapsedTime();
@@ -353,8 +358,7 @@ void Timer::restart(Time timeLimit)
 
 CallbackTimer::CallbackTimer()
 	: Timer()
-	, mListeners()
-	, mJustExpired(true)
+	, mJustExpired(false)
 {
 }
 
@@ -375,23 +379,8 @@ void CallbackTimer::update()
 	if (isExpired() && !mJustExpired)
 	{
 		mJustExpired = true;
-		mListeners.call(*this);
+		onExpire(Timer::getLimit());
 	}
-}
-
-Connection CallbackTimer::connect(std::function<void(CallbackTimer&)> unaryListener)
-{
-	return mListeners.add(std::move(unaryListener));
-}
-
-Connection CallbackTimer::connect0(std::function<void()> nullaryListener)
-{
-	return connect(std::bind(std::move(nullaryListener)));
-}
-
-void CallbackTimer::clearConnections()
-{
-	mListeners.clear();
 }
 
 } // namespace oe

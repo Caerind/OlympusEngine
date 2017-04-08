@@ -14,9 +14,6 @@
 namespace oe
 {
 
-namespace SFML
-{
-	
 inline Color toOE(const sf::Color& color)
 {
 	return Color(color.r, color.g, color.b, color.a);
@@ -46,7 +43,7 @@ inline Vector2 toOE(const sf::Vector2f& vector)
 }	
 inline sf::Vector2f toSF(const Vector2& vector)
 {
-	return sf::Vector2f(vector.x(), vector.y());
+	return sf::Vector2f(vector.x, vector.y);
 }
 
 inline Vector3 toOE(const sf::Vector3f& vector)
@@ -55,11 +52,9 @@ inline Vector3 toOE(const sf::Vector3f& vector)
 }	
 inline sf::Vector3f toSF(const Vector3& vector)
 {
-	return sf::Vector3f(vector.x(), vector.y(), vector.z());
+	return sf::Vector3f(vector.x, vector.y, vector.z);
 }
-
-} // namespace SFML
 
 } // namespace oe
 
-#endif // OE_STREAM_HPP
+#endif // OE_SFML_HPP

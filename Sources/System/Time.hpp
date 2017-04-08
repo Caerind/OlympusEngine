@@ -1,7 +1,7 @@
 #ifndef OE_TIME_HPP
 #define OE_TIME_HPP
 
-#include "Connection.hpp"
+#include "Signal.hpp"
 
 namespace oe
 {
@@ -99,6 +99,7 @@ class Timer
 		Timer();
 		virtual ~Timer();
 
+		Time getLimit() const;
 		Time getRemainingTime() const;
 		bool isRunning() const;
 		bool isExpired() const;
@@ -121,15 +122,10 @@ class CallbackTimer : public Timer
 		virtual void restart(Time timeLimit);
 
 		void update();
-		Connection connect(std::function<void(CallbackTimer&)> unaryListener);
-		Connection connect0(std::function<void()> nullaryListener);
-		void clearConnections();
+
+		OeSignal(onExpire, Time /*duration*/);
 
 	private:
-		using ListenerCtr = priv::ListenerSequence<CallbackTimer&>;
-
-	private:
-		ListenerCtr mListeners;
 		bool mJustExpired;
 };
 

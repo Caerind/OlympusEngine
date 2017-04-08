@@ -2,19 +2,17 @@
 #define OE_SCENECOMPONENT_HPP
 
 #include "Component.hpp"
-#include "Transformable.hpp"
+#include "../System/Node.hpp"
+
+#include "../System/SFMLResources.hpp"
 
 namespace oe
 {
 
-class SceneComponent : public Component, public Transformable
+class SceneComponent : public Component, public Node
 {
 	public:
-		SceneComponent();
-
-		Vector2 getGlobalPosition() const;
-		Matrix4 getGlobalMatrix() const;
-		sf::Transform getGlobalTransform() const;
+		SceneComponent(Entity* entity);
 };
 
 } // namespace oe

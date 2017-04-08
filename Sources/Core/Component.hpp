@@ -5,23 +5,25 @@ namespace oe
 {
 
 class Entity;
-
+class World;
 class Component
 {
 	public:
-		Component();
+		Component(Entity* entity);
 
-		Entity* getParent();
-		bool hasParent() const;
+		virtual void onCreate();
+		virtual void onSpawn();
+		virtual void onDestroy();
 
-	private:
-		friend Entity;
-		void setParent(Entity* parent);
-		virtual void onAttach();
-		virtual void onDetach();
+		Entity& getEntity();
+		World& getWorld();
 
 	protected:
-		Entity* mParent;
+		void registerComponent();
+		void unregisterComponent();
+
+	protected:
+		Entity& mEntity;
 };
 
 } // namespace oe

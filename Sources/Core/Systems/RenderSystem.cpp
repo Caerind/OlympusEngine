@@ -1,67 +1,80 @@
 #include "RenderSystem.hpp"
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace oe
 {
 
 RenderSystem::RenderSystem()
 	: mTexture()
-	, mSprites()
+	, mRenderables()
+	, mNeedUpdateOrderZ(true)
+	, mNeedUpdateOrderY(true)
 {
 }
 
-void RenderSystem::registerSprite(SpriteComponent* sprite)
+void RenderSystem::registerRenderable(RenderableComponent* renderable)
 {
-	ASSERT(sprite != nullptr);
-	mSprites.emplace_back(sprite);
+	ASSERT(renderable != nullptr);
+	mRenderables.insert(renderable);
+
+	// Reorder the sprite
+	mNeedUpdateOrderZ = true;
+	mNeedUpdateOrderY = true;
 } 
 
-void RenderSystem::unregisterSprite(SpriteComponent* sprite)
+void RenderSystem::unregisterRenderable(RenderableComponent* renderable)
 {
-	ASSERT(sprite != nullptr);
-	for (auto itr = mSprites.begin(); itr != mSprites.end(); ++itr)
-	{
-		if (*itr == sprite)
-		{
-			mSprites.erase(itr);
-			return;
-		}
-	}
+	ASSERT(renderable != nullptr);
+	mRenderables.remove(renderable);
+
+	// Don't need to reorder here
 }
 
 void RenderSystem::preRender()
 {
-
-	// TODO : Reorder sprites
-
-	bool needReordering = false;
-	for (SpriteComponent* component : mSprites)
+	// Reorder on Z axis
+	if (mNeedUpdateOrderZ)
 	{
-		ASSERT(component != nullptr);
-		/*
-		if (component->needUpdate())
-		{
-			if (component->hasTransformChanged())
-			{
-				needReordering = true;
-			}
-			ASSERT(component->getSpriteIndex() < mMaxSprites);
-			ASSERT(mSprites[component->getSpriteIndex()] != nullptr);
-			mSprites[component->getSpriteIndex()]->update(component);
-		}
-		*/
+		printf("OrderZ\n");
+		std::sort(mRenderables.begin(), mRenderables.end(), RenderSystem::orderZ);
+		mNeedUpdateOrderZ = false;
+
+		// As we reordered Z we need to reorder Y
+		mNeedUpdateOrderY = true;
 	}
-	if (needReordering)
+
+	// Reorder only on Y axis
+	if (mNeedUpdateOrderY)
 	{
+		auto begin = mRenderables.begin();
+		float currentZ = -99999.f;
+		for (auto itr = mRenderables.begin(); itr != mRenderables.end(); ++itr)
+		{
+			RenderableComponent* r = (*itr);
+			ASSERT(r != nullptr);
+			F32 z = r->getGlobalZ();
+			ASSERT(currentZ <= z);
+			if (currentZ < z)
+			{
+				std::sort(begin, itr, RenderSystem::orderY);
+				currentZ = z;
+				begin = itr + 1;
+			}
+		}
+		mNeedUpdateOrderY = false;
 	}
 }
 
 void RenderSystem::render()
 {
 	mTexture.clear();
-	for (SpriteComponent* sprite : mSprites)
+	for (RenderableComponent* renderable : mRenderables)
 	{
-		ASSERT(sprite != nullptr);
-		sprite->render(mTexture);
+		ASSERT(renderable != nullptr);
+		if (renderable->isVisible())
+		{
+			renderable->render(mTexture);
+		}
 	}
 	mTexture.display();
 }
@@ -80,15 +93,39 @@ void RenderSystem::postRender(sf::RenderTarget& target)
 	}
 	else
 	{
-		sf::Sprite sprite(mTexture.getTexture());
-		sprite.setScale(target.getSize().x / ((F32)mTexture.getSize().x), target.getSize().y / ((F32)mTexture.getSize().y));
-		target.draw(sprite);
+		sf::Transform transform;
+		transform.scale(target.getSize().x / ((F32)mTexture.getSize().x), target.getSize().y / ((F32)mTexture.getSize().y));
+		target.draw(sf::Sprite(mTexture.getTexture()));
 		if (!mTexture.create(target.getSize().x, target.getSize().y))
 		{
 			// TODO : Error handling
 			printf("RenderSystem::postRender : Can't create sf::RenderTexture with size(%d, %d)", target.getSize().x, target.getSize().y);
 		}
 	}
+}
+
+void RenderSystem::needUpdateOrderZ()
+{
+	mNeedUpdateOrderZ = true;
+}
+
+void RenderSystem::needUpdateOrderY()
+{
+	mNeedUpdateOrderY = true;
+}
+
+bool RenderSystem::orderZ(RenderableComponent* a, RenderableComponent* b)
+{
+	ASSERT(a != nullptr);
+	ASSERT(b != nullptr);
+	return a->getGlobalZ() < b->getGlobalZ();
+}
+
+bool RenderSystem::orderY(RenderableComponent* a, RenderableComponent* b)
+{
+	ASSERT(a != nullptr);
+	ASSERT(b != nullptr);
+	return a->getGlobalPosition().y < b->getGlobalPosition().y;
 }
 
 } // namespace oe

@@ -121,4 +121,4 @@ U32 ResourceHolder<T>::size() const
 
 } // namespace oe
 
-#endif // OE_RESOURCEMANAGER_HPP
+#endif // OE_RESOURCEHOLDER_HPP

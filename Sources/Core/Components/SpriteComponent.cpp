@@ -4,15 +4,22 @@
 namespace oe
 {
 
-SpriteComponent::SpriteComponent()
-	: mSprite()
-	, mVisible(true)
+SpriteComponent::SpriteComponent(Entity* entity)
+	: RenderableComponent(entity)
+	, mSprite()
 {
+}
+
+void SpriteComponent::setTexture(ResourceId texture)
+{
+	mSprite.setTexture(getWorld().getTextures().get(texture));
+	mLocalAABB = mSprite.getLocalBounds();
 }
 
 void SpriteComponent::setTexture(sf::Texture& texture)
 {
 	mSprite.setTexture(texture);
+	mLocalAABB = mSprite.getLocalBounds();
 }
 
 const sf::Texture* SpriteComponent::getTexture() const
@@ -23,6 +30,7 @@ const sf::Texture* SpriteComponent::getTexture() const
 void SpriteComponent::setTextureRect(const sf::IntRect& textureRect)
 {
 	mSprite.setTextureRect(textureRect);
+	mLocalAABB = mSprite.getLocalBounds();
 }
 
 const sf::IntRect& SpriteComponent::getTextureRect() const
@@ -30,44 +38,29 @@ const sf::IntRect& SpriteComponent::getTextureRect() const
 	return mSprite.getTextureRect();
 }
 
-void SpriteComponent::setColor(const Color& color)
+void SpriteComponent::setColor(const sf::Color& color)
 {
-	mSprite.setColor(oe::SFML::toSF(color));
+	mSprite.setColor(color);
 }
 
-const Color& SpriteComponent::getColor() const
+const sf::Color& SpriteComponent::getColor() const
 {
-	return oe::SFML::toOE(mSprite.getColor());
+	return mSprite.getColor();
 }
 
-void SpriteComponent::setVisible(bool visible)
+void SpriteComponent::render(sf::RenderTarget& target)
 {
-	mVisible = visible;
+	target.draw(mSprite, getGlobalTransform());
 }
 
-bool SpriteComponent::isVisible() const
+void SpriteComponent::onSpawn()
 {
-	return mVisible;
+	getRenderSystem().registerRenderable(this);
 }
 
-void SpriteComponent::render(sf::RenderTarget& target) const
+void SpriteComponent::onDestroy()
 {
-	if (mVisible)
-	{
-		target.draw(mSprite, getGlobalTransform()); // TODO : Do not recalculate global transform if not needed
-	}
-}
-
-void SpriteComponent::onAttach()
-{
-	ASSERT(hasParent());
-	mParent->getWorld().getRenderSystem().registerSprite(this);
-}
-
-void SpriteComponent::onDetach()
-{
-	ASSERT(hasParent());
-	mParent->getWorld().getRenderSystem().unregisterSprite(this);
+	getRenderSystem().unregisterRenderable(this);
 }
 
 } // namespace oe
