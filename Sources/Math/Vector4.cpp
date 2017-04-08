@@ -5,219 +5,101 @@
 namespace oe
 {
 
-VectorPacked4::VectorPacked4()
-{
-	data[0] = 0.f;
-	data[1] = 0.f;
-	data[2] = 0.f;
-	data[3] = 0.f;
-}
-
-VectorPacked4::VectorPacked4(const Vector4& vector)
-{
-	vector.pack(this);
-}
-
-VectorPacked4& VectorPacked4::operator=(const Vector4& vector)
-{
-	vector.pack(this);
-	return *this;
-}
-
 Vector4::Vector4()
+	: x(0.0f)
+	, y(0.0f)
+	, z(0.0f)
+	, w(0.0f)
 {
-	mData[0] = 0.f;
-	mData[1] = 0.f;
-	mData[2] = 0.f;
-	mData[3] = 0.f;
-}
-
-Vector4::Vector4(const Vector4& v)
-{
-	mData[0] = v.mData[0];
-	mData[1] = v.mData[1];
-	mData[2] = v.mData[2];
-	mData[3] = v.mData[3];
-}
-
-Vector4::Vector4(F32 s)
-{
-	mData[0] = s;
-	mData[1] = s;
-	mData[2] = s;
-	mData[3] = s;
-}
-
-Vector4::Vector4(const F32* const a)
-{
-	mData[0] = a[0];
-	mData[1] = a[1];
-	mData[2] = a[2];
-	mData[3] = a[3];
-}
-
-Vector4::Vector4(F32 x, F32 y, F32 z, F32 w)
-{
-	mData[0] = x;
-	mData[1] = y;
-	mData[2] = z;
-	mData[3] = w;
 }
 
 Vector4::Vector4(const Vector2& v, F32 z, F32 w)
 {
-	mData[0] = v[0];
-	mData[1] = v[1];
-	mData[2] = z;
-	mData[3] = w;
+	set(v, z, w);
 }
 
 Vector4::Vector4(const Vector3& v, F32 w)
 {
-	mData[0] = v[0];
-	mData[1] = v[1];
-	mData[2] = v[2];
-	mData[3] = w;
+	set(v, w);
 }
 
-Vector4::Vector4(const VectorPacked4& vector)
+Vector4::Vector4(const Vector4& v)
 {
-	mData[0] = vector.data[0];
-	mData[1] = vector.data[1];
-	mData[2] = vector.data[2];
-	mData[3] = vector.data[3];
+	set(v);
 }
 
-F32& Vector4::operator()(const U8 i)
+Vector4::Vector4(const F32 v[4])
 {
-	return mData[i];
+	set(v);
 }
 
-const F32& Vector4::operator()(const U8 i) const
+Vector4::Vector4(F32 x, F32 y, F32 z, F32 w)
 {
-	return mData[i];
+	set(x, y, z, w);
 }
 
-F32& Vector4::operator[](const U8 i)
+Vector4::Vector4(F32 s)
 {
-	return mData[i];
+	set(s);
 }
 
-const F32& Vector4::operator[](const U8 i) const
+Vector4& Vector4::set(const Vector2& v, F32 z, F32 w)
 {
-	return mData[i];
+	x = v.x;
+	y = v.y;
+	this->z = z;
+	this->w = w;
+	return *this;
 }
 
-F32& Vector4::x()
+Vector4& Vector4::set(const Vector3& v, F32 w)
 {
-	return mData[0];
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	this->w = w;
+	return *this;
 }
 
-F32& Vector4::y()
+Vector4& Vector4::set(const Vector4& v)
 {
-	return mData[1];
+	std::memcpy(this, &v, sizeof(Vector4));
+	return *this;
 }
 
-F32& Vector4::z()
+Vector4& Vector4::set(const F32 v[4])
 {
-	return mData[2];
+	std::memcpy(&x, v, 4 * sizeof(F32));
+	return *this;
 }
 
-F32& Vector4::w()
+Vector4& Vector4::set(F32 x, F32 y, F32 z, F32 w)
 {
-	return mData[3];
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = w;
+	return *this;
 }
 
-const F32& Vector4::x() const
+Vector4& Vector4::set(F32 s)
 {
-	return mData[0];
-}
-
-const F32& Vector4::y() const
-{
-	return mData[1];
-}
-
-const F32& Vector4::z() const
-{
-	return mData[2];
-}
-
-const F32& Vector4::w() const
-{
-	return mData[3];
-}
-
-Vector2 Vector4::xy() 
-{
-	return Vector2(mData[0], mData[1]);
-}
-
-Vector2 Vector4::yz() 
-{
-	return Vector2(mData[1], mData[2]);
-}
-
-Vector2 Vector4::xz() 
-{
-	return Vector2(mData[0], mData[2]);
-}
-
-Vector2 Vector4::zw() 
-{
-	return Vector2(mData[2], mData[3]);
-}
-
-Vector3 Vector4::xyz()
-{
-	return Vector3(mData[0], mData[1], mData[2]);
-}
-
-const Vector2 Vector4::xy() const 
-{
-	return Vector2(mData[0], mData[1]);
-}
-
-const Vector2 Vector4::yz() const 
-{
-	return Vector2(mData[1], mData[2]);
-}
-
-const Vector2 Vector4::xz() const 
-{
-	return Vector2(mData[0], mData[2]);
-}
-
-const Vector2 Vector4::zw() const
-{
-	return Vector2(mData[2], mData[3]);
-}
-
-const Vector3 Vector4::xyz() const
-{
-	return Vector3(mData[0], mData[1], mData[2]);
-}
-
-void Vector4::pack(VectorPacked4* vector) const
-{
-	vector->data[0] = mData[0];
-	vector->data[1] = mData[1];
-	vector->data[2] = mData[2];
-	vector->data[3] = mData[3];
+	x = s;
+	y = s;
+	z = s;
+	w = s;
+	return *this;
 }
 
 Vector4& Vector4::operator=(const Vector4& v)
 {
-	mData[0] = v.mData[0];
-	mData[1] = v.mData[1];
-	mData[2] = v.mData[2];
-	mData[3] = v.mData[3];
+	set(v);
 	return *this;
 }
 
 bool Vector4::operator==(const Vector4& v) const
 {
-	return Math::equals(mData[0], v.mData[0]) && Math::equals(mData[1], v.mData[1]) && Math::equals(mData[2], v.mData[2]) && Math::equals(mData[3], v.mData[3]);
+	return Math::equals(x, v.x) && Math::equals(y, v.y) && Math::equals(z, v.z) && Math::equals(w, v.w);
 }
 
 bool Vector4::operator!=(const Vector4& v) const
@@ -225,9 +107,14 @@ bool Vector4::operator!=(const Vector4& v) const
 	return !operator==(v);
 }
 
+const Vector4& Vector4::operator+() const
+{
+	return *this;
+}
+
 Vector4 Vector4::operator-() const
 {
-	return Vector4(-mData[0], -mData[1], -mData[2], -mData[3]);
+	return Vector4(-x, -y, -z, -w);
 }
 
 Vector4 Vector4::operator*(const Vector4& v) const
@@ -237,119 +124,185 @@ Vector4 Vector4::operator*(const Vector4& v) const
 
 Vector4 Vector4::operator/(const Vector4& v) const
 {
-	return Vector4(mData[0] / v.mData[0], mData[1] / v.mData[1], mData[2] / v.mData[2], mData[3] / v.mData[3]);
+	return Vector4(x / v.x, y / v.y, z / v.z, w / v.w);
 }
 
 Vector4 Vector4::operator+(const Vector4& v) const
 {
-	return Vector4(mData[0] + v.mData[0], mData[1] + v.mData[1], mData[2]+ v.mData[2], mData[3] + v.mData[3]);
+	return Vector4(x + v.x, y + v.y, z+ v.z, w + v.w);
 }
 
 Vector4 Vector4::operator-(const Vector4& v) const
 {
-	return Vector4(mData[0] - v.mData[0], mData[1] - v.mData[1], mData[2] - v.mData[2], mData[3] - v.mData[3]);
+	return Vector4(x - v.x, y - v.y, z - v.z, w - v.w);
 }
 
 Vector4 Vector4::operator*(F32 s) const
 {
-	return Vector4(mData[0] * s, mData[1] * s, mData[2] * s, mData[3] * s);
+	return Vector4(x * s, y * s, z * s, w * s);
 }
 
 Vector4 Vector4::operator/(F32 s) const
 {
-	return Vector4(mData[0] / s, mData[1] / s, mData[2] / s, mData[3] / s);
+	return Vector4(x / s, y / s, z / s, w / s);
 }
 
 Vector4 Vector4::operator+(F32 s) const
 {
-	return Vector4(mData[0] + s, mData[1] + s, mData[2] + s, mData[3] + s);
+	return Vector4(x + s, y + s, z + s, w + s);
 }
 
 Vector4 Vector4::operator-(F32 s) const
 {
-	return Vector4(mData[0] - s, mData[1] - s, mData[2] - s, mData[3] - s);
+	return Vector4(x - s, y - s, z - s, w - s);
 }
 
 Vector4& Vector4::operator*=(const Vector4& v)
 {
-	mData[0] *= v.mData[0];
-	mData[1] *= v.mData[1];
-	mData[2] *= v.mData[2];
-	mData[3] *= v.mData[3];
+	x *= v.x;
+	y *= v.y;
+	z *= v.z;
+	w *= v.w;
 	return *this;
 }
 
 Vector4& Vector4::operator/=(const Vector4& v)
 {
-	mData[0] /= v.mData[0];
-	mData[1] /= v.mData[1];
-	mData[2] /= v.mData[2];
-	mData[3] /= v.mData[3];
+	x /= v.x;
+	y /= v.y;
+	z /= v.z;
+	w /= v.w;
 	return *this;
 }
 
 Vector4& Vector4::operator+=(const Vector4& v)
 {
-	mData[0] += v.mData[0];
-	mData[1] += v.mData[1];
-	mData[2] += v.mData[2];
-	mData[3] += v.mData[3];
+	x += v.x;
+	y += v.y;
+	z += v.z;
+	w += v.w;
 	return *this;
 }
 
 Vector4& Vector4::operator-=(const Vector4& v)
 {
-	mData[0] -= v.mData[0];
-	mData[1] -= v.mData[1];
-	mData[2] -= v.mData[2];
-	mData[3] -= v.mData[3];
+	x -= v.x;
+	y -= v.y;
+	z -= v.z;
+	w -= v.w;
 	return *this;
 }
 
 Vector4& Vector4::operator*=(F32 s)
 {
-	mData[0] *= s;
-	mData[1] *= s;
-	mData[2] *= s;
-	mData[3] *= s;
+	x *= s;
+	y *= s;
+	z *= s;
+	w *= s;
 	return *this;
 }
 
 Vector4& Vector4::operator/=(F32 s)
 {
-	mData[0] /= s;
-	mData[1] /= s;
-	mData[2] /= s;
-	mData[3] /= s;
+	x /= s;
+	y /= s;
+	z /= s;
+	w /= s;
 	return *this;
 }
 
 Vector4& Vector4::operator+=(F32 s)
 {
-	mData[0] += s;
-	mData[1] += s;
-	mData[2] += s;
-	mData[3] += s;
+	x += s;
+	y += s;
+	z += s;
+	w += s;
 	return *this;
 }
 
 Vector4& Vector4::operator-=(F32 s)
 {
-	mData[0] -= s;
-	mData[1] -= s;
-	mData[2] -= s;
-	mData[3] -= s;
+	x -= s;
+	y -= s;
+	z -= s;
+	w -= s;
 	return *this;
+}
+
+bool Vector4::operator<(const Vector4& vec) const
+{
+	if (!Math::equals(x, vec.x))
+	{
+		return x < vec.x;
+	}
+	else if (!Math::equals(x, vec.x))
+	{
+		return y < vec.y;
+	}
+	else if (!Math::equals(z, vec.z))
+	{
+		return z < vec.z;
+	}
+	else
+	{
+		return w < vec.w;
+	}
+}
+
+bool Vector4::operator<=(const Vector4& vec) const
+{
+	if (Math::equals(x, vec.x))
+	{
+		if (Math::equals(y, vec.y))
+		{
+			if (Math::equals(z, vec.z))
+			{
+				return Math::equals(w, vec.w) || w < vec.w;
+			}
+			else
+			{
+				return z < vec.z;
+			}
+		}
+		else
+		{
+			return y < vec.y;
+		}
+	}
+	else
+	{
+		return x < vec.x;
+	}
+}
+
+bool Vector4::operator>(const Vector4& vec) const
+{
+	return !operator<=(vec);
+}
+
+bool Vector4::operator>=(const Vector4& vec) const
+{
+	return !operator<(vec);
+}
+
+Vector4::operator F32*()
+{
+	return &x;
+}
+
+Vector4::operator const F32*() const
+{
+	return &x;
 }
 
 Vector2 Vector4::toVector2() const
 {
-	return Vector2(mData[0], mData[1]);
+	return Vector2(x, y);
 }
 
 Vector3 Vector4::toVector3() const
 {
-	return Vector3(mData[0], mData[1], mData[2]);
+	return Vector3(x, y, z);
 }
 
 Vector4 Vector4::toVector4() const
@@ -357,62 +310,217 @@ Vector4 Vector4::toVector4() const
 	return *this;
 }
 
-bool Vector4::isZero() const
+Vector2 Vector4::xy()
 {
-	return Math::equals(mData[0], 0.f) && Math::equals(mData[1], 0.f) && Math::equals(mData[2], 0.f) && Math::equals(mData[3], 0.f);
+	return Vector2(x, y);
 }
 
-F32 Vector4::getLengthSquared() const
+Vector2 Vector4::yz()
 {
-	return dotProduct(*this, *this);
+	return Vector2(y, z);
+}
+
+Vector2 Vector4::xz()
+{
+	return Vector2(x, z);
+}
+
+Vector3 Vector4::xyz()
+{
+	return Vector3(x, y, z);
+}
+
+const Vector2 Vector4::xy() const
+{
+	return Vector2(x, y);
+}
+
+const Vector2 Vector4::yz() const
+{
+	return Vector2(y, z);
+}
+
+const Vector2 Vector4::xz() const
+{
+	return Vector2(x, z);
+}
+
+const Vector3 Vector4::xyz() const
+{
+	return Vector3(x, y, z);
+}
+
+bool Vector4::isZero() const
+{
+	return Math::equals(x, 0.0f) && Math::equals(y, 0.0f) && Math::equals(z, 0.0f) && Math::equals(w, 0.0f);
+}
+
+F32 Vector4::getSquaredLength() const
+{
+	return x * x + y * y + z * z + w * w;
 }
 
 F32 Vector4::getLength() const
 {
-	return Math::sqrt(getLengthSquared());
+	return Math::sqrt(getSquaredLength());
 }
 
-void Vector4::setLength(F32 length)
+Vector4& Vector4::setLength(F32 length, F32* oldLength)
 {
-	ASSERT(!isZero());
 	const F32 actualLength = getLength();
+	ASSERT(actualLength > 0.0f);
 	*this *= (length / actualLength);
+
+	if (oldLength != nullptr)
+	{
+		*oldLength = actualLength;
+	}
+
+	return *this;
 }
 
-F32 Vector4::normalize()
+Vector4& Vector4::normalize(F32* oldLength)
 {
-	const F32 length = getLength();
-	ASSERT(length > 0.f);
-	*this *= (1.f / length);
-	return length;
+	return setLength(1.0f, oldLength);
 }
 
-Vector4 Vector4::normalized() const
+Vector4 Vector4::getNormal(F32* oldLength) const
 {
-	const F32 length = getLength();
-	ASSERT(length > 0.f);
-	return *this / length;
+	return Vector4(*this).normalize(oldLength);
+}
+
+Vector4& Vector4::makeZero()
+{
+	set(0.0f, 0.0f, 0.0f, 0.0f);
+	return *this;
+}
+
+Vector4& Vector4::makeOne()
+{
+	set(1.0f, 1.0f, 1.0f, 1.0f);
+	return *this;
+}
+
+Vector4& Vector4::makeAxisX()
+{
+	set(1.0f, 0.0f, 0.0f, 0.0f);
+	return *this;
+}
+
+Vector4& Vector4::makeAxisY()
+{
+	set(0.0f, 1.0f, 0.0f, 0.0f);
+	return *this;
+}
+
+Vector4& Vector4::makeAxisZ()
+{
+	set(0.0f, 0.0f, 1.0f, 0.0f);
+	return *this;
+}
+
+Vector4& Vector4::makeAxisW()
+{
+	set(0.0f, 0.0f, 0.0f, 1.0f);
+	return *this;
+}
+
+Vector4& Vector4::minimize(const Vector4& min)
+{
+	if (min.x < x)
+	{
+		x = min.x;
+	}
+	if (min.y < y)
+	{
+		y = min.y;
+	}
+	if (min.z < z)
+	{
+		z = min.z;
+	}
+	if (min.w < w)
+	{
+		w = min.w;
+	}
+	return *this;
+}
+
+Vector4& Vector4::maximize(const Vector4& max)
+{
+	if (max.x > x)
+	{
+		x = max.x;
+	}
+	if (max.y > y)
+	{
+		y = max.y;
+	}
+	if (max.z > z)
+	{
+		z = max.z;
+	}
+	if (max.w > w)
+	{
+		w = max.w;
+	}
+	return *this;
+}
+
+F32 Vector4::dotProduct(const Vector4& v) const
+{
+	return x * v.x + y * v.y + z * v.z + w * v.w;
+}
+
+F32 Vector4::absDotProduct(const Vector4& v) const
+{
+	return Math::abs(x * v.x) + Math::abs(y * v.y) + Math::abs(z * v.z) + Math::abs(w * v.w);
+}
+
+F32 Vector4::squaredDistance(const Vector4& v) const
+{
+	return (*this - v).getSquaredLength();
+}
+
+F32 Vector4::distance(const Vector4& v) const
+{
+	return Math::sqrt(squaredDistance(v));
+}
+
+Vector4 Vector4::hadamardProduct(const Vector4& v) const
+{
+	return Vector4(x * v.x, y * v.y, z * v.z, w * v.w);
 }
 
 F32 Vector4::dotProduct(const Vector4& v1, const Vector4& v2)
 {
-	return v1.mData[0] * v2.mData[0] + v1.mData[1] * v2.mData[1] + v1.mData[2] * v2.mData[2] + v1.mData[3] * v2.mData[3];
+	return v1.dotProduct(v2);
 }
 
-Vector4 Vector4::hadamardProduct(const Vector4& v1, const Vector4& v2)
+F32 Vector4::absDotProduct(const Vector4& v1, const Vector4& v2)
 {
-	return Vector4(v1.mData[0] * v2.mData[0], v1.mData[1] * v2.mData[1], v1.mData[2] * v2.mData[2], v1.mData[3] * v2.mData[3]);
+	return v1.absDotProduct(v2);
+}
+
+F32 Vector4::squaredDistance(const Vector4& v1, const Vector4& v2)
+{
+	return v1.squaredDistance(v2);
 }
 
 F32 Vector4::distance(const Vector4& v1, const Vector4& v2)
 {
-	return (v1 - v2).getLength();
+	return v1.distance(v2);
 }
 
-Vector4 Vector4::lerp(const Vector4& v1, const Vector4& v2, F32 percent)
+Vector4 Vector4::hadamardProduct(const Vector4& v1, const Vector4& v2)
+{
+	return v1.hadamardProduct(v2);
+}
+
+Vector4 Vector4::lerp(const Vector4& start, const Vector4& end, F32 percent)
 {
 	const F32 omp = 1.f - percent;
-	return Vector4(omp * v1.mData[0] + percent * v2.mData[0], omp * v1.mData[1] + percent * v2.mData[1], omp * v1.mData[2] + percent * v2.mData[2], omp * v1.mData[3] + percent * v2.mData[3]);
+	return Vector4(omp * start.x + percent * end.x, omp * start.y + percent * end.y, omp * start.z + percent * end.z, omp * start.w + percent * end.w);
 }
 
 const U8 Vector4::dim()
@@ -420,34 +528,34 @@ const U8 Vector4::dim()
 	return 4;
 }
 
-const Vector4 Vector4::zeros()
+const Vector4 Vector4::zero()
 {
-	return Vector4(0.f, 0.f, 0.f, 0.f);
+	return Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-const Vector4 Vector4::ones()
+const Vector4 Vector4::one()
 {
-	return Vector4(1.f, 1.f, 1.f, 1.f);
+	return Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 const Vector4 Vector4::axisX()
 {
-	return Vector4(1.f, 0.f, 0.f, 0.f);
+	return Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 }
 
 const Vector4 Vector4::axisY()
 {
-	return Vector4(0.f, 1.f, 0.f, 0.f);
+	return Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 }
 
 const Vector4 Vector4::axisZ()
 {
-	return Vector4(0.f, 0.f, 1.f, 0.f);
+	return Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 }
 
 const Vector4 Vector4::axisW()
 {
-	return Vector4(0.f, 0.f, 0.f, 1.f);
+	return Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 Vector4 operator*(F32 s, const Vector4& v)
@@ -463,16 +571,6 @@ Vector4 operator+(F32 s, const Vector4& v)
 Vector4 operator-(F32 s, const Vector4& v)
 {
 	return v - s;
-}
-
-F32 dot(const Vector4& v1, const Vector4& v2)
-{
-	return Vector4::dotProduct(v1, v2);
-}
-
-Vector4 normalize(const Vector4& v)
-{
-	return v.normalized();
 }
 
 } // namespace oe

@@ -4,285 +4,385 @@ namespace oe
 {
 
 Quaternion::Quaternion()
-	: mScalar()
-	, mVector()
+	: x(0.0f)
+	, y(0.0f)
+	, z(0.0f)
+	, w(0.0f)
 {
 }
 
 Quaternion::Quaternion(const Quaternion& q)
-	: mScalar(q.mScalar)
-	, mVector(q.mVector)
 {
+	set(q);
 }
 
-Quaternion::Quaternion(F32 s1, F32 s2, F32 s3, F32 s4)
-	: mScalar(s1)
-	, mVector(s2, s3, s4)
+Quaternion::Quaternion(F32 x, F32 y, F32 z, F32 w)
 {
+	set(x, y, z, w);
 }
 
-Quaternion::Quaternion(F32 s, const Vector3& v)
-	: mScalar(s)
-	, mVector(v)
+Quaternion::Quaternion(const Vector3& v, F32 w)
 {
+	set(v, w);
 }
 
-F32& Quaternion::scalar()
+Quaternion::Quaternion(F32 pitch, F32 yaw, F32 roll)
 {
-	return mScalar;
+	set(pitch, yaw, roll);
 }
 
-const F32& Quaternion::scalar() const
+Quaternion::Quaternion(const Vector3& eulerAngles)
 {
-	return mScalar;
+	set(eulerAngles);
 }
 
-Vector3& Quaternion::vector()
+Quaternion::Quaternion(F32 angle, const Vector3& axis)
 {
-	return mVector;
+	set(angle, axis);
 }
 
-const Vector3& Quaternion::vector() const
+Quaternion::Quaternion(const F32 q[4])
 {
-	return mVector;
+	set(q);
 }
 
-Quaternion Quaternion::inversed() const
+Quaternion& Quaternion::set(const Quaternion& q)
 {
-	return Quaternion(mScalar, -mVector);
+	std::memcpy(this, &q, sizeof(Quaternion));
+	return *this;
+}
+
+Quaternion& Quaternion::set(F32 x, F32 y, F32 z, F32 w)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+	this->w = w;
+	return *this;
+}
+
+Quaternion& Quaternion::set(const Vector3& v, F32 w)
+{
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	this->w = w;
+	return *this;
+}
+
+Quaternion& Quaternion::set(F32 pitch, F32 yaw, F32 roll)
+{
+	// TODO : Chech that everything is correct
+	yaw *= 0.5f;
+	roll *= 0.5f;
+	pitch *= 0.5f;
+	const F32 c1 = Math::cos(yaw);
+	const F32 c2 = Math::cos(roll);
+	const F32 c3 = Math::cos(pitch);
+	const F32 s1 = Math::sin(yaw);
+	const F32 s2 = Math::sin(roll);
+	const F32 s3 = Math::sin(pitch);
+	return set(s1 * s2 * c3 + c1 * c2 * s3, s1 * c2 * c3 + c1 * s2 * s3, c1 * s2 * c3 - s1 * c2 * s3, c1 * c2 * c3 - s1 * s2 * s3);
+}
+
+Quaternion& Quaternion::set(const Vector3& eulerAngles)
+{
+	return set(eulerAngles.x, eulerAngles.y, eulerAngles.z);
+}
+
+Quaternion& Quaternion::set(F32 angle, const Vector3& axis)
+{
+	// TODO : Chech that everything is correct
+	angle *= 0.5f;
+	Vector3 normalizedAxis = axis.getNormal();
+	const F32 sinAngle = Math::sin(angle);
+	x = normalizedAxis.x * sinAngle;
+	y = normalizedAxis.y * sinAngle;
+	z = normalizedAxis.z * sinAngle;
+	w = Math::cos(angle);
+	return normalize();
+}
+
+Quaternion& Quaternion::set(const F32 q[4])
+{
+	std::memcpy(&x, q, 4 * sizeof(F32));
+	return *this;
 }
 
 Quaternion& Quaternion::operator=(const Quaternion& q)
 {
-	mScalar = q.mScalar;
-	mVector = q.mVector;
-	return *this;
+	return set(q);
+}
+
+bool Quaternion::operator==(const Quaternion& q) const
+{
+	return Math::equals(x, q.x) && Math::equals(y, q.y) && Math::equals(z, q.z) && Math::equals(w, q.w);
+}
+
+bool Quaternion::operator!=(const Quaternion& q) const
+{
+	return !operator==(q);
 }
 
 Quaternion Quaternion::operator*(const Quaternion& q) const
 {
-	return Quaternion(mScalar * q.mScalar - Vector3::dotProduct(mVector, q.mVector), mScalar * q.mVector + q.mScalar * mVector + Vector3::crossProduct(mVector, q.mVector));
+	// TODO : Chech that everything is correct
+	Quaternion result;
+	result.x = w * q.x + x * q.w + y * q.z - z * q.y;
+	result.y = w * q.y + y * q.w + z * q.x - x * q.z;
+	result.z = w * q.z + z * q.w + x * q.y - y * q.x;
+	result.w = w * q.w - x * q.x - y * q.y - z * q.z;
+	return result;
 }
 
-Quaternion Quaternion::operator*(F32 s) const
+Quaternion Quaternion::operator*(F32 scale) const
 {
-	F32 angle;
-	Vector3 axis;
-	toAngleAxis(&angle, &axis);
-	angle *= s;
-	return Quaternion(Math::cos(0.5f * angle), axis.normalized() * Math::sin(0.5f * angle));
+	return Quaternion(x * scale, y * scale, z * scale, w * scale);
+}
+
+Quaternion& Quaternion::operator*=(const Quaternion& q)
+{
+	return set(operator*(q));
+}
+
+Quaternion& Quaternion::operator*=(F32 scale)
+{
+	return set(operator*(scale));
 }
 
 Vector3 Quaternion::operator*(const Vector3& v) const
 {
-	F32 ss = mScalar + mScalar;
-	return ss * Vector3::crossProduct(mVector, v) + (ss * mScalar - 1) * v + 2 * Vector3::dotProduct(mVector, v) * mVector;
+	// TODO : Chech that everything is correct
+	Vector3 qv = getVector();
+	Vector3 uv = qv.crossProduct(v);
+	Vector3 uuv = qv.crossProduct(uv);
+	uv *= 2.0f * w;
+	uuv *= 2.0f;
+	return v + uv + uuv;
 }
 
-F32 Quaternion::normalize()
+Quaternion::operator F32*()
 {
-	const F32 length = Math::sqrt(mScalar * mScalar + Vector3::dotProduct(mVector, mVector));
-	const F32 scale = (1.f / length);
-	mScalar *= scale;
-	mVector *= scale;
-	return length;
+	return &x;
 }
 
-Quaternion Quaternion::normalized() const
+Quaternion::operator const F32*() const
 {
-	Quaternion q(*this);
-	q.normalize();
-	return q;
+	return &x;
 }
 
-void Quaternion::toAngleAxis(F32* angle, Vector3* axis) const
+Quaternion& Quaternion::computeW()
 {
-	*axis = mScalar > 0.f ? mVector : -mVector;
-	*angle = 2.f * Math::atan2(axis->normalize(), mScalar > 0.f ? mScalar : -mScalar);
+	// TODO : Chech that everything is correct
+	F32 t = 1.0f - getSquaredMagnitude();
+	w = (t < 0.0f) ? 0.0f : -Math::sqrt(t);
+	return *this;
 }
 
-Vector3 Quaternion::toEulerAngles() const
+Quaternion& Quaternion::conjugate()
 {
-	Matrix3 m(toMatrix());
-	F32 cos2 = m[0] * m[0] + m[1] * m[1];
-	if (cos2 < 1e-6f)
+	x = -x;
+	y = -y;
+	z = -z;
+	return *this;
+}
+
+Quaternion& Quaternion::inverse()
+{
+	// TODO : Chech that everything is correct
+	F32 norm = getSquaredMagnitude();
+	if (norm > 0.0f)
 	{
-		return Vector3(0.f, m[2] < 0.f ? Math::halfPi() : -Math::halfPi(), -Math::atan2(m[3], m[4]));
+		F32 invNorm = 1.0f / norm;
+		x *= -invNorm;
+		y *= -invNorm;
+		z *= -invNorm;
+		w *= invNorm;
+	}
+	return *this;
+}
+
+Quaternion& Quaternion::normalize(F32* oldLength)
+{
+	F32 norm = getMagnitude();
+	if (norm > 0.0f)
+	{
+		F32 invNorm = 1.0f / norm;
+		x *= invNorm;
+		y *= invNorm;
+		z *= invNorm;
+		w *= invNorm;
+	}
+	if (oldLength)
+	{
+		*oldLength = norm;
+	}
+	return *this;
+}
+
+F32 Quaternion::dotProduct(const Quaternion& q) const
+{
+	return x * q.x + y * q.y + z * q.z + w * q.w;
+}
+
+F32 Quaternion::getSquaredMagnitude() const
+{
+	return x * x + y * y + z * z + w * w;
+}
+
+F32 Quaternion::getMagnitude() const
+{
+	return Math::sqrt(getSquaredMagnitude());
+}
+
+Quaternion Quaternion::getConjugate() const
+{
+	return Quaternion(*this).conjugate();
+}
+
+Quaternion Quaternion::getInverse() const
+{
+	return Quaternion(*this).inverse();
+}
+
+Quaternion Quaternion::getNormal(F32* oldLength) const
+{
+	return Quaternion(*this).normalize(oldLength);
+}
+
+Vector3 Quaternion::getVector() const
+{
+	return Vector3(x, y, z);
+}
+
+Vector3 Quaternion::getEulerAngles() const
+{
+	// TODO : Chech that everything is correct
+	F32 test = x * y + z * w;
+	if (test > 0.499f)
+	{
+		// singularity at north pole
+		return Vector3(90.0f, 2.0f * Math::atan2(x, w), 0.0f);
+	}
+	if (test < -0.499f)
+	{
+		// singularity at south pole
+		return Vector3(-90.0f, -2.0f * Math::atan2(x, w), 0.0f);
+	}
+	return Vector3(Math::atan2(2.0f * x * w - 2.0f * y * z, 1.0f - 2.0f * x * x - 2.0f * z * z),
+		           Math::atan2(2.0f * y * w - 2.0f * x * z, 1.0f - 2.0f * y * y - 2.0f * z * z),
+		           Math::asin(2.0f * test));
+}
+
+void Quaternion::getAngleAxis(F32* angle, Vector3* axis)
+{
+	// TODO : Chech that everything is correct
+	*axis = getVector() * ((w > 0.0f) ? 1.0f : -1.0f);
+	F32 length;
+	axis->normalize(&length);
+	*angle = 2.0f * Math::atan2(length, w * ((w > 0.0f) ? 1.0f : -1.0f));
+}
+
+Quaternion& Quaternion::makeRotation(const Vector3& from, const Vector3& to)
+{
+	// TODO : Chech that everything is correct
+	F32 dot = from.dotProduct(to);
+	if (Math::equals(dot, -1.0f))
+	{
+		Vector3 cross(Vector3::axisX().crossProduct(from));
+		if (Math::equals(cross.getLength(), 0.0f))
+			cross = Vector3::axisY().crossProduct(from);
+		return set(180.0f, cross);
+	}
+	else if (Math::equals(dot, 1.0f))
+	{
+		return makeIdentity();
 	}
 	else
 	{
-		return Vector3(Math::atan2(m[5], m[8]), Math::atan2(-m[2], Math::sqrt(cos2)), Math::atan2(m[1], m[0]));
+		Vector3 c(from.crossProduct(to));
+		x = c.x;
+		y = c.y;
+		z = c.z;
+		w = 1.0f + dot;
+		return normalize();
 	}
 }
 
-Matrix3 Quaternion::toMatrix() const
+Quaternion& Quaternion::makeZero()
 {
-	const F32 x2 = mVector[0] * mVector[0];
-	const F32 y2 = mVector[1] * mVector[1];
-	const F32 z2 = mVector[2] * mVector[2];
-	const F32 sx = mScalar * mVector[0];
-	const F32 sy = mScalar * mVector[1];
-	const F32 sz = mScalar * mVector[2];
-	const F32 xz = mVector[0] * mVector[2];
-	const F32 yz = mVector[1] * mVector[2];
-	const F32 xy = mVector[0] * mVector[1];
-	return Matrix3(1.f - 2.f * (y2 + z2), 2.f * (xy + sz), 2.f * (xz - sy), 2.f * (xy - sz), 1.f - 2.f * (x2 + z2), 2.f * (sx + yz), 2.f * (sy + xz), 2.f * (yz - sx), 1.f - 2.f * (x2 + y2));
+	return set(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-Matrix4 Quaternion::toMatrix4() const
+Quaternion& Quaternion::makeIdentity()
 {
-	const F32 x2 = mVector[0] * mVector[0];
-	const F32 y2 = mVector[1] * mVector[1];
-	const F32 z2 = mVector[2] * mVector[2];
-	const F32 sx = mScalar * mVector[0];
-	const F32 sy = mScalar * mVector[1];
-	const F32 sz = mScalar * mVector[2];
-	const F32 xz = mVector[0] * mVector[2];
-	const F32 yz = mVector[1] * mVector[2];
-	const F32 xy = mVector[0] * mVector[1];
-	return Matrix4(1.f - 2.f * (y2 + z2), 2.f * (xy + sz), 2.f * (xz - sy), 0.f, 2.f * (xy - sz), 1.f - 2.f * (x2 + z2), 2.f * (sx + yz), 0.f, 2.f * (sy + xz), 2.f * (yz - sx), 1.f - 2.f * (x2 + y2), 0.f, 0.f, 0.f, 0.f, 1.f);
+	return set(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Quaternion Quaternion::fromAngleAxis(F32 angle, const Vector3& axis)
+Quaternion Quaternion::normalize(const Quaternion& quat, F32* length)
 {
-	const F32 halfAngle = 0.5f * angle;
-	Vector3 localAxis(axis);
-	return Quaternion(Math::cos(halfAngle), localAxis.normalized() * Math::sin(halfAngle));
+	return Quaternion(quat).normalize(length);
 }
 
-Quaternion Quaternion::fromEulerAngles(const Vector3& angles)
+Quaternion Quaternion::rotation(const Vector3& from, const Vector3& to)
 {
-	const Vector3 halfAngles(0.5f * angles[0], 0.5f * angles[1], 0.5f * angles[2]);
-	const F32 sinx = Math::sin(halfAngles[0]);
-	const F32 cosx = Math::cos(halfAngles[0]);
-	const F32 siny = Math::sin(halfAngles[1]);
-	const F32 cosy = Math::cos(halfAngles[1]);
-	const F32 sinz = Math::sin(halfAngles[2]);
-	const F32 cosz = Math::cos(halfAngles[2]);
-	return Quaternion(cosx * cosy * cosz + sinx * siny * sinz, sinx * cosy * cosz - cosx * siny * sinz, cosx * siny * cosz + sinx * cosy * sinz, cosx * cosy * sinz - sinx * siny * cosz);
+	return Quaternion().makeRotation(from, to);
 }
 
-Quaternion Quaternion::fromMatrix(const Matrix3& m)
+Quaternion Quaternion::lerp(const Quaternion& start, const Quaternion& end, F32 percent)
 {
-	const F32 trace = m(0, 0) + m(1, 1) + m(2, 2);
-	if (trace > 0)
+	const F32 omp = 1.f - percent;
+	return Quaternion(omp * start.x + percent * end.x, omp * start.y + percent * end.y, omp * start.z + percent * end.z, omp * start.w + percent * end.w);
+}
+
+Quaternion Quaternion::slerp(const Quaternion& start, const Quaternion& end, F32 percent)
+{
+	Quaternion q;
+	F32 cosOmega = start.dotProduct(end);
+	if (cosOmega < 0.0f)
 	{
-		const F32 s = Math::sqrt(trace + 1) * 2.f;
-		const F32 oneOverS = 1.f / s;
-		return Quaternion(0.25f * s, (m[5] - m[7]) * oneOverS, (m[6] - m[2]) * oneOverS, (m[1] - m[3]) * oneOverS);
-	}
-	else if (m[0] > m[4] && m[0] > m[8])
-	{
-		const F32 s = Math::sqrt(m[0] - m[4] - m[8] + 1) * 2.f;
-		const F32 oneOverS = 1.f / s;
-		return Quaternion((m[5] - m[7]) * oneOverS, 0.25f * s, (m[3] + m[1]) * oneOverS, (m[6] + m[2]) * oneOverS);
-	}
-	else if (m[4] > m[8])
-	{
-		const F32 s = Math::sqrt(m[4] - m[0] - m[8] + 1) * 2.f;
-		const F32 oneOverS = 1.f / s;
-		return Quaternion((m[6] - m[2]) * oneOverS, (m[3] + m[1]) * oneOverS, 0.25f * s, (m[5] + m[7]) * oneOverS);
+		q.set(-end.w, -end.x, -end.y, -end.z);
+		cosOmega = -cosOmega;
 	}
 	else
 	{
-		const F32 s = Math::sqrt(m[8] - m[0] - m[4] + 1) * 2.f;
-		const F32 oneOverS = 1.f / s;
-		return Quaternion((m[1] - m[3]) * oneOverS, (m[6] + m[2]) * oneOverS, (m[5] + m[7]) * oneOverS, 0.25f * s);
+		q.set(end);
 	}
+	F32 a, b;
+	if (cosOmega > 0.9999f)
+	{
+		// Lerp to avoid div by zero
+		return lerp(start, end, percent);
+	}
+	else
+	{
+		F32 sinOmega = Math::sqrt(1.0f - cosOmega * cosOmega);
+		F32 omega = Math::atan2(sinOmega, cosOmega);
+		sinOmega = 1.0f / sinOmega;
+		a = Math::sin((1.0f - percent) * omega) * sinOmega;
+		b = Math::sin(percent * omega) * sinOmega;
+	}
+	return Quaternion(a * start.x + b * q.x, a * start.y + b * q.y, a * start.z + b * q.z, a * start.w + b * q.w);
 }
 
-Quaternion Quaternion::slerp(const Quaternion& q1, const Quaternion& q2, F32 percent)
+Quaternion Quaternion::zero()
 {
-	if (q1.mScalar * q2.mScalar + Vector3::dotProduct(q1.mVector, q2.mVector) > 0.999999f)
-	{
-		return Quaternion(q1.mScalar * (1 - percent) + q2.mScalar * percent, q1.mVector * (1 - percent) + q2.mVector * percent);
-	}
-	return q1 * ((q1.inversed() * q2) * percent);
-}
-
-F32& Quaternion::operator[](const U8 i)
-{
-	if (i == 0)
-	{
-		return mScalar;
-	}
-	return mVector[i - 1];
-}
-
-const F32& Quaternion::operator[](const U8 i) const
-{
-	return const_cast<Quaternion*>(this)->operator[](i);
-}
-
-Vector3 Quaternion::perpendicularVector(const Vector3& v)
-{
-	// We start out by taking the cross product of the vector and the x-axis to
-	// find something parallel to the input vectors.  If that cross product
-	// turns out to be length 0 (i. e. the vectors already lie along the x axis)
-	// then we use the y-axis instead.
-	Vector3 axis = Vector3::crossProduct(Vector3(1.f, 0.f, 0.f), v);
-	// We use a fairly high epsilon here because we know that if this number
-	// is too small, the axis we'll get from a cross product with the y axis
-	// will be much better and more numerically stable.
-	if (axis.getLengthSquared() < 0.05f)
-	{
-		axis = Vector3::crossProduct(Vector3(0.f, 1.f, 0.f), v);
-	}
-	return axis;
-}
-
-Quaternion Quaternion::rotateFromToWithAxis(const Vector3& v1, const Vector3& v2, const Vector3& preferred_axis)
-{
-	Vector3 start = v1.normalized();
-	Vector3 end = v2.normalized();
-	F32 dot_product = Vector3::dotProduct(start, end);
-	// Any rotation < 0.1 degrees is treated as no rotation in order to avoid division by zero errors.
-	// So we early-out in cases where it's less then 0.1 degrees.
-	// cos( 0.1 degrees) = 0.99999847691
-	if (dot_product >= 0.99999847691f)
-	{
-		return Quaternion::identity();
-	}
-	// If the vectors point in opposite directions, return a 180 degree rotation, on the axis that they asked for.
-	if (dot_product <= -0.99999847691f)
-	{
-		return Quaternion(0.f, preferred_axis);
-	}
-	// Degenerate cases have been handled, so if we're here, we have to actually compute the angle we want:
-	Vector3 crosmScalarproduct = Vector3::crossProduct(start, end);
-	return Quaternion(1.f + dot_product, crosmScalarproduct).normalized();
-}
-
-Quaternion Quaternion::rotateFromTo(const Vector3& v1, const Vector3& v2)
-{
-	Vector3 start = v1.normalized();
-	Vector3 end = v2.normalized();
-	F32 dot_product = Vector3::dotProduct(start, end);
-	// Any rotation < 0.1 degrees is treated as no rotation in order to avoid division by zero errors.
-	// So we early-out in cases where it's less then 0.1 degrees.
-	// cos( 0.1 degrees) = 0.99999847691
-	if (dot_product >= 0.99999847691f)
-	{
-		return Quaternion::identity();
-	}
-	// If the vectors point in opposite directions, return a 180 degree rotation, on an arbitrary axis.
-	if (dot_product <= -0.99999847691f)
-	{
-		return Quaternion(0.f, perpendicularVector(start));
-	}
-	// Degenerate cases have been handled, so if we're here, we have to actually compute the angle we want:
-	Vector3 crosmScalarproduct = Vector3::crossProduct(start, end);
-	return Quaternion(1.f + dot_product, crosmScalarproduct).normalized();
+	return Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 Quaternion Quaternion::identity()
 {
-	return Quaternion(1.f, 0.f, 0.f, 0.f);
+	return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Quaternion operator*(F32 s, const Quaternion& q)
+const U8 Quaternion::dim()
 {
-	return q * s;
+	return 4;
+}
+
+Quaternion operator*(F32 scale, const Quaternion& q)
+{
+	return q * scale;
 }
 
 } // namespace oe

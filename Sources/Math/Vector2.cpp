@@ -5,115 +5,91 @@
 namespace oe
 {
 
-VectorPacked2::VectorPacked2()
-{
-	data[0] = 0.f;
-	data[1] = 0.f;
-}
-
-VectorPacked2::VectorPacked2(const Vector2& vector)
-{
-	vector.pack(this);
-}
-
-VectorPacked2& VectorPacked2::operator=(const Vector2& vector)
-{
-	vector.pack(this);
-	return *this;
-}
-
 Vector2::Vector2()
+	: x(0.0f)
+	, y(0.0f)
 {
-	mData[0] = 0.f;
-	mData[1] = 0.f;
 }
 
 Vector2::Vector2(const Vector2& v)
 {
-	mData[0] = v.mData[0];
-	mData[1] = v.mData[1];
+	set(v);
 }
 
-Vector2::Vector2(F32 s)
+Vector2::Vector2(const Vector3& v)
 {
-	mData[0] = s;
-	mData[1] = s;
+	set(v);
 }
 
-Vector2::Vector2(const F32* const a)
+Vector2::Vector2(const Vector4& v)
 {
-	mData[0] = a[0];
-	mData[1] = a[1];
+	set(v);
+}
+
+Vector2::Vector2(const F32 v[2])
+{
+	set(v);
 }
 
 Vector2::Vector2(F32 x, F32 y)
 {
-	mData[0] = x;
-	mData[1] = y;
+	set(x, y);
 }
 
-Vector2::Vector2(const VectorPacked2& vector)
+Vector2::Vector2(F32 s)
 {
-	mData[0] = vector.data[0];
-	mData[1] = vector.data[1];
+	set(s);
 }
 
-F32& Vector2::operator()(const U8 i)
+Vector2& Vector2::set(const Vector2& v)
 {
-	return mData[i];
+	std::memcpy(this, &v, sizeof(Vector2));
+	return *this;
 }
 
-const F32& Vector2::operator()(const U8 i) const
+Vector2& Vector2::set(const Vector3& v)
 {
-	return mData[i];
+	x = v.x;
+	y = v.y;
+	return *this;
 }
 
-F32& Vector2::operator[](const U8 i)
+Vector2& Vector2::set(const Vector4& v)
 {
-	return mData[i];
+	x = v.x;
+	y = v.y;
+	return *this;
 }
 
-const F32& Vector2::operator[](const U8 i) const
+Vector2& Vector2::set(const F32 v[2])
 {
-	return mData[i];
+	std::memcpy(&x, v, 2 * sizeof(F32));
+	return *this;
 }
 
-F32& Vector2::x()
+Vector2& Vector2::set(F32 x, F32 y)
 {
-	return mData[0];
+	this->x = x;
+	this->y = y;
+	return *this;
 }
 
-F32& Vector2::y()
+Vector2& Vector2::set(F32 s)
 {
-	return mData[1];
-}
-
-const F32& Vector2::x() const
-{
-	return mData[0];
-}
-
-const F32& Vector2::y() const
-{
-	return mData[1];
-}
-
-void Vector2::pack(VectorPacked2* vector) const
-{
-	vector->data[0] = mData[0];
-	vector->data[1] = mData[1];
+	x = s;
+	y = s;
+	return *this;
 }
 
 Vector2& Vector2::operator=(const Vector2& v)
 {
-	mData[0] = v.mData[0];
-	mData[1] = v.mData[1];
+	set(v);
 	return *this;
 }
 
 bool Vector2::operator==(const Vector2& v) const
 {
-	return Math::equals(mData[0], v.mData[0]) && Math::equals(mData[1], v.mData[1]);
+	return Math::equals(x, v.x) && Math::equals(y, v.y);
 }
 
 bool Vector2::operator!=(const Vector2& v) const
@@ -121,105 +97,140 @@ bool Vector2::operator!=(const Vector2& v) const
 	return !operator==(v);
 }
 
+const Vector2& Vector2::operator+() const
+{
+	return *this;
+}
+
 Vector2 Vector2::operator-() const
 {
-	return Vector2(-mData[0], -mData[1]);
+	return Vector2(-x, -y);
 }
 
 Vector2 Vector2::operator*(const Vector2& v) const
 {
-	return hadamardProduct(*this, v);
+	return Vector2(x * v.x, y * v.y);
 }
 
 Vector2 Vector2::operator/(const Vector2& v) const
 {
-	return Vector2(mData[0] / v.mData[0], mData[1] / v.mData[1]);
+	return Vector2(x / v.x, y / v.y);
 }
 
 Vector2 Vector2::operator+(const Vector2& v) const
 {
-	return Vector2(mData[0] + v.mData[0], mData[1] + v.mData[1]);
+	return Vector2(x + v.x, y + v.y);
 }
 
 Vector2 Vector2::operator-(const Vector2& v) const
 {
-	return Vector2(mData[0] - v.mData[0], mData[1] - v.mData[1]);
+	return Vector2(x - v.x, y - v.y);
 }
 
 Vector2 Vector2::operator*(F32 s) const
 {
-	return Vector2(mData[0] * s, mData[1] * s);
+	return Vector2(x * s, y * s);
 }
 
 Vector2 Vector2::operator/(F32 s) const
 {
-	return Vector2(mData[0] / s, mData[1] / s);
+	return Vector2(x / s, y / s);
 }
 
 Vector2 Vector2::operator+(F32 s) const
 {
-	return Vector2(mData[0] + s, mData[1] + s);
+	return Vector2(x + s, y + s);
 }
 
 Vector2 Vector2::operator-(F32 s) const
 {
-	return Vector2(mData[0] - s, mData[1] - s);
+	return Vector2(x - s, y - s);
 }
 
 Vector2& Vector2::operator*=(const Vector2& v)
 {
-	mData[0] *= v.mData[0];
-	mData[1] *= v.mData[1];
+	x *= v.x;
+	y *= v.y;
 	return *this;
 }
 
 Vector2& Vector2::operator/=(const Vector2& v)
 {
-	mData[0] /= v.mData[0];
-	mData[1] /= v.mData[1];
+	x /= v.x;
+	y /= v.y;
 	return *this;
 }
 
 Vector2& Vector2::operator+=(const Vector2& v)
 {
-	mData[0] += v.mData[0];
-	mData[1] += v.mData[1];
+	x += v.x;
+	y += v.y;
 	return *this;
 }
 
 Vector2& Vector2::operator-=(const Vector2& v)
 {
-	mData[0] -= v.mData[0];
-	mData[1] -= v.mData[1];
+	x -= v.x;
+	y -= v.y;
 	return *this;
 }
 
 Vector2& Vector2::operator*=(F32 s)
 {
-	mData[0] *= s;
-	mData[1] *= s;
+	x *= s;
+	y *= s;
 	return *this;
 }
 
 Vector2& Vector2::operator/=(F32 s)
 {
-	mData[0] /= s;
-	mData[1] /= s;
+	x /= s;
+	y /= s;
 	return *this;
 }
 
 Vector2& Vector2::operator+=(F32 s)
 {
-	mData[0] += s;
-	mData[1] += s;
+	x += s;
+	y += s;
 	return *this;
 }
 
 Vector2& Vector2::operator-=(F32 s)
 {
-	mData[0] -= s;
-	mData[1] -= s;
+	x -= s;
+	y -= s;
 	return *this;
+}
+
+bool Vector2::operator<(const Vector2& vec) const
+{
+	return (Math::equals(x, vec.x)) ? y < vec.y : x < vec.x;
+}
+
+bool Vector2::operator<=(const Vector2& vec) const
+{
+	return (Math::equals(x, vec.x)) ? y <= vec.y : x < vec.x;
+}
+
+bool Vector2::operator>(const Vector2& vec) const
+{
+	return !operator<=(vec);
+}
+
+bool Vector2::operator>=(const Vector2& vec) const
+{
+	return !operator<(vec);
+}
+
+Vector2::operator F32*()
+{
+	return &x;
+}
+
+Vector2::operator const F32*() const
+{
+	return &x;
 }
 
 Vector2 Vector2::toVector2() const
@@ -229,82 +240,166 @@ Vector2 Vector2::toVector2() const
 
 Vector3 Vector2::toVector3() const
 {
-	return Vector3(mData[0], mData[1], 0.f);
+	return Vector3(x, y, 0.0f);
 }
 
 Vector4 Vector2::toVector4() const
 {
-	return Vector4(mData[0], mData[1], 0.f, 1.f);
+	return Vector4(x, y, 0.0f, 1.0f);
 }
 
 bool Vector2::isZero() const
 {
-	return Math::equals(mData[0], 0.f) && Math::equals(mData[1], 0.f);
+	return Math::equals(x, 0.0f) && Math::equals(y, 0.0f);
 }
 
-F32 Vector2::getLengthSquared() const
+F32 Vector2::getSquaredLength() const
 {
-	return dotProduct(*this, *this);
+	return x * x + y * y;
 }
 
 F32 Vector2::getLength() const
 {
-	return Math::sqrt(getLengthSquared());
-}
-
-void Vector2::setLength(F32 length)
-{
-	ASSERT(!isZero());
-	const F32 actualLength = getLength();
-	*this *= (length / actualLength);
-}
-
-F32 Vector2::normalize()
-{
-	const F32 length = getLength();
-	ASSERT(length > 0.f);
-	*this *= (1.f / length);
-	return length;
-}
-
-Vector2 Vector2::normalized() const
-{
-	const F32 length = getLength();
-	ASSERT(length > 0.f);
-	return *this / length;
+	return Math::sqrt(getSquaredLength());
 }
 
 F32 Vector2::getPolarAngle() const
 {
-	return Math::atan2(mData[1], mData[0]);
+	return Math::atan2(y, x);
 }
 
-void Vector2::setPolarAngle(F32 angle)
+Vector2& Vector2::setLength(F32 length, F32* oldLength)
+{
+	const F32 actualLength = getLength();
+	ASSERT(actualLength > 0.0f);
+	*this *= (length / actualLength);
+	
+	if (oldLength != nullptr)
+	{
+		*oldLength = actualLength;
+	}
+
+	return *this;
+}
+
+Vector2& Vector2::normalize(F32* oldLength)
+{
+	return setLength(1.0f, oldLength);
+}
+
+Vector2& Vector2::setPolarAngle(F32 angle)
 {
 	const F32 length = getLength();
-	mData[0] = Math::cos(angle) * length;
-	mData[1] = Math::sin(angle) * length;
+	x = Math::cos(angle) * length;
+	y = Math::sin(angle) * length;
+	return *this;
 }
 
-void Vector2::rotate(F32 angle)
+Vector2& Vector2::rotate(F32 angle)
 {
 	const F32 c = Math::cos(angle);
 	const F32 s = Math::sin(angle);
-	const F32 tx = c * mData[0] - s * mData[1];
-	mData[1] = s * mData[0] + c * mData[1];
-	mData[0] = tx;
+	const F32 tx = c * x - s * y;
+	y = s * x + c * y;
+	x = tx;
+	return *this;
 }
 
-Vector2 Vector2::rotated(F32 angle)
+Vector2 Vector2::getNormal(F32* oldLength) const
+{
+	return Vector2(*this).normalize(oldLength);
+}
+
+Vector2 Vector2::getRotated(F32 angle) const
 {
 	const F32 c = Math::cos(angle);
 	const F32 s = Math::sin(angle);
-	return Vector2(c * mData[0] - s * mData[1], s * mData[0] + c * mData[1]);
+	return Vector2(c * x - s * y, s * x + c * y);
 }
 
-Vector2 Vector2::normalized(F32 angle)
+Vector2& Vector2::makeZero()
 {
-	return Vector2(Math::cos(angle), Math::sin(angle));
+	set(0.0f, 0.0f);
+	return *this;
+}
+
+Vector2& Vector2::makeOne()
+{
+	set(1.0f, 1.0f);
+	return *this;
+}
+
+Vector2& Vector2::makeAxisX()
+{
+	set(1.0f, 0.0f);
+	return *this;
+}
+
+Vector2& Vector2::makeAxisY()
+{
+	set(0.0f, 1.0f);
+	return *this;
+}
+
+Vector2& Vector2::minimize(const Vector2& min)
+{
+	if (min.x < x)
+	{
+		x = min.x;
+	}
+	if (min.y < y)
+	{
+		y = min.y;
+	}
+	return *this;
+}
+
+Vector2& Vector2::maximize(const Vector2& max)
+{
+	if (max.x > x)
+	{
+		x = max.x;
+	}
+	if (max.y > y)
+	{
+		y = max.y;
+	}
+	return *this;
+}
+
+F32 Vector2::dotProduct(const Vector2& v) const
+{
+	return x * v.x + y * v.y;
+}
+
+F32 Vector2::absDotProduct(const Vector2& v) const
+{
+	return Math::abs(x * v.x) + Math::abs(y * v.y);
+}
+
+F32 Vector2::squaredDistance(const Vector2& v) const
+{
+	return (*this - v).getSquaredLength();
+}
+
+F32 Vector2::distance(const Vector2& v) const
+{
+	return Math::sqrt(squaredDistance(v));
+}
+
+F32 Vector2::angleBetween(const Vector2& v) const
+{
+	return v.getPolarAngle() - getPolarAngle();
+}
+
+F32 Vector2::crossProduct(const Vector2& v) const
+{
+	return x * v.y - y * v.x;
+}
+
+Vector2 Vector2::hadamardProduct(const Vector2& v) const
+{
+	return Vector2(x * v.x, y * v.y);
 }
 
 Vector2 Vector2::polarVector(F32 angle, F32 length)
@@ -312,35 +407,45 @@ Vector2 Vector2::polarVector(F32 angle, F32 length)
 	return Vector2(Math::cos(angle) * length, Math::sin(angle) * length);
 }
 
-F32 Vector2::polarAngle(const Vector2& v1, const Vector2& v2)
-{
-	return Math::atan2(crossProduct(v1, v2), dotProduct(v1, v2));
-}
-
 F32 Vector2::dotProduct(const Vector2& v1, const Vector2& v2)
 {
-	return v1.mData[0] * v2.mData[0] + v1.mData[1] * v2.mData[1];
+	return v1.dotProduct(v2);
 }
 
-Vector2 Vector2::hadamardProduct(const Vector2& v1, const Vector2& v2)
+F32 Vector2::absDotProduct(const Vector2& v1, const Vector2& v2)
 {
-	return Vector2(v1.mData[0] * v2.mData[0], v1.mData[1] * v2.mData[1]);
+	return v1.absDotProduct(v2);
 }
 
-F32 Vector2::crossProduct(const Vector2& v1, const Vector2& v2)
+F32 Vector2::squaredDistance(const Vector2& v1, const Vector2& v2)
 {
-	return v1.mData[0] * v2.mData[1] - v1.mData[1] * v2.mData[0];
+	return v1.squaredDistance(v2);
 }
 
 F32 Vector2::distance(const Vector2& v1, const Vector2& v2)
 {
-	return (v1 - v2).getLength();
+	return v1.distance(v2);
 }
 
-Vector2 Vector2::lerp(const Vector2& v1, const Vector2& v2, F32 percent)
+F32 Vector2::angleBetween(const Vector2& v1, const Vector2& v2)
+{
+	return v1.angleBetween(v2);
+}
+
+F32 Vector2::crossProduct(const Vector2& v1, const Vector2& v2)
+{
+	return v1.crossProduct(v2);
+}
+
+Vector2 Vector2::hadamardProduct(const Vector2& v1, const Vector2& v2)
+{
+	return v1.hadamardProduct(v2);
+}
+
+Vector2 Vector2::lerp(const Vector2& start, const Vector2& end, F32 percent)
 {
 	const F32 omp = 1.f - percent;
-	return Vector2(omp * v1.mData[0] + percent * v2.mData[0], omp * v1.mData[1] + percent * v2.mData[1]);
+	return Vector2(omp * start.x + percent * end.x, omp * start.y + percent * end.y);
 }
 
 const U8 Vector2::dim()
@@ -348,24 +453,24 @@ const U8 Vector2::dim()
 	return 2;
 }
 
-const Vector2 Vector2::zeros()
+const Vector2 Vector2::zero()
 {
-	return Vector2(0.f, 0.f);
+	return Vector2(0.0f, 0.0f);
 }
 
-const Vector2 Vector2::ones()
+const Vector2 Vector2::one()
 {
-	return Vector2(1.f, 1.f);
+	return Vector2(1.0f, 1.0f);
 }
 
 const Vector2 Vector2::axisX()
 {
-	return Vector2(1.f, 0.f);
+	return Vector2(1.0f, 0.0f);
 }
 
 const Vector2 Vector2::axisY()
 {
-	return Vector2(0.f, 1.f);
+	return Vector2(0.0f, 1.0f);
 }
 
 Vector2 operator*(F32 s, const Vector2& v)
@@ -381,16 +486,6 @@ Vector2 operator+(F32 s, const Vector2& v)
 Vector2 operator-(F32 s, const Vector2& v)
 {
 	return v - s;
-}
-
-F32 dot(const Vector2& v1, const Vector2& v2)
-{
-	return Vector2::dotProduct(v1, v2);
-}
-
-Vector2 normalize(const Vector2& v)
-{
-	return v.normalized();
 }
 
 } // namespace oe

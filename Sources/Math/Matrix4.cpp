@@ -1,129 +1,148 @@
 #include "Matrix4.hpp"
-#include "Matrix3.hpp"
+#include "Quaternion.hpp"
+
+// TODO : Speed up all calculation for Affine Matrix
 
 namespace oe
 {
 
 Matrix4::Matrix4()
-	: mData()
+	: m11(0.0f)
+	, m12(0.0f)
+	, m13(0.0f)
+	, m14(0.0f)
+	, m21(0.0f)
+	, m22(0.0f)
+	, m23(0.0f)
+	, m24(0.0f)
+	, m31(0.0f)
+	, m32(0.0f)
+	, m33(0.0f)
+	, m34(0.0f)
+	, m41(0.0f)
+	, m42(0.0f)
+	, m43(0.0f)
+	, m44(0.0f)
 {
+}
+
+Matrix4::Matrix4(const F32 m[16])
+{
+	set(m);
 }
 
 Matrix4::Matrix4(const Matrix4& m)
 {
-	mData[0] = m.mData[0];
-	mData[1] = m.mData[1];
-	mData[2] = m.mData[2];
-	mData[3] = m.mData[3];
+	set(m);
+}
+
+Matrix4::Matrix4(F32 a11, F32 a12, F32 a13, F32 a14, F32 a21, F32 a22, F32 a23, F32 a24, F32 a31, F32 a32, F32 a33, F32 a34, F32 a41, F32 a42, F32 a43, F32 a44)
+{
+	set(a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44);
 }
 
 Matrix4::Matrix4(F32 s)
 {
-	mData[0] = Vector4(s);
-	mData[1] = Vector4(s);
-	mData[2] = Vector4(s);
-	mData[3] = Vector4(s);
+	set(s);
 }
 
-Matrix4::Matrix4(F32 s00, F32 s10, F32 s20, F32 s30, F32 s01, F32 s11, F32 s21, F32 s31, F32 s02, F32 s12, F32 s22, F32 s32, F32 s03, F32 s13, F32 s23, F32 s33)
+Matrix4& Matrix4::set(const F32 m[16])
 {
-	mData[0] = Vector4(s00, s10, s20, s30);
-	mData[1] = Vector4(s01, s11, s21, s31);
-	mData[2] = Vector4(s02, s12, s22, s32);
-	mData[3] = Vector4(s03, s13, s23, s33);
+	std::memcpy(&m11, m, 16 * sizeof(F32));
+	return *this;
 }
 
-Matrix4::Matrix4(const Vector4& column0, const Vector4& column1, const Vector4& column2, const Vector4& column3)
+Matrix4& Matrix4::set(const Matrix4& m)
 {
-	mData[0] = column0;
-	mData[1] = column1;
-	mData[2] = column2;
-	mData[3] = column3;
+	std::memcpy(this, &m, sizeof(Matrix4));
+	return *this;
 }
 
-Matrix4::Matrix4(const F32* const a)
+Matrix4& Matrix4::set(F32 a11, F32 a12, F32 a13, F32 a14, F32 a21, F32 a22, F32 a23, F32 a24, F32 a31, F32 a32, F32 a33, F32 a34, F32 a41, F32 a42, F32 a43, F32 a44)
 {
-	mData[0] = Vector4(&a[0]);
-	mData[1] = Vector4(&a[4]);
-	mData[2] = Vector4(&a[8]);
-	mData[3] = Vector4(&a[16]);
+	m11 = a11;
+	m12 = a12;
+	m13 = a13;
+	m14 = a14;
+	m21 = a21;
+	m22 = a22;
+	m23 = a23;
+	m24 = a24;
+	m31 = a31;
+	m32 = a32;
+	m33 = a33;
+	m34 = a34;
+	m41 = a41;
+	m42 = a42;
+	m43 = a43;
+	m44 = a44;
+	return *this;
 }
 
-Matrix4::Matrix4(const VectorPacked4* vectors)
+Matrix4& Matrix4::set(F32 s)
 {
-	mData[0] = Vector4(vectors[0]);
-	mData[1] = Vector4(vectors[1]);
-	mData[2] = Vector4(vectors[2]);
-	mData[3] = Vector4(vectors[3]);
+	m11 = s;
+	m12 = s;
+	m13 = s;
+	m14 = s;
+	m21 = s;
+	m22 = s;
+	m23 = s;
+	m24 = s;
+	m31 = s;
+	m32 = s;
+	m33 = s;
+	m34 = s;
+	m41 = s;
+	m42 = s;
+	m43 = s;
+	m44 = s;
+	return *this;
 }
 
-F32& Matrix4::operator()(const U8 row, const U8 column)
+Matrix4::operator F32*()
 {
-	return mData[column][row];
+	return &m11;
 }
 
-const F32& Matrix4::operator()(const U8 row, const U8 column) const
+Matrix4::operator const F32*() const
 {
-	return mData[column][row];
+	return &m11;
 }
 
-F32& Matrix4::operator()(const U8 i)
+F32& Matrix4::operator()(const U8 i, const U8 j)
 {
-	return operator[](i);
+	return (&m11)[j * 4 + i];
 }
 
-const F32& Matrix4::operator()(const U8 i) const
+const F32& Matrix4::operator()(const U8 i, const U8 j) const
 {
-	return operator[](i);
+	return (&m11)[j * 4 + i];
 }
 
-F32& Matrix4::operator[](const U8 i)
+Vector4 Matrix4::getColumn(const U8 i) const
 {
-	return reinterpret_cast<F32*>(mData)[i];
+	ASSERT(i <= 3);
+	return Vector4((&m11)[i], (&m11)[i + 4], (&m11)[i + 8], (&m11)[i + 12]);
 }
 
-const F32& Matrix4::operator[](const U8 i) const
+Vector4 Matrix4::getRow(const U8 j) const
 {
-	return const_cast<Matrix4*>(this)->operator[](i);
-}
-
-void Matrix4::pack(VectorPacked4* vector) const
-{
-	getColumn(0).pack(&vector[0]);
-	getColumn(1).pack(&vector[1]);
-	getColumn(2).pack(&vector[2]);
-	getColumn(3).pack(&vector[3]);
-}
-
-Vector4& Matrix4::getColumn(const U8 i)
-{
-	return mData[i];
-}
-
-const Vector4& Matrix4::getColumn(const U8 i) const
-{
-	return mData[i];
-}
-
-Vector4 Matrix4::getRow(const U8 i) const
-{
-	return Vector4(mData[0][i], mData[1][i], mData[2][i], mData[3][i]);
+	ASSERT(j <= 3);
+	return Vector4((&m11) + j * 4);
 }
 
 Matrix4& Matrix4::operator=(const Matrix4& m)
 {
-	for (U8 i = 0; i < 4; i++)
-	{
-		mData[i] = m.mData[i];
-	}
+	set(m);
 	return *this;
 }
 
 bool Matrix4::operator==(const Matrix4& m) const
 {
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		if (mData[i] != m.mData[i])
+		if (!Math::equals((&m11)[i], (&m.m11)[i]))
 		{
 			return false;
 		}
@@ -136,12 +155,17 @@ bool Matrix4::operator!=(const Matrix4 & m) const
 	return !operator==(m);
 }
 
+const Matrix4& Matrix4::operator+() const
+{
+	return *this;
+}
+
 Matrix4 Matrix4::operator-() const
 {
 	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		result.mData[i] = -mData[i];
+		(&result.m11)[i] = -(&m11)[i];
 	}
 	return result;
 }
@@ -149,9 +173,9 @@ Matrix4 Matrix4::operator-() const
 Matrix4 Matrix4::operator+(const Matrix4& m) const
 {
 	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		result.mData[i] = mData[i] + m.mData[i];
+		(&result.m11)[i] = (&m11)[i] + (&m.m11)[i];
 	}
 	return result;
 }
@@ -159,9 +183,9 @@ Matrix4 Matrix4::operator+(const Matrix4& m) const
 Matrix4 Matrix4::operator-(const Matrix4& m) const
 {
 	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		result.mData[i] = mData[i] - m.mData[i];
+		(&result.m11)[i] = (&m11)[i] - (&m.m11)[i];
 	}
 	return result;
 }
@@ -169,9 +193,9 @@ Matrix4 Matrix4::operator-(const Matrix4& m) const
 Matrix4 Matrix4::operator+(const F32& s) const
 {
 	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		result.mData[i] = mData[i] + s;
+		(&result.m11)[i] = (&m11)[i] + s;
 	}
 	return result;
 }
@@ -179,9 +203,9 @@ Matrix4 Matrix4::operator+(const F32& s) const
 Matrix4 Matrix4::operator-(const F32& s) const
 {
 	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		result.mData[i] = mData[i] - s;
+		(&result.m11)[i] = (&m11)[i] - s;
 	}
 	return result;
 }
@@ -189,391 +213,623 @@ Matrix4 Matrix4::operator-(const F32& s) const
 Matrix4 Matrix4::operator*(const F32& s) const
 {
 	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		result.mData[i] = mData[i] * s;
+		(&result.m11)[i] = (&m11)[i] * s;
 	}
 	return result;
 }
 
 Matrix4 Matrix4::operator/(const F32& s) const
 {
-	return (*this) * (1.f / s);
+	return (*this) * (1.0f / s);
 }
 
 Matrix4 Matrix4::operator*(const Matrix4& m) const
 {
-	Matrix4 out;
-	{
-		Vector4 row(getRow(0));
-		out[0] = Vector4::dotProduct(m.getColumn(0), row);
-		out[4] = Vector4::dotProduct(m.getColumn(1), row);
-		out[8] = Vector4::dotProduct(m.getColumn(2), row);
-		out[12] = Vector4::dotProduct(m.getColumn(3), row);
-	}
-	{
-		Vector4 row(getRow(1));
-		out[1] = Vector4::dotProduct(m.getColumn(0), row);
-		out[5] = Vector4::dotProduct(m.getColumn(1), row);
-		out[9] = Vector4::dotProduct(m.getColumn(2), row);
-		out[13] = Vector4::dotProduct(m.getColumn(3), row);
-	}
-	{
-		Vector4 row(getRow(2));
-		out[2] = Vector4::dotProduct(m.getColumn(0), row);
-		out[6] = Vector4::dotProduct(m.getColumn(1), row);
-		out[10] = Vector4::dotProduct(m.getColumn(2), row);
-		out[14] = Vector4::dotProduct(m.getColumn(3), row);
-	}
-	{
-		Vector4 row(getRow(3));
-		out[3] = Vector4::dotProduct(m.getColumn(0), row);
-		out[7] = Vector4::dotProduct(m.getColumn(1), row);
-		out[11] = Vector4::dotProduct(m.getColumn(2), row);
-		out[15] = Vector4::dotProduct(m.getColumn(3), row);
-	}
-	return out;
+	return Matrix4(m11 * m.m11 + m12 * m.m21 + m13 * m.m31 + m14 * m.m41,
+		           m11 * m.m12 + m12 * m.m22 + m13 * m.m32 + m14 * m.m42,
+		           m11 * m.m13 + m12 * m.m23 + m13 * m.m33 + m14 * m.m43,
+		           m11 * m.m14 + m12 * m.m24 + m13 * m.m34 + m14 * m.m44,
+		           m21 * m.m11 + m22 * m.m21 + m23 * m.m31 + m24 * m.m41,
+		           m21 * m.m12 + m22 * m.m22 + m23 * m.m32 + m24 * m.m42,
+		           m21 * m.m13 + m22 * m.m23 + m23 * m.m33 + m24 * m.m43,
+		           m21 * m.m14 + m22 * m.m24 + m23 * m.m34 + m24 * m.m44,
+		           m31 * m.m11 + m32 * m.m21 + m33 * m.m31 + m34 * m.m41,
+		           m31 * m.m12 + m32 * m.m22 + m33 * m.m32 + m34 * m.m42,
+		           m31 * m.m13 + m32 * m.m23 + m33 * m.m33 + m34 * m.m43,
+		           m31 * m.m14 + m32 * m.m24 + m33 * m.m34 + m34 * m.m44,
+		           m41 * m.m11 + m42 * m.m21 + m43 * m.m31 + m44 * m.m41,
+		           m41 * m.m12 + m42 * m.m22 + m43 * m.m32 + m44 * m.m42,
+		           m41 * m.m13 + m42 * m.m23 + m43 * m.m33 + m44 * m.m43,
+		           m41 * m.m14 + m42 * m.m24 + m43 * m.m34 + m44 * m.m44);
 }
 
 Matrix4& Matrix4::operator+=(const Matrix4& m)
 {
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		mData[i] += m.mData[i];
+		(&m11)[i] += (&m.m11)[i];
 	}
 	return *this;
 }
 
 Matrix4& Matrix4::operator-=(const Matrix4& m)
 {
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		mData[i] -= m.mData[i];
+		(&m11)[i] -= (&m.m11)[i];
 	}
 	return *this;
 }
 
 Matrix4& Matrix4::operator+=(const F32& s)
 {
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		mData[i] += s;
+		(&m11)[i] += s;
 	}
 	return *this;
 }
 
 Matrix4& Matrix4::operator-=(const F32& s)
 {
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		mData[i] -= s;
+		(&m11)[i] -= s;
 	}
 	return *this;
 }
 
 Matrix4& Matrix4::operator*=(const F32& s)
 {
-	for (U8 i = 0; i < 4; i++)
+	for (U8 i = 0; i < 16; i++)
 	{
-		mData[i] *= s;
+		(&m11)[i] *= s;
 	}
 	return *this;
 }
 
 Matrix4& Matrix4::operator/=(const F32& s)
 {
-	return (*this) *= (1.f / s);
+	return (*this) *= (1.0f / s);
 }
 
 Matrix4& Matrix4::operator*=(const Matrix4& m)
 {
 	Matrix4 temp(*this * m);
-	return *this = temp;
+	return set(temp);
 }
 
-Matrix4 Matrix4::inversed() const
+Vector4 Matrix4::operator*(const Vector4& v) const
 {
-	// This will find the pivot element.
-	U8 pivot_elem;
-	Vector4 fabs_column(getColumn(0));
-	if (fabs_column[0] > fabs_column[1])
+	return transform(v);
+}
+
+Vector3 Matrix4::operator*(const Vector3& v) const
+{
+	return transform(v);
+}
+
+Vector2 Matrix4::operator*(const Vector2& v) const
+{
+	return transform(v);
+}
+
+Vector4 Matrix4::transform(const Vector4& v) const
+{
+	return Vector4(m11 * v.x + m12 * v.y + m13 * v.z + m14 * v.w,
+		           m21 * v.x + m22 * v.y + m23 * v.z + m24 * v.w,
+		           m31 * v.x + m32 * v.y + m33 * v.z + m34 * v.w,
+		           m41 * v.x + m42 * v.y + m43 * v.z + m44 * v.w);
+}
+
+Vector3 Matrix4::transform(const Vector3& v, F32 w) const
+{
+	return Vector3(m11 * v.x + m12 * v.y + m13 * v.z + m14 * w,
+		           m21 * v.x + m22 * v.y + m23 * v.z + m24 * w,
+		           m31 * v.x + m32 * v.y + m33 * v.z + m34 * w);
+}
+
+Vector2 Matrix4::transform(const Vector2& v, F32 z, F32 w) const
+{
+	return Vector2(m11 * v.x + m12 * v.y + m13 * z + m14 * w, 
+		           m21 * v.x + m22 * v.y + m23 * z + m24 * w);
+}
+
+Quaternion Matrix4::getRotation() const
+{
+	F32 trace = m11 + m22 + m33;
+	if (trace > 0.0f)
 	{
-		if (fabs_column[0] > fabs_column[2])
-		{
-			if (fabs_column[0] > fabs_column[3])
-			{
-				pivot_elem = 0;
-			}
-			else
-			{
-				pivot_elem = 3;
-			}
-		}
-		else if (fabs_column[2] > fabs_column[3])
-		{
-			pivot_elem = 2;
-		}
-		else
-		{
-			pivot_elem = 3;
-		}
+		const F32 s = 0.5f / Math::sqrt(trace + 1.0f);
+		return Quaternion((m32 - m23) * s, (m13 - m31) * s, (m21 - m12) * s, 0.25f / s);
 	}
-	else if (fabs_column[1] > fabs_column[2])
+	else if (m11 > m22 && m11 > m33)
 	{
-		if (fabs_column[1] > fabs_column[3])
-		{
-			pivot_elem = 1;
-		}
-		else
-		{
-			pivot_elem = 3;
-		}
+		const F32 s = 2.0f * Math::sqrt(1.0f + m11 - m22 - m33);
+		return Quaternion(0.25f * s, (m12 + m21) / s, (m13 + m31) / s, (m32 - m23) / s);
 	}
-	else if (fabs_column[2] > fabs_column[3])
+	else if (m22 > m33)
 	{
-		pivot_elem = 2;
-	}
-	else
-	{
-		pivot_elem = 3;
-	}
-	// This will perform the pivot and find the row, column, and 3x3 submatrix for this pivot.
-	Vector3 row;
-	Vector3 column;
-	Matrix3 matrix;
-	if (pivot_elem == 0)
-	{
-		row = Vector3((*this)[4], (*this)[8], (*this)[12]);
-		column = Vector3((*this)[1], (*this)[2], (*this)[3]);
-		matrix = Matrix3((*this)[5], (*this)[6], (*this)[7], (*this)[9], (*this)[10], (*this)[11], (*this)[13], (*this)[14], (*this)[15]);
-	}
-	else if (pivot_elem == 1)
-	{
-		row = Vector3((*this)[5], (*this)[9], (*this)[13]);
-		column = Vector3((*this)[0], (*this)[2], (*this)[3]);
-		matrix = Matrix3((*this)[4], (*this)[6], (*this)[7], (*this)[8], (*this)[10], (*this)[11], (*this)[12], (*this)[14], (*this)[15]);
-	}
-	else if (pivot_elem == 2)
-	{
-		row = Vector3((*this)[6], (*this)[10], (*this)[14]);
-		column = Vector3((*this)[0], (*this)[1], (*this)[3]);
-		matrix = Matrix3((*this)[4], (*this)[5], (*this)[7], (*this)[8], (*this)[9], (*this)[11], (*this)[12], (*this)[13], (*this)[15]);
+		const F32 s = 2.0f * Math::sqrt(1.0f + m22 - m11 - m33);
+		return Quaternion((m12 + m21) / s, 0.25f * s, (m23 + m32) / s, (m13 - m31) / s);
 	}
 	else
 	{
-		row = Vector3((*this)[7], (*this)[11], (*this)[15]);
-		column = Vector3((*this)[0], (*this)[1], (*this)[2]);
-		matrix = Matrix3((*this)[4], (*this)[5], (*this)[6], (*this)[8], (*this)[9], (*this)[10], (*this)[12], (*this)[13], (*this)[14]);
+		const F32 s = 2.0f * Math::sqrt(1.0f + m33 - m11 - m22);
+		return Quaternion((m13 + m31) / s, (m23 + m32) / s, 0.25f * s, (m21 - m12) / s);
 	}
-	F32 pivot_value = (*this)[pivot_elem];
-	if (fabs(pivot_value) < (1e-7f))
+}
+
+Vector3 Matrix4::getSquaredScale() const
+{
+	return Vector3(m11 * m11 + m21 * m21 + m31 * m31,  m12 * m12 + m22 * m22 + m32 * m32, m13 * m13 + m23 * m23 + m33 * m33);
+}
+
+Vector3 Matrix4::getScale() const
+{
+	Vector3 squaredScale = getSquaredScale();
+	return Vector3(Math::sqrt(squaredScale.x), Math::sqrt(squaredScale.y), Math::sqrt(squaredScale.z));
+}
+
+Vector3 Matrix4::getTranslation() const
+{
+	return Vector3(m14, m24, m34);
+}
+
+F32 Matrix4::getTrace() const
+{
+	return m11 + m22 + m33 + m44;
+}
+
+F32 Matrix4::getDeterminant() const
+{
+	// We will use the last row of the matrix
+	// Because if the matrix is affine it will be faster
+
+	// Compute det2x2
+	const F32 m22m33 = m22 * m33 - m32 * m23;
+	const F32 m21m33 = m21 * m33 - m31 * m23;
+	const F32 m21m32 = m21 * m32 - m31 * m22;
+
+	if (isAffine())
 	{
-		return Matrix4(0.f);
-	}
-	// This will compute the inverse using the row, column, and 3x3 submatrix.
-	F32 inv = -1.f / pivot_value;
-	row *= inv;
-	matrix += Matrix3::outerProduct(column, row);
-	Matrix3 mat_inverse(matrix.inversed());
-	Matrix3 error3(0.f);
-	if (mat_inverse == error3)
-	{
-		return Matrix4(0.f);
-	}
-	Vector3 col_inverse = mat_inverse * (column * inv);
-	Vector3 row_inverse = row * mat_inverse;
-	F32 pivot_inverse = Vector3::dotProduct(row, col_inverse) - inv;
-	if (pivot_elem == 0)
-	{
-		return Matrix4(pivot_inverse, col_inverse[0], col_inverse[1], col_inverse[2], row_inverse[0], mat_inverse[0], mat_inverse[1], mat_inverse[2], row_inverse[1], mat_inverse[3], mat_inverse[4], mat_inverse[5], row_inverse[2], mat_inverse[6], mat_inverse[7], mat_inverse[8]);
-	}
-	else if (pivot_elem == 1)
-	{
-		return Matrix4(row_inverse[0], mat_inverse[0], mat_inverse[1], mat_inverse[2], pivot_inverse, col_inverse[0], col_inverse[1], col_inverse[2], row_inverse[1], mat_inverse[3], mat_inverse[4], mat_inverse[5], row_inverse[2], mat_inverse[6], mat_inverse[7], mat_inverse[8]);
-	}
-	else if (pivot_elem == 2)
-	{
-		return Matrix4(row_inverse[0], mat_inverse[0], mat_inverse[1], mat_inverse[2], row_inverse[1], mat_inverse[3], mat_inverse[4], mat_inverse[5], pivot_inverse, col_inverse[0], col_inverse[1], col_inverse[2], row_inverse[2], mat_inverse[6], mat_inverse[7], mat_inverse[8]);
+		// If affine, the last row is full of zero except the last one
+		// Return the det of the 3x3
+		return m11 * m22m33 - m12 * m21m33 + m13 * m21m32;
 	}
 	else
 	{
-		return Matrix4(row_inverse[0], mat_inverse[0], mat_inverse[1], mat_inverse[2], row_inverse[1], mat_inverse[3], mat_inverse[4], mat_inverse[5], row_inverse[2], mat_inverse[6], mat_inverse[7], mat_inverse[8], pivot_inverse, col_inverse[0], col_inverse[1], col_inverse[2]);
+		// Compute det2x2, each det2x2 is used 2 times for the det3
+		const F32 m21m34 = m21 * m34 - m31 * m24;
+		const F32 m22m34 = m22 * m34 - m32 * m24;
+		const F32 m23m34 = m23 * m24 - m33 * m24;
+
+		// Compute det3x3
+		const F32 a = m12 * m23m34 - m13 * m22m34 + m14 * m22m33;
+		const F32 b = m11 * m23m34 - m13 * m21m34 + m14 * m21m33;
+		const F32 c = m11 * m22m34 - m12 * m21m34 + m14 * m21m32;
+		const F32 d = m11 * m22m33 - m12 * m21m33 + m13 * m21m32;
+
+		// Return the det of the 4x4
+		return a - b + c - d;
 	}
-	return Matrix4(0.f);
 }
 
-Matrix4 Matrix4::transposed() const
+bool Matrix4::getInverse(Matrix4* m) const
 {
-	Matrix4 transpose;
-	for (U8 i = 0; i < 4; i++)
+	// http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
+	if (m == nullptr)
 	{
-		for (U8 j = 0; j < 4; j++)
-		{
-			transpose.getColumn(j)[i] = getColumn(i)[j];
-		}
+		return false;
 	}
-	return transpose;
-}
-
-Vector2 Matrix4::translationVector2D() const
-{
-	return mData[3].toVector2();
-}
-
-Vector3 Matrix4::translationVector3D() const
-{
-	return mData[3].toVector3();
-}
-
-Vector4 Matrix4::translationVector4D() const
-{
-	return Vector4(mData[3]);
-}
-
-Matrix4 Matrix4::outerProduct(const Vector4& v1, const Vector4& v2)
-{
-	return Matrix4(v1[0] * v2[0], v1[1] * v2[0], v1[2] * v2[0], v1[3] * v2[0], v1[0] * v2[1], v1[1] * v2[1], v1[2] * v2[1], v1[3] * v2[1], v1[0] * v2[2], v1[1] * v2[2], v1[2] * v2[2], v1[3] * v2[2], v1[0] * v2[3], v1[1] * v2[3], v1[2] * v2[3], v1[3] * v2[3]);
-}
-
-Matrix4 Matrix4::hadamardProduct(const Matrix4& m1, const Matrix4& m2)
-{
-	Matrix4 result;
-	for (U8 i = 0; i < 4; i++)
+	F32 det = m->getDeterminant();
+	if (Math::equals(det, 0.0f))
 	{
-		result.mData[i] = m1.mData[i] * m2.mData[i];
+		return false;
 	}
-	return result;
-}
+	F32 com[16];
+	com[0] = m22 * m33 * m44 -
+		m22 * m34 * m43 -
+		m32 * m23 * m44 +
+		m32 * m24 * m43 +
+		m42 * m23 * m34 -
+		m42 * m24 * m33;
 
-Matrix4 Matrix4::identity()
-{
-	return Matrix4(1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f);
-}
+	com[1] = -m12 * m33 * m44 +
+		m12 * m34 * m43 +
+		m32 * m13 * m44 -
+		m32 * m14 * m43 -
+		m42 * m13 * m34 +
+		m42 * m14 * m33;
 
-Matrix4 Matrix4::fromTranslationVector(const Vector2& v)
-{
-	return Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, v[0], v[1], 0, 1);
-}
+	com[2] = m12 * m23 * m44 -
+		m12 * m24 * m43 -
+		m22 * m13 * m44 +
+		m22 * m14 * m43 +
+		m42 * m13 * m24 -
+		m42 * m14 * m23;
 
-Matrix4 Matrix4::fromTranslationVector(const Vector3& v)
-{
-	return Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, v[0], v[1], v[2], 1);
-}
+	com[3] = -m12 * m23 * m34 +
+		m12 * m24 * m33 +
+		m22 * m13 * m34 -
+		m22 * m14 * m33 -
+		m32 * m13 * m24 +
+		m32 * m14 * m23;
 
-Matrix4 Matrix4::fromTranslationVector(const Vector4& v)
-{
-	return Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, v[0], v[1], v[2], v[3]);
-}
+	com[4] = -m21 * m33 * m44 +
+		m21 * m34 * m43 +
+		m31 * m23 * m44 -
+		m31 * m24 * m43 -
+		m41 * m23 * m34 +
+		m41 * m24 * m33;
 
-Matrix4 Matrix4::fromScaleVector(const Vector3& v)
-{
-	Matrix4 return_matrix(identity());
-	for (U8 i = 0; i < 3; i++)
+	com[5] = m11 * m33 * m44 -
+		m11 * m34 * m43 -
+		m31 * m13 * m44 +
+		m31 * m14 * m43 +
+		m41 * m13 * m34 -
+		m41 * m14 * m33;
+
+	com[6] = -m11 * m23 * m44 +
+		m11 * m24 * m43 +
+		m21 * m13 * m44 -
+		m21 * m14 * m43 -
+		m41 * m13 * m24 +
+		m41 * m14 * m23;
+
+	com[7] = m11 * m23 * m34 -
+		m11 * m24 * m33 -
+		m21 * m13 * m34 +
+		m21 * m14 * m33 +
+		m31 * m13 * m24 -
+		m31 * m14 * m23;
+
+	com[8] = m21 * m32 * m44 -
+		m21 * m34 * m42 -
+		m31 * m22 * m44 +
+		m31 * m24 * m42 +
+		m41 * m22 * m34 -
+		m41 * m24 * m32;
+
+	com[9] = -m11 * m32 * m44 +
+		m11 * m34 * m42 +
+		m31 * m12 * m44 -
+		m31 * m14 * m42 -
+		m41 * m12 * m34 +
+		m41 * m14 * m32;
+
+	com[10] = m11 * m22 * m44 -
+		m11 * m24 * m42 -
+		m21 * m12 * m44 +
+		m21 * m14 * m42 +
+		m41 * m12 * m24 -
+		m41 * m14 * m22;
+
+	com[11] = -m11 * m22 * m34 +
+		m11 * m24 * m32 +
+		m21 * m12 * m34 -
+		m21 * m14 * m32 -
+		m31 * m12 * m24 +
+		m31 * m14 * m22;
+
+	com[12] = -m21 * m32 * m43 +
+		m21 * m33 * m42 +
+		m31 * m22 * m43 -
+		m31 * m23 * m42 -
+		m41 * m22 * m33 +
+		m41 * m23 * m32;
+
+	com[13] = m11 * m32 * m43 -
+		m11 * m33 * m42 -
+		m31 * m12 * m43 +
+		m31 * m13 * m42 +
+		m41 * m12 * m33 -
+		m41 * m13 * m32;
+
+	com[14] = -m11 * m22 * m43 +
+		m11 * m23 * m42 +
+		m21 * m12 * m43 -
+		m21 * m13 * m42 -
+		m41 * m12 * m23 +
+		m41 * m13 * m22;
+
+	com[15] = m11 * m22 * m33 -
+		m11 * m23 * m32 -
+		m21 * m12 * m33 +
+		m21 * m13 * m32 +
+		m31 * m12 * m23 -
+		m31 * m13 * m22;
+
+	F32 invDet = 1.0f / det;
+	for (U8 i = 0; i < 16; i++)
 	{
-		return_matrix(i, i) = v[i];
+		com[i] *= invDet;
 	}
-	return return_matrix;
+	m->set(com);
+	return true;
 }
 
-Matrix4 Matrix4::fromRotationMatrix(const Matrix3& m)
+Matrix4 Matrix4::getTransposed() const
 {
-	return Matrix4(m[0], m[1], m[2], 0, m[3], m[4], m[5], 0, m[6], m[7], m[8], 0.f, 0.f, 0.f, 0.f, 1.f);
+	return Matrix4(m11, m21, m31, m41,
+		           m12, m22, m32, m42,
+		           m13, m23, m33, m43,
+		           m14, m24, m34, m44);
 }
 
-/*
-Matrix4 Matrix4::fromAffineTransform(const MatrixAffine& affine)
+bool Matrix4::hasNegativeScale() const
 {
-	return Matrix4(affine[0], affine[4], affine[8], 0.f, affine[1], affine[5], affine[9], 0.f, affine[2], affine[6], affine[10], 0.f, affine[3], affine[7], affine[11], 1.f);
+	return getDeterminant() < 0.0f;
 }
 
-MatrixAffine Matrix4::toAffineTransform(const Matrix4& m)
+bool Matrix4::hasScale() const
 {
-	return MatrixAffine(m[0], m[4], m[8], m[12], m[1], m[5], m[9], m[13], m[2], m[6], m[10], m[14]);
-}
-*/
-
-Matrix4 Matrix4::rotationX(const Vector2& v)
-{
-	return fromRotationMatrix(Matrix3(1.f, 0.f, 0.f, 0.f, v.x(), v.y(), 0.f, -v.y(), v.x()));
+	return getSquaredScale() != Vector3::one();
 }
 
-Matrix4 Matrix4::rotationY(const Vector2& v)
+bool Matrix4::isAffine() const
 {
-	return fromRotationMatrix(Matrix3(v.x(), 0.f, -v.y(), 0.f, 1.f, 0.f, v.y(), 0.f, v.x()));
+	return Math::equals(m41, 0.0f) && Math::equals(m42, 0.0f) && Math::equals(m43, 0.0f) && Math::equals(m44, 1.0f);
 }
 
-Matrix4 Matrix4::rotationZ(const Vector2& v)
+bool Matrix4::isIdentity() const
 {
-	return fromRotationMatrix(Matrix3(v.x(), v.y(), 0.f, -v.y(), v.x(), 0.f, 0.f, 0.f, 1.f));
+	return (Math::equals(m11, 1.0f) && Math::equals(m12, 0.0f) && Math::equals(m13, 0.0f) && Math::equals(m14, 0.0f) &&
+		Math::equals(m21, 0.0f) && Math::equals(m22, 1.0f) && Math::equals(m23, 0.0f) && Math::equals(m24, 0.0f) &&
+		Math::equals(m31, 0.0f) && Math::equals(m32, 0.0f) && Math::equals(m33, 1.0f) && Math::equals(m34, 0.0f) &&
+		Math::equals(m41, 0.0f) && Math::equals(m42, 0.0f) && Math::equals(m43, 0.0f) && Math::equals(m44, 1.0f));
 }
 
-Matrix4 Matrix4::rotationX(F32 angle)
+Matrix4& Matrix4::inverse(bool* succeeded)
 {
-	return rotationX(Vector2(Math::cos(angle), Math::sin(angle)));
-}
-
-Matrix4 Matrix4::rotationY(F32 angle)
-{
-	return rotationY(Vector2(Math::cos(angle), Math::sin(angle)));
-}
-
-Matrix4 Matrix4::rotationZ(F32 angle)
-{
-	return rotationZ(Vector2(Math::cos(angle), Math::sin(angle)));
-}
-
-Matrix4 Matrix4::perspective(F32 fovy, F32 aspect, F32 znear, F32 zfar, F32 handedness)
-{
-	const F32 y = 1.f / Math::tan(fovy * 0.5f);
-	const F32 x = y / aspect;
-	const F32 zdist = (znear - zfar);
-	const F32 zfar_per_zdist = zfar / zdist;
-	return Matrix4(x, 0.f, 0.f, 0.f, 0.f, y, 0.f, 0.f, 0.f, 0.f, zfar_per_zdist * handedness, -1.f * handedness, 0.f, 0.f, 2.f * znear * zfar_per_zdist, 0.f);
-}
-
-Matrix4 Matrix4::ortho(F32 left, F32 right, F32 bottom, F32 top, F32 znear, F32 zfar, F32 handedness)
-{
-	return Matrix4(2.f / (right - left), 0.f, 0.f, 0.f, 0.f, 2.f / (top - bottom), 0.f, 0.f, 0.f, 0.f, -handedness * 2.f / (zfar - znear), 0.f, -(right + left) / (right - left), -(top + bottom) / (top - bottom), -(zfar + znear) / (zfar - znear), 1.f);
-}
-
-Matrix4 Matrix4::lookAt(const Vector3& at, const Vector3& eye, const Vector3& up, F32 handedness)
-{
-	Vector3 axes[4];
-	axes[2] = (at - eye).normalized();
-	axes[0] = Vector3::crossProduct(up, axes[2]).normalized();
-	axes[1] = Vector3::crossProduct(axes[2], axes[0]);
-	axes[3] = Vector3(handedness * Vector3::dotProduct(axes[0], eye), -Vector3::dotProduct(axes[1], eye), handedness * Vector3::dotProduct(axes[2], eye));
-	// Default calculation is left-handed (i.e. handedness=-1).
-	// Negate x and z axes for right-handed (i.e. handedness=+1) case.
-	const F32 neg = -handedness;
-	axes[0] *= neg;
-	axes[2] *= neg;
-	const Vector4 column0(axes[0][0], axes[1][0], axes[2][0], 0.f);
-	const Vector4 column1(axes[0][1], axes[1][1], axes[2][1], 0.f);
-	const Vector4 column2(axes[0][2], axes[1][2], axes[2][2], 0.f);
-	const Vector4 column3(axes[3], 1.f);
-	return Matrix4(column0, column1, column2, column3);
-}
-
-Vector3 Matrix4::unProject(const Vector3& window_coord, const Matrix4& model_view, const Matrix4& projection, const F32 window_width, const F32 window_height)
-{
-	Vector3 result;
-	if (window_coord.z() < 0.f || window_coord.z() > 1.f)
+	bool result = getInverse(this);
+	if (succeeded != nullptr)
 	{
-		// window_coord.z should be with in [0, 1]
-		// 0: near plane
-		// 1: far plane
-		return result;
+		*succeeded = result;
 	}
-	Matrix4 matrix = (projection * model_view).inversed();
-	Vector4 standardized = Vector4(2.f * (window_coord.x() - window_width) / window_width + 1.f, 2.f * (window_coord.y() - window_height) / window_height + 1.f, 2.f * window_coord.z() - 1.f, 1.f);
-	Vector4 multiply = matrix * standardized;
-	if (Math::equals(multiply.w(), 0.f))
-	{
-		return result;
-	}
-	result = multiply.xyz() / multiply.w();
-	return result;
+	return *this;
+}
+
+Matrix4& Matrix4::transpose()
+{
+	std::swap(m12, m21);
+	std::swap(m13, m31);
+	std::swap(m14, m41);
+	std::swap(m23, m32);
+	std::swap(m24, m42);
+	std::swap(m34, m43);
+	return *this;
+}
+
+Matrix4& Matrix4::setRotation(const Quaternion& rotation)
+{
+	const F32 x2 = rotation.x * rotation.x;
+	const F32 y2 = rotation.y * rotation.y;
+	const F32 z2 = rotation.z * rotation.z;
+	const F32 sx = rotation.w * rotation.x;
+	const F32 sy = rotation.w * rotation.y;
+	const F32 sz = rotation.w * rotation.z;
+	const F32 xz = rotation.x * rotation.z;
+	const F32 yz = rotation.y * rotation.z;
+	const F32 xy = rotation.x * rotation.y;
+
+	m11 = 1.0f - 2.0f * (y2 + z2);
+	m12 = 2.0f * (xy + sz);
+	m13 = 2.0f * (xz - sy);
+
+	m21 = 2.0f * (xy - sz);
+	m22 = 1.0f - 2.0f * (x2 + z2);
+	m23 = 2.0f * (sx + yz);
+
+	m31 = 2.0f * (sy + xz);
+	m32 = 2.0f * (yz - sx);
+	m33 = 1.0f - 2.0f * (x2 + y2);
+
+	return *this;
+}
+
+Matrix4& Matrix4::setScale(const Vector3& scale)
+{
+	m11 = scale.x;
+	m22 = scale.y;
+	m33 = scale.z;
+	return *this;
+}
+
+Matrix4& Matrix4::setTranslation(const Vector3& translation)
+{
+	m14 = translation.x;
+	m24 = translation.y;
+	m34 = translation.z;
+	return *this;
+}
+
+Matrix4& Matrix4::applyRotation(const Quaternion& rotation)
+{
+	return operator*=(Matrix4::rotate(rotation));
+}
+
+Matrix4& Matrix4::applyScale(const Vector3& scale)
+{
+	m11 *= scale.x;
+	m21 *= scale.x;
+	m31 *= scale.x;
+
+	m12 *= scale.y;
+	m22 *= scale.y;
+	m32 *= scale.y;
+
+	m13 *= scale.z;
+	m23 *= scale.z;
+	m33 *= scale.z;
+
+	return *this;
+}
+
+Matrix4& Matrix4::applyTranslation(const Vector3& translation)
+{
+	m14 += translation.x;
+	m24 += translation.y;
+	m34 += translation.z;
+
+	return *this;
+}
+
+Matrix4& Matrix4::makeRotation(const Quaternion& rotation)
+{
+	setRotation(rotation);
+	m14 = 0.0f;
+	m24 = 0.0f;
+	m34 = 0.0f;
+	m44 = 0.0f;
+	m43 = 0.0f;
+	m42 = 0.0f;
+	m41 = 0.0f;
+	return *this;
+}
+
+Matrix4& Matrix4::makeScale(const Vector3& scale)
+{
+	return set(scale.x, 0.0f, 0.0f, 0.0f, 0.0f, scale.y, 0.0f, 0.0f, 0.0f, 0.0f, scale.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix4& Matrix4::makeTranslation(const Vector3& translation)
+{
+	return set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f, translation.y, 0.0f, 0.0f, 1.0f, translation.z, 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix4& Matrix4::makeTransform(const Vector3& translation, const Quaternion& rotation)
+{
+	setTranslation(translation);
+	setRotation(rotation);
+
+	m41 = 0.0f;
+	m42 = 0.0f;
+	m43 = 0.0f;
+	m44 = 1.0f;
+
+	return *this;
+}
+
+Matrix4& Matrix4::makeTransform(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+{
+	return makeTransform(translation, rotation).applyScale(scale);
+}
+
+Matrix4& Matrix4::makeViewMatrix(const Vector3& translation, const Quaternion& rotation)
+{
+	// A view matrix must apply an inverse transformation of the 'world' matrix
+	Quaternion invRot = rotation.getConjugate(); // Inverse of the rotation
+	return makeTransform(-(invRot * translation), invRot);
+}
+
+Matrix4& Matrix4::makeLookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
+{
+	Vector3 a((target - eye).getNormal());
+	Vector3 b(a.crossProduct(up).getNormal());
+	Vector3 c(a.crossProduct(b));
+	Vector3 d(b.dotProduct(eye), -c.dotProduct(eye), a.dotProduct(eye));
+	return set(-a.x, -b.x, c.x, d.x,
+		       -a.y, -b.y, c.y, d.y, 
+		       -a.z, -b.z, c.z, d.z,
+		       0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix4& Matrix4::makeOrtho(F32 left, F32 right, F32 top, F32 bottom, F32 zNear, F32 zFar)
+{
+	return set(2.0f / (right - left), 0.0f, 0.0f, 0.0f, 
+		       0.0f, 2.0f / (top - bottom), 0.0f, 0.0f, 
+		       0.0f, 0.0f, 2.0f / (zNear - zFar), 0.0f,
+		       (left + right) / (left - right), (top + bottom) / (bottom - top), (zFar + zNear) / (zNear - zFar), 1.0f);
+}
+
+Matrix4& Matrix4::makeOrtho(F32 width, F32 height, F32 zNear, F32 zFar)
+{
+	return makeOrtho(width * -0.5f, width * 0.5f, height * 0.5f, height * -0.5f, zNear, zFar);
+}
+
+Matrix4& Matrix4::makePerspective(F32 angle, F32 ratio, F32 zNear, F32 zFar)
+{
+	const F32 y = Math::tan(90.f - angle * 0.5f);
+	const F32 x = y / ratio;
+	const F32 zDist = (zNear - zFar);
+	const F32 zFarzDist = zFar / zDist;
+	return set(x, 0.0f, 0.0f, 0.0f, 
+		       0.0f, y, 0.0f, 0.0f, 
+		       0.0f, 0.0f, zFarzDist, -1.0f, 
+		       0.0f, 0.0f, 2.0f * zNear * zFarzDist, 0.0f);
+}
+
+Matrix4& Matrix4::makeZero()
+{
+	return set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+Matrix4& Matrix4::makeIdentity()
+{
+	return set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+Matrix4 Matrix4::rotate(const Quaternion& rotation)
+{
+	return Matrix4().makeRotation(rotation);
+}
+
+Matrix4 Matrix4::scale(const Vector3& scale)
+{
+	return Matrix4().makeScale(scale);
+}
+
+Matrix4 Matrix4::translate(const Vector3& translation)
+{
+	return Matrix4().makeTranslation(translation);
+}
+
+Matrix4 Matrix4::transform(const Vector3& translation, const Quaternion& rotation)
+{
+	return Matrix4().makeTransform(translation, rotation);
+}
+
+Matrix4 Matrix4::transform(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
+{
+	return Matrix4().makeTransform(translation, rotation, scale);
+}
+
+Matrix4 Matrix4::viewMatrix(const Vector3& translation, const Quaternion& rotation)
+{
+	return Matrix4().makeViewMatrix(translation, rotation);
+}
+
+Matrix4 Matrix4::lookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
+{
+	return Matrix4().makeLookAt(eye, target, up);
+}
+
+Matrix4 Matrix4::ortho(F32 left, F32 right, F32 top, F32 bottom, F32 zNear, F32 zFar)
+{
+	return Matrix4().makeOrtho(left, right, top, bottom, zNear, zFar);
+}
+
+Matrix4 Matrix4::ortho(F32 width, F32 height, F32 zNear, F32 zFar)
+{
+	return Matrix4().makeOrtho(width, height, zNear, zFar);
+}
+
+Matrix4 Matrix4::perspective(F32 angle, F32 ratio, F32 zNear, F32 zFar)
+{
+	return Matrix4().makePerspective(angle, ratio, zNear, zFar);
+}
+
+const Matrix4 Matrix4::zero()
+{
+	return Matrix4(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+const Matrix4 Matrix4::identity()
+{
+	return Matrix4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 const U8 Matrix4::rows()
@@ -591,46 +847,19 @@ const U8 Matrix4::elements()
 	return 16;
 }
 
-Vector4 operator*(const Vector4& v, const Matrix4& m)
-{
-	Vector4 result;
-	for (U8 i = 0; i < 4; i++)
-	{
-		result[i] = Vector4::dotProduct(m.mData[i], v);
-	}
-	return result;
-}
-
-Matrix4 operator*(const F32& s, const Matrix4& m)
+Matrix4 operator*(F32 s, const Matrix4 & m)
 {
 	return m * s;
 }
 
-Vector4 operator*(const Matrix4& m, const Vector4& v)
+Matrix4 operator+(F32 s, const Matrix4& m)
 {
-	Vector4 result(0.f);
-	U8 offset = 0;
-	for (U8 column = 0; column < 4; column++)
-	{
-		for (U8 row = 0; row < 4; row++)
-		{
-			result[row] += m[offset + row] * v[column];
-		}
-		offset += 4;
-	}
-	return result;
+	return m + s;
 }
 
-Vector3 operator*(const Matrix4& m, const Vector3& v)
+Matrix4 operator-(F32 s, const Matrix4& m)
 {
-	Vector4 v4(m * v.toVector4());
-	return Vector3(v4[0] / v4[3], v4[1] / v4[3], v4[2] / v4[3]);
-}
-
-Vector2 operator*(const Matrix4& m, const Vector2& v)
-{
-	Vector4 v4(m * v.toVector4());
-	return Vector2(v4[0] / v4[3], v4[1] / v4[3]);
+	return (m - s) * 1.0f;
 }
 
 } // namespace oe

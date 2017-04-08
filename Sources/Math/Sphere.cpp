@@ -7,7 +7,7 @@ namespace oe
 
 Sphere::Sphere()
 	: mCenter()
-	, mRadius(1.f)
+	, mRadius(1.0f)
 {
 }
 
@@ -30,7 +30,7 @@ const Vector3& Sphere::getCenter() const
 
 void Sphere::setCenter(const Vector3& center)
 {
-	mCenter = center;
+	mCenter.set(center);
 }
 
 F32 Sphere::getRadius() const
@@ -51,12 +51,12 @@ AABB Sphere::getAABB() const
 
 bool Sphere::intersects(const Vector3& point) const
 {
-	return (point - mCenter).getLengthSquared() <= mRadius * mRadius;
+	return (point - mCenter).getSquaredLength() <= mRadius * mRadius;
 }
 
 bool Sphere::intersects(const Sphere& sphere) const
 {
-	return (sphere.mCenter - mCenter).getLengthSquared() <= (sphere.mRadius + mRadius) * (sphere.mRadius + mRadius);
+	return (sphere.mCenter - mCenter).getSquaredLength() <= (sphere.mRadius + mRadius) * (sphere.mRadius + mRadius);
 }
 
 bool Sphere::intersects(const Plane& plane) const
@@ -67,8 +67,8 @@ bool Sphere::intersects(const Plane& plane) const
 bool Sphere::intersects(const AABB& box) const
 {
 	// Use splitting planes
-	const Vector3& min = box.getMinimum();
-	const Vector3& max = box.getMaximum();
+	const Vector3& min(box.getMinimum());
+	const Vector3& max(box.getMaximum());
 	// Arvo's algorithm
 	F32 s;
 	F32 d = 0.f;

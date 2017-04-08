@@ -11,6 +11,11 @@ namespace oe
 class Math
 {
 	public:
+		static inline F32 abs(F32 x)
+		{
+			return std::abs(x);
+		}
+
 		static inline F32 lerp(F32 start, F32 end, F32 percent)
 		{
 			return start * (1.f - percent) + end * percent;

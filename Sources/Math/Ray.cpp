@@ -4,8 +4,8 @@ namespace oe
 {
 
 Ray::Ray()
-	: mOrigin(Vector3::zeros())
-	, mDirection(Vector3::zeros())
+	: mOrigin(Vector3::zero())
+	, mDirection(Vector3::zero())
 {
 }
 
@@ -62,7 +62,7 @@ std::pair<bool, F32> Ray::intersects(const Sphere& sphere) const
 	F32 radius = sphere.getRadius();
 
 	// Check origin inside first
-	if (diff.getLengthSquared() <= radius * radius)
+	if (diff.getSquaredLength() <= radius * radius)
 	{
 		return std::pair<bool, F32>(true, 0.f);
 	}
@@ -115,17 +115,17 @@ std::pair<bool, F32> Ray::intersects(const AABB& box) const
 	// Check origin inside first
 	if (box.intersects(mOrigin))
 	{
-		return std::pair<bool, F32>(true, 0.f);
+		return std::pair<bool, F32>(true, 0.0f);
 	}
 
 	// Check each face in turn, only check closest 3
 	// Min x
-	if (mOrigin.x() <= min.x() && mDirection.x() > 0.f)
+	if (mOrigin.x <= min.x && mDirection.x > 0.0f)
 	{
-		t = (min.x() - mOrigin.x()) / mDirection.x();
+		t = (min.x - mOrigin.x) / mDirection.x;
 		hitpoint = mOrigin + mDirection * t;
-		if (hitpoint.y() >= min.y() && hitpoint.y() <= max.y() &&
-			hitpoint.z() >= min.z() && hitpoint.z() <= max.z() &&
+		if (hitpoint.y >= min.y && hitpoint.y <= max.y &&
+			hitpoint.z >= min.z && hitpoint.z <= max.z &&
 			(!hit || t < lowt)) //-V560
 		{
 			hit = true;
@@ -133,12 +133,12 @@ std::pair<bool, F32> Ray::intersects(const AABB& box) const
 		}
 	}
 	// Max x
-	if (mOrigin.x() >= max.x() && mDirection.x() < 0.f)
+	if (mOrigin.x >= max.x && mDirection.x < 0.0f)
 	{
-		t = (max.x() - mOrigin.x()) / mDirection.x();
+		t = (max.x - mOrigin.x) / mDirection.x;
 		hitpoint = mOrigin + mDirection * t;
-		if (hitpoint.y() >= min.y() && hitpoint.y() <= max.y() &&
-			hitpoint.z() >= min.z() && hitpoint.z() <= max.z() &&
+		if (hitpoint.y >= min.y && hitpoint.y <= max.y &&
+			hitpoint.z >= min.z && hitpoint.z <= max.z &&
 			(!hit || t < lowt))
 		{
 			hit = true;
@@ -146,12 +146,12 @@ std::pair<bool, F32> Ray::intersects(const AABB& box) const
 		}
 	}
 	// Min y
-	if (mOrigin.y() <= min.y() && mDirection.y() > 0.f)
+	if (mOrigin.y <= min.y && mDirection.y > 0.0f)
 	{
-		t = (min.y() - mOrigin.y()) / mDirection.y();
+		t = (min.y - mOrigin.y) / mDirection.y;
 		hitpoint = mOrigin + mDirection * t;
-		if (hitpoint.x() >= min.x() && hitpoint.x() <= max.x() &&
-			hitpoint.z() >= min.z() && hitpoint.z() <= max.z() &&
+		if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
+			hitpoint.z >= min.z && hitpoint.z <= max.z &&
 			(!hit || t < lowt))
 		{
 			hit = true;
@@ -159,12 +159,12 @@ std::pair<bool, F32> Ray::intersects(const AABB& box) const
 		}
 	}
 	// Max y
-	if (mOrigin.y() >= max.y() && mDirection.y() < 0.f)
+	if (mOrigin.y >= max.y && mDirection.y < 0.0f)
 	{
-		t = (max.y() - mOrigin.y()) / mDirection.y();
+		t = (max.y - mOrigin.y) / mDirection.y;
 		hitpoint = mOrigin + mDirection * t;
-		if (hitpoint.x() >= min.x() && hitpoint.x() <= max.x() &&
-			hitpoint.z() >= min.z() && hitpoint.z() <= max.z() &&
+		if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
+			hitpoint.z >= min.z && hitpoint.z <= max.z &&
 			(!hit || t < lowt))
 		{
 			hit = true;
@@ -172,12 +172,12 @@ std::pair<bool, F32> Ray::intersects(const AABB& box) const
 		}
 	}
 	// Min z
-	if (mOrigin.z() <= min.z() && mDirection.z() > 0.f)
+	if (mOrigin.z <= min.z && mDirection.z > 0.0f)
 	{
-		t = (min.z() - mOrigin.z()) / mDirection.z();
+		t = (min.z - mOrigin.z) / mDirection.z;
 		hitpoint = mOrigin + mDirection * t;
-		if (hitpoint.x() >= min.x() && hitpoint.x() <= max.x() &&
-			hitpoint.y() >= min.y() && hitpoint.y() <= max.y() &&
+		if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
+			hitpoint.y >= min.y && hitpoint.y <= max.y &&
 			(!hit || t < lowt))
 		{
 			hit = true;
@@ -185,12 +185,12 @@ std::pair<bool, F32> Ray::intersects(const AABB& box) const
 		}
 	}
 	// Max z
-	if (mOrigin.z() >= max.z() && mDirection.z() < 0.f)
+	if (mOrigin.z >= max.z && mDirection.z < 0.0f)
 	{
-		t = (max.z() - mOrigin.z()) / mDirection.z();
+		t = (max.z - mOrigin.z) / mDirection.z;
 		hitpoint = mOrigin + mDirection * t;
-		if (hitpoint.x() >= min.x() && hitpoint.x() <= max.x() &&
-			hitpoint.y() >= min.y() && hitpoint.y() <= max.y() &&
+		if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
+			hitpoint.y >= min.y && hitpoint.y <= max.y &&
 			(!hit || t < lowt))
 		{
 			hit = true;
