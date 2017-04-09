@@ -24,9 +24,11 @@ class AudioSystem
 
 		ResourceId createMusic(const std::string& id, const std::string& filename);
 		MusicPtr playMusic(ResourceId id, bool loop = true);
+		MusicPtr playMusic(const std::string& id, bool loop = true);
 
 		ResourceId createSound(const std::string& id, const std::string& filename);
         SoundPtr playSound(ResourceId id);
+		SoundPtr playSound(const std::string& id);
 
         void play();
         void pause();

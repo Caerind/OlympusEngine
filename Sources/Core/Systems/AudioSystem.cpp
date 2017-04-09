@@ -39,6 +39,11 @@ AudioSystem::MusicPtr AudioSystem::playMusic(ResourceId id, bool loop)
     return nullptr;
 }
 
+AudioSystem::MusicPtr AudioSystem::playMusic(const std::string& id, bool loop)
+{
+	return playMusic(StringHash::hash(id));
+}
+
 ResourceId AudioSystem::createSound(const std::string& id, const std::string& filename)
 {
 	return mSoundBuffers.create(id, filename);
@@ -60,6 +65,11 @@ AudioSystem::SoundPtr AudioSystem::playSound(ResourceId id)
         return s;
     }
     return nullptr;
+}
+
+AudioSystem::SoundPtr AudioSystem::playSound(const std::string& id)
+{
+	return playSound(StringHash::hash(id));
 }
 
 void AudioSystem::play()

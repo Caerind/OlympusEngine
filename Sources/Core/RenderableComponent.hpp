@@ -27,6 +27,9 @@ class RenderableComponent : public SceneComponent
 		virtual void onSpawn();
 		virtual void onDestroy();
 
+		OeSlot(oe::Node, onNodeInvalidation, mInvalidationSlot);
+		OeSlot(oe::Node, onNodeInvalidationZ, mInvalidationZSlot);
+
 	protected:
 		sf::FloatRect mLocalAABB;
 		mutable sf::FloatRect mGlobalAABB;

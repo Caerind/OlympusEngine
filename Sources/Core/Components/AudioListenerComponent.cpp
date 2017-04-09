@@ -50,11 +50,11 @@ Vector3 AudioListenerComponent::getUpVector() const
 
 void AudioListenerComponent::onSpawn()
 {
-	onNodeInvalidation.connect([this](const Node* node)
+	mInvalidationSlot.connect(onNodeInvalidation, [this](const Node* node)
 	{
 		sf::Listener::setPosition(toSF(getGlobalPosition()));
 	});
-	onNodeInvalidationZ.connect([this](const Node* node)
+	mInvalidationZSlot.connect(onNodeInvalidationZ, [this](const Node* node)
 	{
 		sf::Listener::setPosition(toSF(getGlobalPosition()));
 	});
@@ -62,7 +62,8 @@ void AudioListenerComponent::onSpawn()
 
 void AudioListenerComponent::onDestroy()
 {
-	// TODO : Disconnect slots on destroy
+	mInvalidationSlot.disconnect();
+	mInvalidationZSlot.disconnect();
 }
 
 } // namespace oe

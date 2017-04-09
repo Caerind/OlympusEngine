@@ -26,6 +26,9 @@ class AudioListenerComponent : public SceneComponent
 
 		virtual void onSpawn();
 		virtual void onDestroy();
+
+		OeSlot(oe::Node, onNodeInvalidation, mInvalidationSlot);
+		OeSlot(oe::Node, onNodeInvalidationZ, mInvalidationZSlot);
 };
 
 } // namespace oe

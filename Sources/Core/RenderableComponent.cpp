@@ -51,12 +51,12 @@ RenderSystem& RenderableComponent::getRenderSystem()
 void RenderableComponent::onSpawn()
 {
 	getRenderSystem().registerRenderable(this);
-	onNodeInvalidation.connect([this](const Node* node)
+	mInvalidationSlot.connect(onNodeInvalidation, [this](const Node* node)
 	{
 		getRenderSystem().needUpdateOrderY();
 		mGlobalAABBUpdated = false;
 	});
-	onNodeInvalidationZ.connect([this](const Node* node)
+	mInvalidationZSlot.connect(onNodeInvalidationZ, [this](const Node* node)
 	{
 		getRenderSystem().needUpdateOrderZ();
 	});
@@ -65,7 +65,8 @@ void RenderableComponent::onSpawn()
 void RenderableComponent::onDestroy()
 {
 	getRenderSystem().unregisterRenderable(this);
-	// TODO : Disconnect slots on destroy
+	mInvalidationSlot.disconnect();
+	mInvalidationZSlot.disconnect();
 }
 
 } // namespace oe
