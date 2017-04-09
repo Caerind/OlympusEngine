@@ -39,9 +39,6 @@ class TextComponent : public RenderableComponent
 
 		virtual void render(sf::RenderTarget& target);
 
-		virtual void onSpawn();
-		virtual void onDestroy();
-
 	private:
 		sf::Text mText;
 		std::string mString;

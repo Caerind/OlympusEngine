@@ -53,14 +53,4 @@ void SpriteComponent::render(sf::RenderTarget& target)
 	target.draw(mSprite, getGlobalTransform());
 }
 
-void SpriteComponent::onSpawn()
-{
-	getRenderSystem().registerRenderable(this);
-}
-
-void SpriteComponent::onDestroy()
-{
-	getRenderSystem().unregisterRenderable(this);
-}
-
 } // namespace oe

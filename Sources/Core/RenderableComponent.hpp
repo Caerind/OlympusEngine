@@ -13,7 +13,6 @@ class RenderableComponent : public SceneComponent
 {
 	public:
 		RenderableComponent(Entity* entity);
-		virtual ~RenderableComponent();
 		
 		virtual void render(sf::RenderTarget& target);
 
@@ -24,6 +23,9 @@ class RenderableComponent : public SceneComponent
 		void setVisible(bool visible);
 
 		RenderSystem& getRenderSystem();
+
+		virtual void onSpawn();
+		virtual void onDestroy();
 
 	protected:
 		sf::FloatRect mLocalAABB;

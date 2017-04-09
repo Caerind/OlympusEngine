@@ -97,14 +97,4 @@ void TextComponent::render(sf::RenderTarget& target)
 	target.draw(mText, getGlobalTransform());
 }
 
-void TextComponent::onSpawn()
-{
-	getRenderSystem().registerRenderable(this);
-}
-
-void TextComponent::onDestroy()
-{
-	getRenderSystem().unregisterRenderable(this);
-}
-
 } // namespace oe

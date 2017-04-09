@@ -12,19 +12,6 @@ RenderableComponent::RenderableComponent(Entity* entity)
 	, mGlobalAABBUpdated(false)
 	, mVisible(true)
 {
-	onNodeInvalidation.connect([this](const Node* node)
-	{
-		getRenderSystem().needUpdateOrderY();
-		mGlobalAABBUpdated = false;
-	});
-	onNodeInvalidationZ.connect([this](const Node* node)
-	{
-		getRenderSystem().needUpdateOrderZ();
-	});
-}
-
-RenderableComponent::~RenderableComponent()
-{
 }
 
 void RenderableComponent::render(sf::RenderTarget& target)
@@ -59,6 +46,26 @@ void RenderableComponent::setVisible(bool visible)
 RenderSystem& RenderableComponent::getRenderSystem()
 {
 	return getWorld().getRenderSystem();
+}
+
+void RenderableComponent::onSpawn()
+{
+	getRenderSystem().registerRenderable(this);
+	onNodeInvalidation.connect([this](const Node* node)
+	{
+		getRenderSystem().needUpdateOrderY();
+		mGlobalAABBUpdated = false;
+	});
+	onNodeInvalidationZ.connect([this](const Node* node)
+	{
+		getRenderSystem().needUpdateOrderZ();
+	});
+}
+
+void RenderableComponent::onDestroy()
+{
+	getRenderSystem().unregisterRenderable(this);
+	// TODO : Disconnect slots on destroy
 }
 
 } // namespace oe

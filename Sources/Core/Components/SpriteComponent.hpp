@@ -26,9 +26,6 @@ class SpriteComponent : public RenderableComponent
 
 		virtual void render(sf::RenderTarget& target);
 
-		virtual void onSpawn();
-		virtual void onDestroy();
-
 	private:
 		sf::Sprite mSprite;
 };
