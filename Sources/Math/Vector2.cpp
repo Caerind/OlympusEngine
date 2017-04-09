@@ -1,6 +1,7 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
+#include "../System/Vector2i.hpp"
 
 namespace oe
 {
@@ -9,6 +10,11 @@ Vector2::Vector2()
 	: x(0.0f)
 	, y(0.0f)
 {
+}
+
+Vector2::Vector2(const Vector2i& v)
+{
+	set(v);
 }
 
 Vector2::Vector2(const Vector2& v)
@@ -39,6 +45,13 @@ Vector2::Vector2(F32 x, F32 y)
 Vector2::Vector2(F32 s)
 {
 	set(s);
+}
+
+Vector2& Vector2::set(const Vector2i& v)
+{
+	x = (F32)v.x;
+	y = (F32)v.y;
+	return *this;
 }
 
 Vector2& Vector2::set(const Vector2& v)
@@ -79,6 +92,11 @@ Vector2& Vector2::set(F32 s)
 	x = s;
 	y = s;
 	return *this;
+}
+
+Vector2& Vector2::operator=(const Vector2i& v)
+{
+	return set(v);
 }
 
 Vector2& Vector2::operator=(const Vector2& v)

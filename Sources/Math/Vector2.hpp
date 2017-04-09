@@ -6,7 +6,7 @@
 namespace oe 
 {
 
-class Vector2;
+class Vector2i;
 class Vector3;
 class Vector4;
 
@@ -14,6 +14,7 @@ class Vector2
 {
 	public:
 		Vector2();
+		Vector2(const Vector2i& v);
 		Vector2(const Vector2& v);
 		Vector2(const Vector3& v);
 		Vector2(const Vector4& v);
@@ -22,6 +23,7 @@ class Vector2
 		Vector2(F32 s);
 		~Vector2() = default;
 
+		Vector2& set(const Vector2i& v);
 		Vector2& set(const Vector2& v);
 		Vector2& set(const Vector3& v);
 		Vector2& set(const Vector4& v);
@@ -29,6 +31,7 @@ class Vector2
 		Vector2& set(F32 x, F32 y);
 		Vector2& set(F32 s);
 
+		Vector2& operator=(const Vector2i& v);
 		Vector2& operator=(const Vector2& v);
 		bool operator==(const Vector2& v) const;
 		bool operator!=(const Vector2& v) const;

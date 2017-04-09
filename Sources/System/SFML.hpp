@@ -5,6 +5,7 @@
 #include "../Math/Matrix4.hpp"
 #include "../Math/Vector2.hpp"
 #include "../Math/Vector3.hpp"
+#include "Vector2i.hpp"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -36,18 +37,23 @@ inline sf::Transform toSF(const Matrix4& transform)
 	                     transform(1, 0), transform(1, 1), transform(1, 3),
 						 transform(3, 0), transform(3, 1), transform(3, 3));
 }
+
+inline Vector2i toOE(const sf::Vector2u& vector)
+{
+	return Vector2i((I32)vector.x, (I32)vector.y);
+}
+inline Vector2i toOE(const sf::Vector2i& vector)
+{
+	return Vector2i(vector.x, vector.y);
+}
+inline sf::Vector2i toSF(const Vector2i& vector)
+{
+	return sf::Vector2i(vector.x, vector.y);
+}
 	
 inline Vector2 toOE(const sf::Vector2f& vector)
 {
 	return Vector2(vector.x, vector.y);
-}
-inline Vector2 toOE(const sf::Vector2u& vector)
-{
-	return Vector2((F32)vector.x, (F32)vector.y);
-}
-inline Vector2 toOE(const sf::Vector2i& vector)
-{
-	return Vector2((F32)vector.x, (F32)vector.y);
 }
 inline sf::Vector2f toSF(const Vector2& vector)
 {
