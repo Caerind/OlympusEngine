@@ -40,7 +40,15 @@ inline sf::Transform toSF(const Matrix4& transform)
 inline Vector2 toOE(const sf::Vector2f& vector)
 {
 	return Vector2(vector.x, vector.y);
-}	
+}
+inline Vector2 toOE(const sf::Vector2u& vector)
+{
+	return Vector2((F32)vector.x, (F32)vector.y);
+}
+inline Vector2 toOE(const sf::Vector2i& vector)
+{
+	return Vector2((F32)vector.x, (F32)vector.y);
+}
 inline sf::Vector2f toSF(const Vector2& vector)
 {
 	return sf::Vector2f(vector.x, vector.y);
