@@ -5,15 +5,17 @@
 namespace oe
 {
 
-template <> Application* Singleton<Application>::mSingleton = nullptr;
-
 Application::Application()
-	: mStates()
+	: mStates(*this)
 	, mWindow(sf::VideoMode(800,600), "OlympusEngine")
 	, mRunning(true)
 	, mFPSCounter(0)
 	, mUPSCounter(0)
 {
+	mWindowClosedSlot.connect(mWindow.onWindowClosed, [this](const Window* window)
+	{
+		stop();
+	});
 }
 
 Application::~Application()
@@ -77,17 +79,9 @@ void Application::run()
 void Application::stop()
 {
 	mRunning = false;
-}
-
-Application& Application::getSingleton()
-{
-	ASSERT(mSingleton != nullptr);
-	return *mSingleton;
-}
-
-Application* Application::getSingletonPtr()
-{
-	return mSingleton;
+	#ifdef OE_PLATFORM_ANDROID
+		// TODO : Android quit application
+	#endif
 }
 
 void Application::popState()
@@ -116,10 +110,6 @@ void Application::processEvents()
 	bool cont = true;
 	while (mWindow.pollEvent(event))
 	{
-		if (event.type == sf::Event::Closed)
-		{
-			stop();
-		}
 		cont = mStates.handleEvent(event);
 	}
 	if (!cont)
@@ -139,11 +129,11 @@ void Application::update(Time dt)
 void Application::render()
 {
 	mWindow.clear();
-	mStates.render(mWindow);
+	mStates.render(mWindow.getHandle());
 	mWindow.display();
 }
 
-sf::RenderWindow& Application::getWindow()
+Window& Application::getWindow()
 {
 	return mWindow;
 }

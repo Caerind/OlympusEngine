@@ -1,10 +1,11 @@
-#include "World.hpp"
 #include "StateManager.hpp"
+#include "Application.hpp"
 
 namespace oe
 {
 
-StateManager::StateManager()
+StateManager::StateManager(Application& application)
+	: mApplication(application)
 {
 }
 

@@ -1,6 +1,8 @@
 #ifndef OE_WORLD_HPP
 #define OE_WORLD_HPP
 
+#include "Application.hpp"
+
 #include "Entity.hpp"
 #include "EntityHandle.hpp"
 #include "EntityList.hpp"
@@ -21,7 +23,9 @@ namespace oe
 class World
 {
 	public:
-		World();
+		World(Application& application);
+
+		Application& getApplication();
 
 		void handleEvent(const sf::Event& event);
 		void update(Time dt);
@@ -53,7 +57,11 @@ class World
 	private:
 		static const U32 mMaxEntities = 1024;
 
+		OeSlot(oe::Window, onWindowLostFocus, mWindowLostFocus);
+		OeSlot(oe::Window, onWindowGainedFocus, mWindowGainedFocus);
+
 	private:
+		Application& mApplication;
 		Entity* mEntities[mMaxEntities];
 		EntityList mEntitiesSpawning;
 		EntityList mEntitiesPlaying;

@@ -5,7 +5,8 @@
 namespace oe
 {
 
-State::State()
+State::State(Application& application)
+	: mApplication(application)
 {
 }
 
@@ -37,12 +38,12 @@ void State::render(sf::RenderTarget& target)
 
 void State::popState()
 {
-	Application::getSingleton().popState();
+	mApplication.popState();
 }
 
 void State::clearStates()
 {
-	Application::getSingleton().clearStates();
+	mApplication.clearStates();
 }
 
 } // namespace oe

@@ -3,12 +3,33 @@
 namespace oe
 {
 
-World::World()
+World::World(Application& application)
+	: mApplication(application)
 {
 	for (U32 i = 0; i < mMaxEntities; i++)
 	{
 		mEntities[i] = nullptr;
 	}
+
+	mWindowLostFocus.connect(mApplication.getWindow().onWindowLostFocus, [this](const Window* window)
+	{
+		if (mAudioSystem.getStatus() != sf::SoundSource::Status::Paused)
+		{
+			mAudioSystem.pause();
+		}
+	});
+	mWindowGainedFocus.connect(mApplication.getWindow().onWindowGainedFocus, [this](const Window* window)
+	{
+		if (mAudioSystem.getStatus() == sf::SoundSource::Status::Paused)
+		{
+			mAudioSystem.play();
+		}
+	});
+}
+
+Application& World::getApplication()
+{
+	return mApplication;
 }
 
 void World::handleEvent(const sf::Event& event)

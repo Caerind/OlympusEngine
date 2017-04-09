@@ -45,7 +45,9 @@ BEGIN_TEST(Core)
 		class MyState : public oe::State
 		{
 			public:
-				MyState()
+				MyState(oe::Application& application) 
+					: oe::State(application)
+					, mWorld(application)
 				{
 					oe::ResourceId hero = mWorld.getTextures().create("hero", "Assets/hero.png");
 					oe::ResourceId font = mWorld.getFonts().create("font", "Assets/font.ttf");
@@ -96,7 +98,7 @@ BEGIN_TEST(Core)
 				{
 					mWorld.update();
 					mWorld.update(dt);
-					oe::Application::getSingleton().getWindow().setTitle("TestCore : " + oe::toString(oe::Application::getSingleton().getFPSCount()));
+					mApplication.getWindow().setTitle("TestCore : " + oe::toString(mApplication.getFPSCount()));
 					return false;
 				}
 
@@ -106,8 +108,8 @@ BEGIN_TEST(Core)
 				}
 
 			private:
-				oe::Clock mClock;
 				oe::World mWorld;
+				oe::Clock mClock;
 				oe::ResourceId mSelectSound;
 		};
 

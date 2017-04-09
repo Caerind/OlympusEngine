@@ -12,10 +12,12 @@
 namespace oe
 {
 
+class Application;
+
 class StateManager
 {
 	public:
-		StateManager();
+		StateManager(Application& application);
 		~StateManager();
 
 		bool handleEvent(const sf::Event& event);
@@ -48,6 +50,7 @@ class StateManager
 		bool applyPendingChanges();
 
 	private:
+		Application& mApplication;
 		std::vector<State::Ptr> mStates;
 		std::vector<PendingChange> mChanges;
 };
@@ -55,7 +58,7 @@ class StateManager
 template <typename T, typename ... Args>
 void StateManager::pushState(Args&& ... args)
 {
-	mChanges.emplace_back(Action::Push, std::make_shared<T>(std::forward<Args>(args)...));
+	mChanges.emplace_back(Action::Push, std::make_shared<T>(mApplication, std::forward<Args>(args)...));
 }
 
 } // namespace oe

@@ -17,7 +17,7 @@ class Application;
 class State
 {
 	public:
-		State();
+		State(Application& application);
 		virtual ~State();
 
 		using Ptr = std::shared_ptr<State>;
@@ -35,12 +35,15 @@ class State
 		void pushState(Args&& ... args);
 		void popState();
 		void clearStates();
+
+	protected:
+		Application& mApplication;
 };
 
 template <typename T, typename ... Args>
 void State::pushState(Args&& ... args)
 {
-	Application::getSingleton().pushState<T>(std::forward<Args>(args)...);
+	mApplication.pushState<T>(std::forward<Args>(args)...);
 }
 
 } // namespace oe
