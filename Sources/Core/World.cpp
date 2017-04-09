@@ -17,6 +17,7 @@ void World::handleEvent(const sf::Event& event)
 
 void World::update(Time dt)
 {
+	mAudioSystem.update();
 }
 
 void World::update()
@@ -64,6 +65,11 @@ U32 World::getEntitiesPlaying() const
 RenderSystem& World::getRenderSystem()
 {
 	return mRenderSystem;
+}
+
+AudioSystem& World::getAudioSystem()
+{
+	return mAudioSystem;
 }
 
 TextureHolder& World::getTextures()

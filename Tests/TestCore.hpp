@@ -49,6 +49,9 @@ BEGIN_TEST(Core)
 				{
 					oe::ResourceId hero = mWorld.getTextures().create("hero", "Assets/hero.png");
 					oe::ResourceId font = mWorld.getFonts().create("font", "Assets/font.ttf");
+					oe::ResourceId theme = mWorld.getAudioSystem().createMusic("theme", "Assets/theme.ogg");
+					mSelectSound = mWorld.getAudioSystem().createSound("select", "Assets/select.wav");
+
 					for (U32 i = 0; i < 100; i++)
 					{
 						oe::EntityHandle h = mWorld.createEntity<MyEntity>();
@@ -71,6 +74,8 @@ BEGIN_TEST(Core)
 							text.setVisible(false);
 						}
 					}
+
+					mWorld.getAudioSystem().playMusic(theme, true);
 				}
 
 				std::string getName()
@@ -80,6 +85,10 @@ BEGIN_TEST(Core)
 
 				bool handleEvent(const sf::Event& event)
 				{
+					if (event.type == sf::Event::KeyPressed)
+					{
+						mWorld.getAudioSystem().playSound(mSelectSound);
+					}
 					return false;
 				}
 
@@ -99,6 +108,7 @@ BEGIN_TEST(Core)
 			private:
 				oe::Clock mClock;
 				oe::World mWorld;
+				oe::ResourceId mSelectSound;
 		};
 
 		oe::Application app;

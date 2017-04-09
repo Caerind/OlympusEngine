@@ -6,6 +6,7 @@
 #include "EntityList.hpp"
 
 #include "Systems/RenderSystem.hpp"
+#include "Systems/AudioSystem.hpp"
 
 #include "../System/ResourceHolder.hpp"
 #include "../System/SFMLResources.hpp"
@@ -34,6 +35,7 @@ class World
 		U32 getEntitiesPlaying() const; // Playing only
 
 		RenderSystem& getRenderSystem();
+		AudioSystem& getAudioSystem();
 
 		TextureHolder& getTextures();
 		FontHolder& getFonts();
@@ -58,6 +60,7 @@ class World
 		EntityList mEntitiesKilled;
 
 		RenderSystem mRenderSystem;
+		AudioSystem mAudioSystem;
 
 		TextureHolder mTextures;
 		FontHolder mFonts;

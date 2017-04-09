@@ -1,16 +1,16 @@
-#include "AudioManager.hpp"
+#include "AudioSystem.hpp"
 
 namespace oe
 {
 
-AudioManager::AudioManager()
+AudioSystem::AudioSystem()
 	: mStatus(sf::SoundSource::Playing)
 	, mMusicVolume(100.0f)
 	, mSoundVolume(100.0f)
 {
 }
 
-ResourceId AudioManager::createMusic(const std::string& id, const std::string& filename)
+ResourceId AudioSystem::createMusic(const std::string& id, const std::string& filename)
 {
 	ResourceId index(StringHash::hash(id));
 	if (mMusicFilenames.find(index) == mMusicFilenames.end())
@@ -20,7 +20,7 @@ ResourceId AudioManager::createMusic(const std::string& id, const std::string& f
 	return index;
 }
 
-AudioManager::MusicPtr AudioManager::playMusic(ResourceId id, bool loop)
+AudioSystem::MusicPtr AudioSystem::playMusic(ResourceId id, bool loop)
 {
     if (mStatus != sf::SoundSource::Stopped && mMusicFilenames.find(id) != mMusicFilenames.end() && mMusics.size() < MAX_MUSIC)
     {
@@ -39,12 +39,12 @@ AudioManager::MusicPtr AudioManager::playMusic(ResourceId id, bool loop)
     return nullptr;
 }
 
-ResourceId AudioManager::createSound(const std::string& id, const std::string& filename)
+ResourceId AudioSystem::createSound(const std::string& id, const std::string& filename)
 {
 	return mSoundBuffers.create(id, filename);
 }
 
-AudioManager::SoundPtr AudioManager::playSound(ResourceId id)
+AudioSystem::SoundPtr AudioSystem::playSound(ResourceId id)
 {
     if (mStatus != sf::SoundSource::Stopped && mSoundBuffers.has(id) && mSounds.size() < MAX_SOUND)
     {
@@ -62,7 +62,7 @@ AudioManager::SoundPtr AudioManager::playSound(ResourceId id)
     return nullptr;
 }
 
-void AudioManager::play()
+void AudioSystem::play()
 {
     if (mStatus == sf::SoundSource::Paused)
     {
@@ -79,7 +79,7 @@ void AudioManager::play()
     }
 }
 
-void AudioManager::pause()
+void AudioSystem::pause()
 {
     if (mStatus == sf::SoundSource::Playing)
     {
@@ -96,7 +96,7 @@ void AudioManager::pause()
     }
 }
 
-void AudioManager::stop()
+void AudioSystem::stop()
 {
     if (mStatus != sf::SoundSource::Stopped)
     {
@@ -105,7 +105,7 @@ void AudioManager::stop()
     }
 }
 
-void AudioManager::update()
+void AudioSystem::update()
 {
     for (auto itr = mMusics.begin(); itr != mMusics.end();)
     {
@@ -131,12 +131,12 @@ void AudioManager::update()
     }
 }
 
-void AudioManager::setGlobalVolume(F32 volume)
+void AudioSystem::setGlobalVolume(F32 volume)
 {
     sf::Listener::setGlobalVolume(volume);
 }
 
-void AudioManager::setMusicVolume(F32 volume)
+void AudioSystem::setMusicVolume(F32 volume)
 {
     mMusicVolume = volume;
     for (auto itr = mMusics.begin(); itr != mMusics.end(); ++itr)
@@ -145,7 +145,7 @@ void AudioManager::setMusicVolume(F32 volume)
     }
 }
 
-void AudioManager::setSoundVolume(F32 volume)
+void AudioSystem::setSoundVolume(F32 volume)
 {
     mSoundVolume = volume;
     for (auto itr = mSounds.begin(); itr != mSounds.end(); ++itr)
@@ -154,22 +154,22 @@ void AudioManager::setSoundVolume(F32 volume)
     }
 }
 
-F32 AudioManager::getGlobalVolume() const
+F32 AudioSystem::getGlobalVolume() const
 {
 	return sf::Listener::getGlobalVolume();
 }
 
-F32 AudioManager::getMusicVolume() const
+F32 AudioSystem::getMusicVolume() const
 {
     return mMusicVolume;
 }
 
-F32 AudioManager::getSoundVolume() const
+F32 AudioSystem::getSoundVolume() const
 {
     return mSoundVolume;
 }
 
-sf::SoundSource::Status AudioManager::getStatus() const
+sf::SoundSource::Status AudioSystem::getStatus() const
 {
     return mStatus;
 }

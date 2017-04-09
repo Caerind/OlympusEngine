@@ -1,8 +1,8 @@
-#ifndef OE_AUDIOMANAGER_HPP
-#define OE_AUDIOMANAGER_HPP
+#ifndef OE_AUDIOSYSTEM_HPP
+#define OE_AUDIOSYSTEM_HPP
 
-#include "Prerequisites.hpp"
-#include "SFMLResources.hpp"
+#include "../../System/Prerequisites.hpp"
+#include "../../System/SFMLResources.hpp"
 
 #include <SFML/Audio.hpp>
 
@@ -13,14 +13,14 @@
 namespace oe
 {
 
-class AudioManager
+class AudioSystem
 {
     public:
         using MusicPtr = std::shared_ptr<sf::Music>;
         using SoundPtr = std::shared_ptr<sf::Sound>;
 
     public:
-        AudioManager();
+        AudioSystem();
 
 		ResourceId createMusic(const std::string& id, const std::string& filename);
 		MusicPtr playMusic(ResourceId id, bool loop = true);
@@ -60,4 +60,4 @@ class AudioManager
 
 } // namespace oe
 
-#endif // OE_AUDIOMANAGER_HPP
+#endif // OE_AUDIOSYSTEM_HPP
