@@ -53,10 +53,10 @@ class Vector2i
 		operator I32* ();
 		operator const I32* () const;
 
-		Vector2& makeZero();
-		Vector2& makeOne();
-		Vector2& makeAxisX();
-		Vector2& makeAxisY();
+		Vector2i& makeZero();
+		Vector2i& makeOne();
+		Vector2i& makeAxisX();
+		Vector2i& makeAxisY();
 
 		Vector2i& minimize(const Vector2i& min);
 		Vector2i& maximize(const Vector2i& max);

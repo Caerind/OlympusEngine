@@ -223,22 +223,22 @@ Vector2i::operator const I32*() const
 	return &x;
 }
 
-Vector2& Vector2i::makeZero()
+Vector2i& Vector2i::makeZero()
 {
 	return set(0, 0);
 }
 
-Vector2& Vector2i::makeOne()
+Vector2i& Vector2i::makeOne()
 {
 	return set(1, 1);
 }
 
-Vector2& Vector2i::makeAxisX()
+Vector2i& Vector2i::makeAxisX()
 {
 	return set(1, 0);
 }
 
-Vector2& Vector2i::makeAxisY()
+Vector2i& Vector2i::makeAxisY()
 {
 	return set(0, 1);
 }
