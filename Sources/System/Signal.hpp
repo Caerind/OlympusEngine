@@ -16,8 +16,7 @@
 #define OeStaticSignal(SignalName, ...) OeDetailSignal(static, SignalName, __VA_ARGS__)
 #define OeStaticSignalImpl(Class, SignalName) Class :: SignalName ## Type Class :: SignalName
 
-#define OeSlotType(Class, SignalName) Class::SignalName ## Type::ConnectionGuard
-#define OeSlot(Class, SignalName, SlotName) OeSlotType(Class, SignalName) SlotName
+#define OeSlot(Class, SignalName, SlotName) Class::SignalName ## Type::ConnectionGuard SlotName
 
 namespace oe
 {
@@ -221,7 +220,9 @@ template<typename... Args>
 void Signal<Args...>::operator()(Args... args) const
 {
 	for (mSlotIterator = 0; mSlotIterator < mSlots.size(); ++mSlotIterator)
+	{
 		mSlots[mSlotIterator]->callback(args...);
+	}
 }
 
 template<typename... Args>

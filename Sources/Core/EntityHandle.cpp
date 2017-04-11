@@ -4,6 +4,13 @@
 namespace oe
 {
 
+EntityHandle::EntityHandle()
+	: mEntityId(0)
+	, mHandleIndex(0)
+	, mWorld(nullptr)
+{
+}
+
 EntityHandle::EntityHandle(World* world, const Entity& entity, U32 handleIndex)
 	: mEntityId(entity.getId())
 	, mHandleIndex(handleIndex)

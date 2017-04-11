@@ -340,89 +340,89 @@ void Window::display()
 	mWindow.display();
 }
 
-void Window::setView(const sf::View& view)
+void Window::setView(const View& view)
 {
-	mWindow.setView(view);
+	mWindow.setView(view.getHandle());
 }
 
-const sf::View& Window::getView() const
+View Window::getView() const
 {
-	return mWindow.getView();
+	return View(mWindow.getView());
 }
 
-void Window::setMainView(const sf::View& view)
+void Window::setMainView(const View& view)
 {
 	mMainView = view;
 }
 
-const sf::View& Window::getMainView() const
+const View& Window::getMainView() const
 {
 	return mMainView;
 }
 
 void Window::applyMainView()
 {
-	mWindow.setView(mMainView);
+	mWindow.setView(mMainView.getHandle());
 }
 
-sf::IntRect Window::getViewport(const sf::View& view) const
+sf::IntRect Window::getViewport(const View& view) const
 {
-	return mWindow.getViewport(view);
+	return mWindow.getViewport(view.getHandle());
 }
 
-Vector2 Window::mapPixelToCoords(const Vector2& point, const sf::View& view)
+Vector2 Window::mapPixelToCoords(const Vector2& point, const View& view)
 {
-	if (view.getSize() == sf::Vector2f())
+	if (view.getSize() == Vector2())
 	{	
 		return toOE(mWindow.mapPixelToCoords({ (I32)point.x, (I32)point.y }));
 	}
 	else
 	{
-		return toOE(mWindow.mapPixelToCoords({ (I32)point.x, (I32)point.y }, view));
+		return toOE(mWindow.mapPixelToCoords({ (I32)point.x, (I32)point.y }, view.getHandle()));
 	}
 }
 
-Vector2 Window::mapCoordsToPixel(const Vector2& point, const sf::View& view)
+Vector2 Window::mapCoordsToPixel(const Vector2& point, const View& view)
 {
-	if (view.getSize() == sf::Vector2f())
+	if (view.getSize() == Vector2())
 	{
 		return toOE(mWindow.mapCoordsToPixel(toSF(point)));
 	}
 	else
 	{
-		return toOE(mWindow.mapCoordsToPixel(toSF(point), view));
+		return toOE(mWindow.mapCoordsToPixel(toSF(point), view.getHandle()));
 	}
 }
 
 void Window::setCursorPosition(const Vector2& position)
 {
 	#ifndef SFML_SYSTEM_ANDROID
-		sf::Mouse::setPosition(mWindow.mapCoordsToPixel(toSF(position), getMainView()));
+		sf::Mouse::setPosition(mWindow.mapCoordsToPixel(toSF(position), mMainView.getHandle()));
 	#endif
 }
 
-void Window::setCursorPositionView(const Vector2& position, const sf::View& view)
+void Window::setCursorPositionView(const Vector2& position, const View& view)
 {
 	#ifndef SFML_SYSTEM_ANDROID
-		sf::Mouse::setPosition(mWindow.mapCoordsToPixel(toSF(position), view));
+		sf::Mouse::setPosition(mWindow.mapCoordsToPixel(toSF(position), view.getHandle()));
 	#endif
 }
 
 Vector2 Window::getCursorPosition(U32 touchIndex) const
 {
 	#ifdef SFML_SYSTEM_ANDROID
-		return toOE(mWindow.mapPixelToCoords(sf::Touch::getPosition(touchIndex), getMainView()));
+		return toOE(mWindow.mapPixelToCoords(sf::Touch::getPosition(touchIndex), mMainView.getHandle()));
 	#else
-		return toOE(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow), getMainView()));
+		return toOE(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow), mMainView.getHandle()));
 	#endif
 }
 
-Vector2 Window::getCursorPositionView(const sf::View& view, U32 touchIndex)
+Vector2 Window::getCursorPositionView(const View& view, U32 touchIndex)
 {
 	#ifdef SFML_SYSTEM_ANDROID
-		return toOE(mWindow.mapPixelToCoords(sf::Touch::getPosition(touchIndex), view));
+		return toOE(mWindow.mapPixelToCoords(sf::Touch::getPosition(touchIndex), view.getHandle()));
 	#else
-		return toOE(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow), view));
+		return toOE(mWindow.mapPixelToCoords(sf::Mouse::getPosition(mWindow), view.getHandle()));
 	#endif
 }
 
@@ -599,7 +599,7 @@ void Window::init()
 	mFullscreenVideoMode = sf::VideoMode::getFullscreenModes()[0];
 	mNonFullscreenVideoMode = sf::VideoMode::getDesktopMode();
 	mNonFullscreenStyle = sf::Style::Close;
-	mMainView = sf::View(sf::FloatRect(0.0f, 0.0f, F32(sf::VideoMode::getDesktopMode().width), F32(sf::VideoMode::getDesktopMode().height)));
+	mMainView.reset(0.0f, 0.0f, F32(sf::VideoMode::getDesktopMode().width), F32(sf::VideoMode::getDesktopMode().height));
 	mIconPath = "";
 
 	// Init mouse cursor

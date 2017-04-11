@@ -11,6 +11,7 @@ World::World(Application& application)
 		mEntities[i] = nullptr;
 	}
 
+	#ifdef OE_PLATFORM_ANDROID
 	mWindowLostFocus.connect(mApplication.getWindow().onWindowLostFocus, [this](const Window* window)
 	{
 		if (mAudioSystem.getStatus() != sf::SoundSource::Status::Paused)
@@ -25,6 +26,9 @@ World::World(Application& application)
 			mAudioSystem.play();
 		}
 	});
+	#endif
+
+	mRenderSystem.getView().reset(0.0f, 0.0f, mApplication.getWindow().getSize().x, mApplication.getWindow().getSize().y);
 }
 
 Application& World::getApplication()
@@ -59,9 +63,7 @@ void World::update()
 
 void World::render(sf::RenderTarget& target)
 {
-	mRenderSystem.preRender();
-	mRenderSystem.render();
-	mRenderSystem.postRender(target);
+	mRenderSystem.render(target);
 }
 
 void World::killEntity(const EntityHandle& handle)
@@ -140,6 +142,7 @@ void World::destroyEntities()
 		if (entity != nullptr)
 		{
 			entity->destroyComponents();
+			entity->setPlaying(false);
 			entity->onDestroy();
 
 			U32 index = (*itr).getHandleIndex();
@@ -160,6 +163,7 @@ void World::spawnEntities()
 		if (entity != nullptr)
 		{
 			entity->onSpawn();
+			entity->setPlaying(true);
 			entity->spawnComponents();
 			mEntitiesPlaying.insert(*itr);
 		}

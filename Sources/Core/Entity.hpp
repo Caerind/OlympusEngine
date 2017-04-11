@@ -27,6 +27,8 @@ class Entity : public Node
 		const ComponentList& getComponents() const;
 		const SceneComponentList& getSceneComponents() const;
 
+		bool isPlaying() const;
+
 	private:
 		friend class World;
 		virtual void onCreate();
@@ -36,6 +38,7 @@ class Entity : public Node
 		virtual void onDestroy();
 		void destroyComponents();
 		virtual void update(Time dt);
+		void setPlaying(bool playing);
 
 	private:
 		friend class Component;
@@ -45,6 +48,7 @@ class Entity : public Node
 	private:
 		World& mWorld;
 		UID mId;
+		bool mPlaying;
 		ComponentList mComponents;
 		SceneComponentList mSceneComponents;
 };

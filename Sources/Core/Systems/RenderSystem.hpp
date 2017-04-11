@@ -4,6 +4,8 @@
 #include "../RenderableComponent.hpp"
 #include "../ComponentList.hpp"
 
+#include "../../System/View.hpp"
+
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
@@ -18,14 +20,18 @@ class RenderSystem
 		void registerRenderable(RenderableComponent* renderable);
 		void unregisterRenderable(RenderableComponent* renderable);
 
-		void preRender();
-		void render();
-		void postRender(sf::RenderTarget& target);
+		void render(sf::RenderTarget& target);
 
 		void needUpdateOrderZ();
 		void needUpdateOrderY();
 
+		View& getView();
+
 	private:
+		void preRender();
+		void render();
+		void postRender(sf::RenderTarget& target);
+
 		static bool orderZ(RenderableComponent* a, RenderableComponent* b);
 		static bool orderY(RenderableComponent* a, RenderableComponent* b);
 
@@ -33,6 +39,8 @@ class RenderSystem
 		sf::RenderTexture mTexture;
 
 		RenderableComponentList mRenderables;
+
+		View mView;
 
 		bool mNeedUpdateOrderZ;
 		bool mNeedUpdateOrderY;

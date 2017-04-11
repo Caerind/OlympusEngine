@@ -24,8 +24,9 @@ class AudioListenerComponent : public SceneComponent
 		void setUpVector(const Vector3& up);
 		Vector3 getUpVector() const;
 
-		virtual void onSpawn();
-		virtual void onDestroy();
+		virtual void onCreate();
+
+		void onNodeInvalidated(const oe::Node* node);
 
 		OeSlot(oe::Node, onNodeInvalidation, mInvalidationSlot);
 		OeSlot(oe::Node, onNodeInvalidationZ, mInvalidationZSlot);

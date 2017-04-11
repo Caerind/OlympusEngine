@@ -3,6 +3,7 @@
 
 #include "StateManager.hpp"
 
+#include "../System/DebugDraw.hpp"
 #include "../System/Singleton.hpp"
 #include "../System/Time.hpp"
 #include "../System/Window.hpp"
@@ -38,6 +39,7 @@ class Application
 
 	private:
 		Window mWindow;
+		DebugDraw mDebugDraw;
 		StateManager mStates;
 		U32 mFPSCounter;
 		U32 mUPSCounter;

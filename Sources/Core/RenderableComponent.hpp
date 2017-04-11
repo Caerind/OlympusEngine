@@ -24,8 +24,12 @@ class RenderableComponent : public SceneComponent
 
 		RenderSystem& getRenderSystem();
 
+		virtual void onCreate();
 		virtual void onSpawn();
 		virtual void onDestroy();
+
+		void onNodeInvalidated(const Node* node);
+		void onNodeInvalidatedZ(const Node* node);
 
 		OeSlot(oe::Node, onNodeInvalidation, mInvalidationSlot);
 		OeSlot(oe::Node, onNodeInvalidationZ, mInvalidationZSlot);

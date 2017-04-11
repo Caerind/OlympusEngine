@@ -8,11 +8,11 @@
 #include "Date.hpp"
 #include "SFML.hpp"
 #include "Signal.hpp"
+#include "View.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/View.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Touch.hpp>
@@ -70,19 +70,19 @@ class Window
 		void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type, const sf::RenderStates& states = sf::RenderStates::Default);
 		void display();
 
-		void setView(const sf::View& view);
-		const sf::View& getView() const;
-		void setMainView(const sf::View& view);
-		const sf::View& getMainView() const;
+		void setView(const View& view);
+		View getView() const;
+		void setMainView(const View& view);
+		const View& getMainView() const;
 		void applyMainView();
-		sf::IntRect getViewport(const sf::View& view) const; 
-		Vector2 mapPixelToCoords(const Vector2& point, const sf::View& view = sf::View(sf::FloatRect()));
-		Vector2 mapCoordsToPixel(const Vector2& point, const sf::View& view = sf::View(sf::FloatRect()));
+		sf::IntRect getViewport(const View& view) const; 
+		Vector2 mapPixelToCoords(const Vector2& point, const View& view = View());
+		Vector2 mapCoordsToPixel(const Vector2& point, const View& view = View());
 		
 		void setCursorPosition(const Vector2& position);
-		void setCursorPositionView(const Vector2& position, const sf::View& view);
+		void setCursorPositionView(const Vector2& position, const View& view);
 		Vector2 getCursorPosition(U32 touchIndex = 0) const;
-		Vector2 getCursorPositionView(const sf::View& view, U32 touchIndex = 0);
+		Vector2 getCursorPositionView(const View& view, U32 touchIndex = 0);
 
 		enum Cursor { Default = 0, None, Custom };
 		Cursor getCursor() const;
@@ -148,7 +148,7 @@ class Window
 		sf::VideoMode mFullscreenVideoMode;
 		sf::VideoMode mNonFullscreenVideoMode;
 		sf::Uint32 mNonFullscreenStyle;
-		sf::View mMainView;
+		View mMainView;
 
 		sf::Image mIcon;
 		std::string mIconPath;

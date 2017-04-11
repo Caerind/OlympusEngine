@@ -13,6 +13,7 @@ class World;
 class EntityHandle
 {
 	public:
+		EntityHandle();
 		EntityHandle(World* world, const Entity& entity, U32 handleIndex);
 
 		EntityHandle(const EntityHandle& handle);

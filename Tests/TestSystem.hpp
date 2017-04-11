@@ -118,6 +118,7 @@ BEGIN_TEST(System)
 		birth.setHours(3);
 		birth.setMinutes(33);
 		birth.setSeconds(34);
+		printf("%s\n", birth.toString().c_str());
 		CHECK("23-01-1996 03-33-34" == birth.toString());
 		CHECK("23-01-1996 03-33-34" == toString(birth));
 

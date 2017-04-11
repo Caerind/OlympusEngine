@@ -30,6 +30,28 @@ void RenderSystem::unregisterRenderable(RenderableComponent* renderable)
 	// Don't need to reorder here
 }
 
+void RenderSystem::render(sf::RenderTarget& target)
+{
+	preRender();
+	render();
+	postRender(target);
+}
+
+void RenderSystem::needUpdateOrderZ()
+{
+	mNeedUpdateOrderZ = true;
+}
+
+void RenderSystem::needUpdateOrderY()
+{
+	mNeedUpdateOrderY = true;
+}
+
+View& RenderSystem::getView()
+{
+	return mView;
+}
+
 void RenderSystem::preRender()
 {
 	// Reorder on Z axis
@@ -68,6 +90,7 @@ void RenderSystem::preRender()
 void RenderSystem::render()
 {
 	mTexture.clear();
+	mTexture.setView(mView.getHandle());
 	for (RenderableComponent* renderable : mRenderables)
 	{
 		ASSERT(renderable != nullptr);
@@ -102,16 +125,6 @@ void RenderSystem::postRender(sf::RenderTarget& target)
 			printf("RenderSystem::postRender : Can't create sf::RenderTexture with size(%d, %d)", target.getSize().x, target.getSize().y);
 		}
 	}
-}
-
-void RenderSystem::needUpdateOrderZ()
-{
-	mNeedUpdateOrderZ = true;
-}
-
-void RenderSystem::needUpdateOrderY()
-{
-	mNeedUpdateOrderY = true;
 }
 
 bool RenderSystem::orderZ(RenderableComponent* a, RenderableComponent* b)

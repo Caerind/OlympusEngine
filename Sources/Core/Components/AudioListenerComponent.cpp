@@ -48,22 +48,15 @@ Vector3 AudioListenerComponent::getUpVector() const
 	return toOE(sf::Listener::getUpVector());
 }
 
-void AudioListenerComponent::onSpawn()
+void AudioListenerComponent::onCreate()
 {
-	mInvalidationSlot.connect(onNodeInvalidation, [this](const Node* node)
-	{
-		sf::Listener::setPosition(toSF(getGlobalPosition()));
-	});
-	mInvalidationZSlot.connect(onNodeInvalidationZ, [this](const Node* node)
-	{
-		sf::Listener::setPosition(toSF(getGlobalPosition()));
-	});
+	mInvalidationSlot.connect(onNodeInvalidation, this, &AudioListenerComponent::onNodeInvalidated);
+	mInvalidationZSlot.connect(onNodeInvalidation, this, &AudioListenerComponent::onNodeInvalidated);
 }
 
-void AudioListenerComponent::onDestroy()
+void AudioListenerComponent::onNodeInvalidated(const oe::Node* node)
 {
-	mInvalidationSlot.disconnect();
-	mInvalidationZSlot.disconnect();
+	sf::Listener::setPosition(toSF(getGlobalPosition()));
 }
 
 } // namespace oe

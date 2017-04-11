@@ -66,6 +66,11 @@ void Entity::update(Time dt)
 {
 }
 
+void Entity::setPlaying(bool playing)
+{
+	mPlaying = playing;
+}
+
 void Entity::registerComponent(Component* component)
 {
 	ASSERT(component != nullptr);
@@ -100,6 +105,11 @@ const ComponentList& Entity::getComponents() const
 const SceneComponentList& Entity::getSceneComponents() const
 {
 	return mSceneComponents;
+}
+
+bool Entity::isPlaying() const
+{
+	return mPlaying;
 }
 
 } // namespace oe

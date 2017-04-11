@@ -52,7 +52,7 @@ void Application::run()
 			// Update
 			update(timePerFrame);
 
-			// FPS
+			// UPS
 			tempUPS++;
 			if (clockUPS.getElapsedTime() >= second)
 			{
@@ -120,6 +120,7 @@ void Application::processEvents()
 
 void Application::update(Time dt)
 {
+	mDebugDraw.clear();
 	if (!mStates.update(dt))
 	{
 		stop();
@@ -129,7 +130,15 @@ void Application::update(Time dt)
 void Application::render()
 {
 	mWindow.clear();
+
 	mStates.render(mWindow.getHandle());
+
+	// DebugDraw
+	if (mDebugDraw.needRender())
+	{
+		mDebugDraw.render(mWindow.getHandle());
+	}
+
 	mWindow.display();
 }
 

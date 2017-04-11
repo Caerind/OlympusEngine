@@ -48,25 +48,31 @@ RenderSystem& RenderableComponent::getRenderSystem()
 	return getWorld().getRenderSystem();
 }
 
+void RenderableComponent::onCreate()
+{
+	mInvalidationSlot.connect(onNodeInvalidation, this, &RenderableComponent::onNodeInvalidated);
+	mInvalidationZSlot.connect(onNodeInvalidationZ, this, &RenderableComponent::onNodeInvalidatedZ);
+}
+
 void RenderableComponent::onSpawn()
 {
 	getRenderSystem().registerRenderable(this);
-	mInvalidationSlot.connect(onNodeInvalidation, [this](const Node* node)
-	{
-		getRenderSystem().needUpdateOrderY();
-		mGlobalAABBUpdated = false;
-	});
-	mInvalidationZSlot.connect(onNodeInvalidationZ, [this](const Node* node)
-	{
-		getRenderSystem().needUpdateOrderZ();
-	});
 }
 
 void RenderableComponent::onDestroy()
 {
 	getRenderSystem().unregisterRenderable(this);
-	mInvalidationSlot.disconnect();
-	mInvalidationZSlot.disconnect();
+}
+
+void RenderableComponent::onNodeInvalidated(const Node* node)
+{
+	getRenderSystem().needUpdateOrderY();
+	mGlobalAABBUpdated = false;
+}
+
+void RenderableComponent::onNodeInvalidatedZ(const Node* node)
+{
+	getRenderSystem().needUpdateOrderZ();
 }
 
 } // namespace oe
