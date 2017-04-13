@@ -2,6 +2,7 @@
 #define OE_RENDERSYSTEM_HPP
 
 #include "../RenderableComponent.hpp"
+#include "../Components/ParticleComponent.hpp"
 #include "../ComponentList.hpp"
 
 #include "../../System/View.hpp"
@@ -20,6 +21,10 @@ class RenderSystem
 		void registerRenderable(RenderableComponent* renderable);
 		void unregisterRenderable(RenderableComponent* renderable);
 
+		void registerParticle(ParticleComponent* particle);
+		void unregisterParticle(ParticleComponent* particle);
+
+		void update(Time dt);
 		void render(sf::RenderTarget& target);
 
 		void needUpdateOrderZ();
@@ -39,6 +44,7 @@ class RenderSystem
 		sf::RenderTexture mTexture;
 
 		RenderableComponentList mRenderables;
+		ParticleComponentList mParticles;
 
 		View mView;
 

@@ -42,6 +42,7 @@ void World::handleEvent(const sf::Event& event)
 
 void World::update(Time dt)
 {
+	mRenderSystem.update(dt);
 	mAudioSystem.update();
 }
 

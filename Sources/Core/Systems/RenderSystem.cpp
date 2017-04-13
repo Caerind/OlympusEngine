@@ -30,6 +30,26 @@ void RenderSystem::unregisterRenderable(RenderableComponent* renderable)
 	// Don't need to reorder here
 }
 
+void RenderSystem::registerParticle(ParticleComponent* particle)
+{
+	registerRenderable(particle);
+	mParticles.insert(particle);
+}
+
+void RenderSystem::unregisterParticle(ParticleComponent * particle)
+{
+	mParticles.remove(particle);
+	unregisterRenderable(particle);
+}
+
+void RenderSystem::update(Time dt)
+{
+	for (auto& particle : mParticles)
+	{
+		particle->update(dt);
+	}
+}
+
 void RenderSystem::render(sf::RenderTarget& target)
 {
 	preRender();

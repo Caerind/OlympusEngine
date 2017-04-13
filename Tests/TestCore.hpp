@@ -11,6 +11,7 @@
 #include "../Sources/Core/Components/TextComponent.hpp"
 #include "../Sources/Core/Components/LayerComponent.hpp"
 #include "../Sources/Core/Components/ViewComponent.hpp"
+#include "../Sources/Core/Components/ParticleComponent.hpp"
 
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -516,6 +517,141 @@ BEGIN_TEST(Core)
 				oe::Vector2i mLastCoords;
 				oe::TileId mColor;
 				oe::TileId mColor2;
+		};
+
+		oe::Application app;
+		app.pushState<MyState>();
+		app.run();
+	}
+
+	TEST("Advanced")
+	{
+		// TODO : Test View
+		class MyEntity : public oe::Entity
+		{
+		public:
+			MyEntity(oe::World& world)
+				: oe::Entity(world)
+				, mParticle(this)
+				, mView(this)
+			{
+			}
+
+			oe::ParticleComponent& getParticle()
+			{
+				return mParticle;
+			}
+
+			oe::ViewComponent& getView()
+			{
+				return mView;
+			}
+
+		private:
+			oe::ParticleComponent mParticle;
+			oe::ViewComponent mView;
+		};
+
+		class MyState : public oe::State
+		{
+		public:
+			MyState(oe::Application& application)
+				: oe::State(application)
+				, mWorld(application)
+			{
+				mApplication.getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
+				mApplication.getWindow().applyMainView();
+
+				mWorld.getRenderSystem().getView() = mApplication.getWindow().getMainView();
+
+				oe::ResourceId pt = mWorld.getTextures().create("particle", "Assets/fx.png");
+
+				mEntity = mWorld.createEntity<MyEntity>();
+				MyEntity* ent = mEntity.getAs<MyEntity>();
+				ent->setPosition(400.f, 300.f, 0.f);
+				oe::ParticleComponent& p = ent->getParticle();
+				p.setTexture(pt);
+				p.addTextureRect(0, 0, 6, 6);
+				p.setParticleLifetime(oe::seconds(0.3f));
+				p.setParticleColor(oe::Distributions::colorGrade(oe::Color::Cyan, 0.3f, 1.0f));
+				p.setParticleVelocity(oe::Distributions::circle(oe::Vector2(), 300.0f));
+				p.setParticleRotationSpeed(oe::Distributions::uniform(0.0f, 90.f));
+				p.enableEmission();
+				p.setEmissionRate(100.f);
+
+				mTileset.setImageSource("Assets/hexapointy2.png");
+				mTileset.setTileSize(oe::Vector2i(60, 80));
+				mTileset.setTileCount(3);
+				mTileset.setColumns(3);
+				mMap = mWorld.createEntity<oe::Map>();
+				oe::Map* map = mMap.getAs<oe::Map>();
+				map->setPositionZ(-100.f);
+				map->setTileset(&mTileset);
+				map->setOrientation(oe::MapUtility::Hexagonal);
+				map->setSize(oe::Vector2i(30, 30));
+				map->setTileSize(oe::Vector2i(60, 52));
+				map->setStaggerAxis(oe::MapUtility::Y);
+				map->setStaggerIndex(oe::MapUtility::Odd);
+				map->setHexSideLength(28);
+				oe::LayerComponent& layer = map->addLayer();
+				oe::Vector2i c;
+				for (c.x = 0; c.x < 30; c.x++)
+				{
+					for (c.y = 0; c.y < 30; c.y++)
+					{
+						layer.setTileId(oe::Vector2i(c.x, c.y), 1);
+					}
+				}
+			}
+
+			std::string getName()
+			{
+				return "MyState";
+			}
+
+			bool handleEvent(const sf::Event& event)
+			{
+				return false;
+			}
+
+			bool update(oe::Time dt)
+			{
+				mWorld.update();
+				mWorld.update(dt);
+				mApplication.getWindow().setTitle("TestCore : " + oe::toString(mApplication.getFPSCount()));
+
+				oe::Vector2 mvt;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+				{
+					mvt.y--;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+				{
+					mvt.y++;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+				{
+					mvt.x--;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+				{
+					mvt.x++;
+				}
+				mEntity.get()->move(mvt * dt.asSeconds() * 200.f);
+
+				return false;
+			}
+
+			void render(sf::RenderTarget& target)
+			{
+				mWorld.render(target);
+			}
+
+		private:
+			oe::World mWorld;
+			oe::EntityHandle mMap;
+			oe::EntityHandle mEntity;
+			oe::Tileset mTileset;
 		};
 
 		oe::Application app;
