@@ -10,11 +10,13 @@ class Component;
 class SceneComponent;
 class RenderableComponent;
 class ParticleComponent;
+class AnimatorComponent;
 
 using ComponentList = List<Component*>;
 using SceneComponentList = List<SceneComponent*>;
 using RenderableComponentList = List<RenderableComponent*>;
 using ParticleComponentList = List<ParticleComponent*>;
+using AnimatorComponentList = List<AnimatorComponent*>;
 
 } // namespace oe
 

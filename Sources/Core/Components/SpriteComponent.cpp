@@ -38,14 +38,14 @@ const sf::IntRect& SpriteComponent::getTextureRect() const
 	return mSprite.getTextureRect();
 }
 
-void SpriteComponent::setColor(const sf::Color& color)
+void SpriteComponent::setColor(const Color& color)
 {
-	mSprite.setColor(color);
+	mSprite.setColor(toSF(color));
 }
 
-const sf::Color& SpriteComponent::getColor() const
+Color SpriteComponent::getColor() const
 {
-	return mSprite.getColor();
+	return toOE(mSprite.getColor());
 }
 
 void SpriteComponent::render(sf::RenderTarget& target)

@@ -36,10 +36,22 @@ void RenderSystem::registerParticle(ParticleComponent* particle)
 	mParticles.insert(particle);
 }
 
-void RenderSystem::unregisterParticle(ParticleComponent * particle)
+void RenderSystem::unregisterParticle(ParticleComponent* particle)
 {
 	mParticles.remove(particle);
 	unregisterRenderable(particle);
+}
+
+void RenderSystem::registerAnimator(AnimatorComponent* animator)
+{
+	registerRenderable(animator);
+	mAnimators.insert(animator);
+}
+
+void RenderSystem::unregisterAnimator(AnimatorComponent* animator)
+{
+	mAnimators.remove(animator);
+	unregisterRenderable(animator);
 }
 
 void RenderSystem::update(Time dt)
@@ -47,6 +59,10 @@ void RenderSystem::update(Time dt)
 	for (auto& particle : mParticles)
 	{
 		particle->update(dt);
+	}
+	for (auto& animator : mAnimators)
+	{
+		animator->update(dt);
 	}
 }
 
@@ -77,7 +93,6 @@ void RenderSystem::preRender()
 	// Reorder on Z axis
 	if (mNeedUpdateOrderZ)
 	{
-		printf("OrderZ\n");
 		std::sort(mRenderables.begin(), mRenderables.end(), RenderSystem::orderZ);
 		mNeedUpdateOrderZ = false;
 

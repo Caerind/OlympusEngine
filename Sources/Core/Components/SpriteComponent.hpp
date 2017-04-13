@@ -21,12 +21,12 @@ class SpriteComponent : public RenderableComponent
 		void setTextureRect(const sf::IntRect& textureRect);
 		const sf::IntRect& getTextureRect() const;
 
-		void setColor(const sf::Color& color);
-		const sf::Color& getColor() const;
+		void setColor(const Color& color);
+		Color getColor() const;
 
 		virtual void render(sf::RenderTarget& target);
 
-	private:
+	protected:
 		sf::Sprite mSprite;
 };
 

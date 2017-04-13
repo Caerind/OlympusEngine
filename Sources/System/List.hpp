@@ -12,6 +12,11 @@ template <typename T>
 class List
 {
 	public:
+		using iterator = typename std::vector<T>::iterator;
+		using const_iterator = typename std::vector<T>::const_iterator;
+		using reverse_iterator = typename std::vector<T>::reverse_iterator;
+		using const_reverse_iterator = typename std::vector<T>::const_reverse_iterator;
+
 		List() : mList() {}
 
 		void clear() { mList.clear(); }
@@ -54,62 +59,74 @@ class List
 		U32 size() const { return mList.size(); }
 		bool empty() const { return mList.empty(); }
 
-		typename std::vector<T>::iterator begin()
+		iterator find(T item)
+		{
+			for (auto itr = begin(); itr != end(); ++itr)
+			{
+				if (item == *itr)
+				{
+					return itr;
+				}
+			}
+			return end();
+		}
+
+		iterator begin()
 		{
 			return mList.begin();
 		}
 
-		typename std::vector<T>::const_iterator begin() const
+		const_iterator begin() const
 		{
 			return mList.begin();
 		}
 
-		typename std::vector<T>::iterator end()
+		iterator end()
 		{
 			return mList.end();
 		}
 
-		typename std::vector<T>::const_iterator end() const
+		const_iterator end() const
 		{
 			return mList.end();
 		}
 
-		typename std::vector<T>::const_iterator cbegin() const
+		const_iterator cbegin() const
 		{
 			return mList.cbegin();
 		}
 
-		typename std::vector<T>::const_iterator cend() const
+		const_iterator cend() const
 		{
 			return mList.cend();
 		}
 
-		typename std::vector<T>::const_reverse_iterator crbegin() const
+		const_reverse_iterator crbegin() const
 		{
 			return mList.crbegin();
 		}
 
-		typename std::vector<T>::const_reverse_iterator crend() const
+		const_reverse_iterator crend() const
 		{
 			return mList.crend();
 		}
 
-		typename std::vector<T>::reverse_iterator rbegin()
+		reverse_iterator rbegin()
 		{
 			return mList.rbegin();
 		}
 
-		typename std::vector<T>::const_reverse_iterator rbegin() const
+		const_reverse_iterator rbegin() const
 		{
 			return mList.rbegin();
 		}
 
-		typename std::vector<T>::reverse_iterator rend()
+		reverse_iterator rend()
 		{
 			return mList.rend();
 		}
 
-		typename std::vector<T>::const_reverse_iterator rend() const
+		const_reverse_iterator rend() const
 		{
 			return mList.rend();
 		}

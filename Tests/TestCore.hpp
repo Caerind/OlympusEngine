@@ -12,6 +12,7 @@
 #include "../Sources/Core/Components/LayerComponent.hpp"
 #include "../Sources/Core/Components/ViewComponent.hpp"
 #include "../Sources/Core/Components/ParticleComponent.hpp"
+#include "../Sources/Core/Components/AnimatorComponent.hpp"
 
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -534,6 +535,7 @@ BEGIN_TEST(Core)
 				: oe::Entity(world)
 				, mParticle(this)
 				, mView(this)
+				, mAnimator(this)
 			{
 			}
 
@@ -547,9 +549,15 @@ BEGIN_TEST(Core)
 				return mView;
 			}
 
+			oe::AnimatorComponent& getAnimator()
+			{
+				return mAnimator;
+			}
+
 		private:
 			oe::ParticleComponent mParticle;
 			oe::ViewComponent mView;
+			oe::AnimatorComponent mAnimator;
 		};
 
 		class MyState : public oe::State
@@ -566,6 +574,14 @@ BEGIN_TEST(Core)
 
 				oe::ResourceId pt = mWorld.getTextures().create("particle", "Assets/fx.png");
 
+				oe::ResourceId an = mWorld.getTextures().create("soldier", "Assets/soldier.png");
+
+				mIdleAnimation.addFrame(an, sf::IntRect(0, 0, 64, 64), oe::seconds(5.f));
+				mAnimation.addFrame(an, sf::IntRect(0, 0, 64, 64), oe::seconds(0.2f));
+				mAnimation.addFrame(an, sf::IntRect(64, 0, 64, 64), oe::seconds(0.2f));
+				mAnimation.addFrame(an, sf::IntRect(128, 0, 64, 64), oe::seconds(0.2f));
+				mAnimation.addFrame(an, sf::IntRect(192, 0, 64, 64), oe::seconds(0.2f));
+
 				mEntity = mWorld.createEntity<MyEntity>();
 				MyEntity* ent = mEntity.getAs<MyEntity>();
 				ent->setPosition(400.f, 300.f, 0.f);
@@ -578,6 +594,9 @@ BEGIN_TEST(Core)
 				p.setParticleRotationSpeed(oe::Distributions::uniform(0.0f, 90.f));
 				p.enableEmission();
 				p.setEmissionRate(100.f);
+				oe::AnimatorComponent& a = ent->getAnimator();
+				a.play(&mIdleAnimation);
+				a.setPosition(-32, -60);
 
 				mTileset.setImageSource("Assets/hexapointy2.png");
 				mTileset.setTileSize(oe::Vector2i(60, 80));
@@ -639,6 +658,16 @@ BEGIN_TEST(Core)
 				}
 				mEntity.get()->move(mvt * dt.asSeconds() * 200.f);
 
+				oe::AnimatorComponent& a = mEntity.getAs<MyEntity>()->getAnimator();
+				if (mvt != oe::Vector2() && !a.isPlaying(&mAnimation))
+				{
+					a.play(&mAnimation);
+				}
+				else if (mvt == oe::Vector2() && !a.isPlaying(&mIdleAnimation))
+				{
+					a.play(&mIdleAnimation);
+				}
+
 				return false;
 			}
 
@@ -652,6 +681,8 @@ BEGIN_TEST(Core)
 			oe::EntityHandle mMap;
 			oe::EntityHandle mEntity;
 			oe::Tileset mTileset;
+			oe::Animation mAnimation;
+			oe::Animation mIdleAnimation;
 		};
 
 		oe::Application app;

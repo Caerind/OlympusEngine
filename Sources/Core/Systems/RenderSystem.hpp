@@ -3,6 +3,7 @@
 
 #include "../RenderableComponent.hpp"
 #include "../Components/ParticleComponent.hpp"
+#include "../Components/AnimatorComponent.hpp"
 #include "../ComponentList.hpp"
 
 #include "../../System/View.hpp"
@@ -21,8 +22,13 @@ class RenderSystem
 		void registerRenderable(RenderableComponent* renderable);
 		void unregisterRenderable(RenderableComponent* renderable);
 
+		// TODO : move to particle system ?
 		void registerParticle(ParticleComponent* particle);
 		void unregisterParticle(ParticleComponent* particle);
+
+		// TODO : move to animation system ?
+		void registerAnimator(AnimatorComponent* animator);
+		void unregisterAnimator(AnimatorComponent* animator);
 
 		void update(Time dt);
 		void render(sf::RenderTarget& target);
@@ -45,6 +51,7 @@ class RenderSystem
 
 		RenderableComponentList mRenderables;
 		ParticleComponentList mParticles;
+		AnimatorComponentList mAnimators;
 
 		View mView;
 
