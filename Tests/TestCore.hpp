@@ -27,8 +27,8 @@ BEGIN_TEST(Core)
 			public:
 				MyEntity(oe::World& world)
 					: oe::Entity(world)
-					, mSprite(this)
-					, mText(this)
+					, mSprite(*this)
+					, mText(*this)
 				{
 				}
 
@@ -124,8 +124,8 @@ BEGIN_TEST(Core)
 			public:
 				MyEntity(oe::World& world)
 					: oe::Entity(world)
-					, mSprite(this)
-					, mView(this)
+					, mSprite(*this)
+					, mView(*this)
 				{
 				}
 
@@ -523,9 +523,9 @@ BEGIN_TEST(Core)
 		public:
 			MyEntity(oe::World& world)
 				: oe::Entity(world)
-				, mParticle(this)
-				, mView(this)
-				, mAnimator(this)
+				, mParticle(*this)
+				, mView(*this)
+				, mAnimator(*this)
 			{
 			}
 
@@ -559,13 +559,9 @@ BEGIN_TEST(Core)
 			{
 				mApplication.getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
 				mApplication.getWindow().applyMainView();
-
 				mWorld.getRenderSystem().getView() = mApplication.getWindow().getMainView();
 
-				oe::ResourceId pt = mWorld.getTextures().create("particle", "Assets/fx.png");
-
 				oe::ResourceId an = mWorld.getTextures().create("soldier", "Assets/soldier.png");
-
 				mIdleAnimation.addFrame(an, sf::IntRect(0, 0, 64, 64), oe::seconds(5.f));
 				mAnimation.addFrame(an, sf::IntRect(0, 0, 64, 64), oe::seconds(0.2f));
 				mAnimation.addFrame(an, sf::IntRect(64, 0, 64, 64), oe::seconds(0.2f));
@@ -575,6 +571,8 @@ BEGIN_TEST(Core)
 				mEntity = mWorld.createEntity<MyEntity>();
 				MyEntity* ent = mEntity.getAs<MyEntity>();
 				ent->setPosition(400.f, 300.f, 0.f);
+
+				oe::ResourceId pt = mWorld.getTextures().create("particle", "Assets/fx.png");
 				oe::ParticleComponent& p = ent->getParticle();
 				p.setTexture(pt);
 				p.addTextureRect(0, 0, 6, 6);
@@ -587,6 +585,24 @@ BEGIN_TEST(Core)
 				oe::AnimatorComponent& a = ent->getAnimator();
 				a.play(&mIdleAnimation);
 				a.setPosition(-32, -60);
+
+				oe::ActionSystem& actions = mWorld.getActionSystem();
+				mKeyZ.setKey(sf::Keyboard::Z);
+				mKeyS.setKey(sf::Keyboard::S);
+				mKeyQ.setKey(sf::Keyboard::Q);
+				mKeyD.setKey(sf::Keyboard::D);
+				oe::ActionId moveUp = actions.addAction("MoveUp");
+				oe::ActionId moveDown = actions.addAction("MoveDown");
+				oe::ActionId moveLeft = actions.addAction("MoveLeft");
+				oe::ActionId moveRight = actions.addAction("MoveRight");
+				actions.setInput(moveUp, &mKeyZ);
+				actions.setInput(moveDown, &mKeyS);
+				actions.setInput(moveLeft, &mKeyQ);
+				actions.setInput(moveRight, &mKeyD);
+				actions.addOutput(moveUp, [&]() { mEntity->move(oe::Vector2(0.0f, -200.0f * mWorld.getUpdateTime().asSeconds())); });
+				actions.addOutput(moveDown, [&]() { mEntity->move(oe::Vector2(0.0f, 200.0f * mWorld.getUpdateTime().asSeconds())); });
+				actions.addOutput(moveLeft, [&]() { mEntity->move(oe::Vector2(-200.0f * mWorld.getUpdateTime().asSeconds(), 0.0f)); });
+				actions.addOutput(moveRight, [&]() { mEntity->move(oe::Vector2(200.0f * mWorld.getUpdateTime().asSeconds(), 0.0f)); });
 
 				mTileset.setImageSource("Assets/hexapointy2.png");
 				mTileset.setTileSize(oe::Vector2i(60, 80));
@@ -668,6 +684,10 @@ BEGIN_TEST(Core)
 			oe::Tileset mTileset;
 			oe::Animation mAnimation;
 			oe::Animation mIdleAnimation;
+			oe::ActionInputKey mKeyZ;
+			oe::ActionInputKey mKeyS;
+			oe::ActionInputKey mKeyQ;
+			oe::ActionInputKey mKeyD;
 		};
 
 		oe::Application app;

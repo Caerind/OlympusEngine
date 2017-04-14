@@ -9,6 +9,7 @@
 
 #include "Systems/RenderSystem.hpp"
 #include "Systems/AudioSystem.hpp"
+#include "Systems/ActionSystem.hpp"
 
 #include "../System/ResourceHolder.hpp"
 #include "../System/SFMLResources.hpp"
@@ -32,6 +33,8 @@ class World
 		void update();
 		void render(sf::RenderTarget& target);
 
+		const Time& getUpdateTime() const;
+
 		template <typename T = Entity>
 		EntityHandle createEntity();
 		void killEntity(const EntityHandle& handle);
@@ -40,6 +43,7 @@ class World
 
 		RenderSystem& getRenderSystem();
 		AudioSystem& getAudioSystem();
+		ActionSystem& getActionSystem();
 
 		TextureHolder& getTextures();
 		FontHolder& getFonts();
@@ -67,8 +71,11 @@ class World
 		EntityList mEntitiesPlaying;
 		EntityList mEntitiesKilled;
 
+		Time mUpdateTime;
+
 		RenderSystem mRenderSystem;
 		AudioSystem mAudioSystem;
+		ActionSystem mActionSystem;
 
 		TextureHolder mTextures;
 		FontHolder mFonts;

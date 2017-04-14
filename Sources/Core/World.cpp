@@ -38,12 +38,15 @@ Application& World::getApplication()
 
 void World::handleEvent(const sf::Event& event)
 {
+	mActionSystem.addEvent(event);
 }
 
 void World::update(Time dt)
 {
+	mUpdateTime = dt;
 	mRenderSystem.update(dt);
 	mAudioSystem.update();
+	mActionSystem.update();
 }
 
 void World::update()
@@ -65,6 +68,11 @@ void World::update()
 void World::render(sf::RenderTarget& target)
 {
 	mRenderSystem.render(target);
+}
+
+const Time& World::getUpdateTime() const
+{
+	return mUpdateTime;
 }
 
 void World::killEntity(const EntityHandle& handle)
@@ -94,6 +102,11 @@ RenderSystem& World::getRenderSystem()
 AudioSystem& World::getAudioSystem()
 {
 	return mAudioSystem;
+}
+
+ActionSystem& World::getActionSystem()
+{
+	return mActionSystem;
 }
 
 TextureHolder& World::getTextures()
