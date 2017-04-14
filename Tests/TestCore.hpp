@@ -85,11 +85,6 @@ BEGIN_TEST(Core)
 					mWorld.getAudioSystem().playMusic(theme, true);
 				}
 
-				std::string getName()
-				{
-					return "MyState";
-				}
-
 				bool handleEvent(const sf::Event& event)
 				{
 					if (event.type == sf::Event::KeyPressed)
@@ -205,11 +200,6 @@ BEGIN_TEST(Core)
 					layer.setTileId(oe::Vector2i(2, 4), 48);
 					layer.setTileId(oe::Vector2i(3, 4), 48);
 					layer.setTileId(oe::Vector2i(4, 4), 48);
-				}
-
-				std::string getName()
-				{
-					return "MyState";
 				}
 
 				bool handleEvent(const sf::Event& event)
@@ -621,11 +611,6 @@ BEGIN_TEST(Core)
 						layer.setTileId(oe::Vector2i(c.x, c.y), 1);
 					}
 				}
-			}
-
-			std::string getName()
-			{
-				return "MyState";
 			}
 
 			bool handleEvent(const sf::Event& event)

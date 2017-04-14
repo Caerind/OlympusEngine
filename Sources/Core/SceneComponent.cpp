@@ -4,7 +4,7 @@
 namespace oe
 {
 
-SceneComponent::SceneComponent(Entity* entity)
+SceneComponent::SceneComponent(Entity& entity)
 	: Component(entity)
 	, Node()
 {

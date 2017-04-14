@@ -22,8 +22,6 @@ class State
 
 		using Ptr = std::shared_ptr<State>;
 
-		virtual std::string getName() = 0;
-
 		virtual void onActivate();
 		virtual void onDeactivate();
 

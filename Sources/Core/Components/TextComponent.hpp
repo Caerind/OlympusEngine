@@ -14,7 +14,7 @@ namespace oe
 class TextComponent : public RenderableComponent
 {
 	public:
-		TextComponent(Entity* entity);
+		TextComponent(Entity& entity);
 
 		void setFont(ResourceId font);
 		void setFont(sf::Font& font);

@@ -14,7 +14,7 @@ namespace oe
 class LayerComponent : public RenderableComponent
 {
 	public:
-		LayerComponent(Entity* entity);
+		LayerComponent(Entity& entity);
 
 		std::vector<Vector2i> getNeighboors(const Vector2i& coords, bool diag = false);
 		Vector2i worldToCoords(const Vector2& world);

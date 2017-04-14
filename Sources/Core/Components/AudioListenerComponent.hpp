@@ -11,7 +11,7 @@ namespace oe
 class AudioListenerComponent : public SceneComponent
 {
     public:
-		AudioListenerComponent(Entity* entity);
+		AudioListenerComponent(Entity& entity);
 
 		void setGlobalVolume(float volume);
 		float getGlobalVolume() const;

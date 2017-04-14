@@ -4,7 +4,7 @@
 namespace oe
 {
 
-TextComponent::TextComponent(Entity* entity)
+TextComponent::TextComponent(Entity& entity)
 	: RenderableComponent(entity)
 	, mText()
 	, mString("")

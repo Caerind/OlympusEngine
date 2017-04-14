@@ -19,6 +19,11 @@ class EntityHandle
 		EntityHandle(const EntityHandle& handle);
 		void operator=(const EntityHandle& handle);
 
+		Entity* operator->() const 
+		{
+			return get();
+		}
+
 		Entity* get() const;
 
 		template <typename T>

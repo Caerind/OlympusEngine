@@ -4,7 +4,7 @@
 namespace oe
 {
 
-ViewComponent::ViewComponent(Entity* entity)
+ViewComponent::ViewComponent(Entity& entity)
 	: SceneComponent(entity)
 {
 }

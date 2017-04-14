@@ -11,7 +11,7 @@ namespace oe
 class AnimatorComponent : public SpriteComponent
 {
 	public:
-		AnimatorComponent(Entity* entity);
+		AnimatorComponent(Entity& entity);
 
 		bool isPlaying() const;
 		bool isPlaying(Animation* animation) const;

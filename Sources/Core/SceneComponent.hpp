@@ -12,7 +12,7 @@ namespace oe
 class SceneComponent : public Component, public Node
 {
 	public:
-		SceneComponent(Entity* entity);
+		SceneComponent(Entity& entity);
 };
 
 } // namespace oe

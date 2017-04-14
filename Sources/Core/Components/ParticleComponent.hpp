@@ -38,7 +38,7 @@ class ParticleComponent : public RenderableComponent
 		using Affector = std::function<void(Particle&, Time)>;
 
 	public:
-		ParticleComponent(Entity* entity);
+		ParticleComponent(Entity& entity);
 
 		void setTexture(ResourceId texture);
 		void setTexture(sf::Texture& texture);

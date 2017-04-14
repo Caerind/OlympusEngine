@@ -12,7 +12,7 @@ class RenderSystem;
 class RenderableComponent : public SceneComponent
 {
 	public:
-		RenderableComponent(Entity* entity);
+		RenderableComponent(Entity& entity);
 		
 		virtual void render(sf::RenderTarget& target);
 

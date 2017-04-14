@@ -4,7 +4,7 @@
 namespace oe
 {
 
-SpriteComponent::SpriteComponent(Entity* entity)
+SpriteComponent::SpriteComponent(Entity& entity)
 	: RenderableComponent(entity)
 	, mSprite()
 {

@@ -5,8 +5,8 @@
 namespace oe
 {
 
-Component::Component(Entity* entity)
-	: mEntity(*entity)
+Component::Component(Entity& entity)
+	: mEntity(entity)
 {
 	registerComponent();
 }

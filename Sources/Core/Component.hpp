@@ -9,7 +9,7 @@ class World;
 class Component
 {
 	public:
-		Component(Entity* entity);
+		Component(Entity& entity);
 
 		virtual void onCreate();
 		virtual void onSpawn();

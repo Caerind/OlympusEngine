@@ -3,7 +3,7 @@
 namespace oe
 {
 
-LayerComponent::LayerComponent(Entity* entity)
+LayerComponent::LayerComponent(Entity& entity)
 	: RenderableComponent(entity)
 	, mVertices(sf::Triangles)
 	, mGeometryUpdated(false)

@@ -3,7 +3,7 @@
 namespace oe
 {
 
-AudioListenerComponent::AudioListenerComponent(Entity* entity)
+AudioListenerComponent::AudioListenerComponent(Entity& entity)
 	: SceneComponent(entity)
 {
 }

@@ -12,7 +12,7 @@ namespace oe
 class SpriteComponent : public RenderableComponent
 {
 	public:
-		SpriteComponent(Entity* entity);
+		SpriteComponent(Entity& entity);
 
 		void setTexture(ResourceId texture);
 		void setTexture(sf::Texture& texture);

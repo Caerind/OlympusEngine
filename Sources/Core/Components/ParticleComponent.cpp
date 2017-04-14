@@ -4,7 +4,7 @@
 namespace oe
 {
 
-ParticleComponent::ParticleComponent(Entity* entity)
+ParticleComponent::ParticleComponent(Entity& entity)
 	: RenderableComponent(entity)
 	, mParticles()
 	, mAffectors()

@@ -5,7 +5,7 @@
 namespace oe
 {
 
-RenderableComponent::RenderableComponent(Entity* entity)
+RenderableComponent::RenderableComponent(Entity& entity)
 	: SceneComponent(entity)
 	, mLocalAABB()
 	, mGlobalAABB()

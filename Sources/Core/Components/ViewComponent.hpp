@@ -9,7 +9,7 @@ namespace oe
 class ViewComponent : public SceneComponent
 {
     public:
-		ViewComponent(Entity* entity);
+		ViewComponent(Entity& entity);
 
 		virtual void onCreate();
 

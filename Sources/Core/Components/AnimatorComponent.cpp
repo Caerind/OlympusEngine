@@ -4,7 +4,7 @@
 namespace oe
 {
 
-AnimatorComponent::AnimatorComponent(Entity* entity)
+AnimatorComponent::AnimatorComponent(Entity& entity)
 	: SpriteComponent(entity)
 	, mPlaying(false)
 	, mAnimation(nullptr)
