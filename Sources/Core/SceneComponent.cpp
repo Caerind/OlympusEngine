@@ -8,7 +8,7 @@ SceneComponent::SceneComponent(Entity& entity)
 	: Component(entity)
 	, Node()
 {
-	Node::setParent(entity);
+	Node::setParent(&entity);
 }
 
 } // namespace oe

@@ -38,7 +38,7 @@ Vector2 Map::coordsToWorld(const Vector2i& coords)
 
 LayerComponent& Map::addLayer()
 {
-	mLayers.emplace_back(this);
+	mLayers.emplace_back(*this);
 	mLayers.back().create(mTileset, mSize, mTileSize, mOrientation, mStaggerAxis, mStaggerIndex, mHexSideLength);
 	if (isPlaying())
 	{

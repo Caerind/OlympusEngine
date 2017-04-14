@@ -56,6 +56,7 @@ void RenderSystem::unregisterAnimator(AnimatorComponent* animator)
 
 void RenderSystem::update(Time dt)
 {
+	mDebugDraw.clear();
 	for (auto& particle : mParticles)
 	{
 		particle->update(dt);
@@ -90,7 +91,7 @@ View& RenderSystem::getView()
 
 void RenderSystem::preRender()
 {
-	// Reorder on Z axis
+	// Reorder only on Z axis
 	if (mNeedUpdateOrderZ)
 	{
 		std::sort(mRenderables.begin(), mRenderables.end(), RenderSystem::orderZ);
@@ -134,13 +135,12 @@ void RenderSystem::render()
 			renderable->render(mTexture);
 		}
 	}
+	mDebugDraw.render(mTexture);
 	mTexture.display();
 }
 
 void RenderSystem::postRender(sf::RenderTarget& target)
 {
-	// TODO : Particles
-
 	// TODO : Lights
 
 	// TODO : Shaders

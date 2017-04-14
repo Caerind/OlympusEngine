@@ -24,7 +24,6 @@ class DebugDraw : public Singleton<DebugDraw>
 		static DebugDraw* getSingletonPtr();
 
 		static bool instanced();
-		static bool needRender();
 
 		static void clear();
 

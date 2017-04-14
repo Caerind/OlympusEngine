@@ -120,7 +120,6 @@ void Application::processEvents()
 
 void Application::update(Time dt)
 {
-	mDebugDraw.clear();
 	if (!mStates.update(dt))
 	{
 		stop();
@@ -132,12 +131,6 @@ void Application::render()
 	mWindow.clear();
 
 	mStates.render(mWindow.getHandle());
-
-	// DebugDraw
-	if (mDebugDraw.needRender())
-	{
-		mDebugDraw.render(mWindow.getHandle());
-	}
 
 	mWindow.display();
 }

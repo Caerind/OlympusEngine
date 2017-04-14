@@ -5,7 +5,7 @@ namespace oe
 
 LayerComponent::LayerComponent(Entity& entity)
 	: RenderableComponent(entity)
-	, mVertices(sf::Triangles)
+	, mVertices(sf::Quads)
 	, mGeometryUpdated(false)
 	, mTileGrid()
 	, mName("")
@@ -70,15 +70,13 @@ void LayerComponent::setTileId(const Vector2i& coords, TileId id)
 		mTileGrid[index] = id;
 		if (mTileset != nullptr)
 		{
-			sf::Vertex* vertex(&mVertices[index * 6]);
+			sf::Vertex* vertex(&mVertices[index * 4]);
 			sf::Vector2f pos(mTileset->toPos(id));
 			Vector2 texSize(mTileset->getTileSize());
 			vertex[0].texCoords = pos;
 			vertex[1].texCoords = sf::Vector2f(pos.x + texSize.x, pos.y);
 			vertex[2].texCoords = sf::Vector2f(pos.x + texSize.x, pos.y + texSize.y);
-			vertex[4].texCoords = sf::Vector2f(pos.x, pos.y + texSize.y);
-			vertex[3].texCoords = vertex[2].texCoords;
-			vertex[5].texCoords = vertex[0].texCoords;
+			vertex[3].texCoords = sf::Vector2f(pos.x, pos.y + texSize.y);
 		}
 	}
 }
@@ -222,8 +220,8 @@ void LayerComponent::updateGeometry()
 		return;
 	}
 	sf::Vector2f texSize(toSF(Vector2(mTileset->getTileSize())));
-	mVertices.resize(mSize.x * mSize.y * 6);
-	mTileGrid.resize(mSize.x * mSize.y * 6); // TODO : Keep tile id already set in order
+	mVertices.resize(mSize.x * mSize.y * 4);
+	mTileGrid.resize(mSize.x * mSize.y * 4); // TODO : Keep tile id already set in order
 	Vector2i coords;
 	for (coords.x = 0; coords.x < mSize.x; coords.x++)
 	{
@@ -231,14 +229,12 @@ void LayerComponent::updateGeometry()
 		{
 			// Get the position of the vertex
 			Vector2 pos = MapUtility::coordsToWorld(coords, mOrientation, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength);
-			sf::Vertex* vertex = &mVertices[(coords.x + coords.y * mSize.x) * 6];
+			sf::Vertex* vertex = &mVertices[(coords.x + coords.y * mSize.x) * 4];
 			F32 delta = texSize.y - (F32)mTileSize.y;
 			vertex[0].position = sf::Vector2f(pos.x, pos.y - delta);
 			vertex[1].position = sf::Vector2f(pos.x + mTileSize.x, pos.y - delta);
 			vertex[2].position = sf::Vector2f(pos.x + mTileSize.x, pos.y + mTileSize.y);
-			vertex[4].position = sf::Vector2f(pos.x, pos.y + mTileSize.y);
-			vertex[3].position = vertex[2].position;
-			vertex[5].position = vertex[0].position;
+			vertex[3].position = sf::Vector2f(pos.x, pos.y + mTileSize.y);
 		}
 	}
 	mGeometryUpdated = true;
