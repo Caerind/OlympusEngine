@@ -34,8 +34,6 @@ class AABB
 		void merge(const AABB& box);
 
 		void transform(const Matrix4& m);
-		// TODO : MatrixAffine
-		//void transform(const MatrixAffine& m);
 
 		Vector3 getCenter() const;
 		Vector3 getSize() const;

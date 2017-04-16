@@ -212,7 +212,6 @@ void LayerComponent::render(sf::RenderTarget& target)
 	}
 }
 
-
 void LayerComponent::updateGeometry()
 {
 	if (mTileset == nullptr || mSize.x == 0 || mSize.y == 0 || mTileSize.x == 0 || mTileSize.y == 0)

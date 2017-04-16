@@ -6,6 +6,8 @@
 #include "../System/Singleton.hpp"
 #include "../System/Time.hpp"
 #include "../System/Window.hpp"
+#include "../System/Log.hpp"
+#include "../System/Localization.hpp"
 
 namespace oe
 {
@@ -17,6 +19,7 @@ class Application
 		~Application();
 
 		Window& getWindow();
+		Localization& getLocalization();
 
 		void run();
 		void stop();
@@ -37,8 +40,10 @@ class Application
 		void render();
 
 	private:
+		Log mLog;
 		Window mWindow;
 		StateManager mStates;
+		Localization mLocalization;
 		U32 mFPSCounter;
 		U32 mUPSCounter;
 		bool mRunning;

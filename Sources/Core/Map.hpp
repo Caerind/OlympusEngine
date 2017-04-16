@@ -10,6 +10,8 @@
 namespace oe
 {
 
+// TODO : Read from .tmx
+
 class World;
 class Map : public Entity
 {
@@ -22,7 +24,7 @@ class Map : public Entity
 		Vector2 coordsToWorld(const Vector2i& coords);
 
 		LayerComponent& addLayer();
-		LayerComponent& getLayer(); // TODO : Testing
+		// TODO : Improve Layer usage
 
 		const std::string& getName() const;
 		void setName(const std::string& name);

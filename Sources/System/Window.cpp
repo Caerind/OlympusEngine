@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "Log.hpp"
 
 namespace oe
 {
@@ -40,7 +41,7 @@ void Window::create(sf::VideoMode mode, const std::string& title, sf::Uint32 sty
 			}
 			else
 			{
-				// TODO : Error handling
+				error("No fullscreen mode available");
 				mFullscreenVideoMode = sf::VideoMode();
 			}
 		}
@@ -53,7 +54,7 @@ void Window::create(sf::VideoMode mode, const std::string& title, sf::Uint32 sty
 			}
 			else
 			{
-				// TODO : Error handling
+				error("Invalid video mode");
 				mNonFullscreenVideoMode = sf::VideoMode::getDesktopMode();
 			}
 		}
@@ -247,7 +248,7 @@ void Window::setIcon(const std::string& icon)
 	}
 	else
 	{
-		// TODO : Error handling
+		error("Can't load the icon from : " + icon);
 		mIconPath = "";
 	}
 }
@@ -517,7 +518,7 @@ void Window::setCursorTexture(const std::string& texture)
 	}
 	else
 	{
-		// TODO : Error handling
+		error("Can't load cursor from : " + texture);
 		mCursorTextureData = "";
 		setCursor(Cursor::Default);
 	}

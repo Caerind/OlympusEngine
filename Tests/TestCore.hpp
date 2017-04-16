@@ -517,7 +517,6 @@ BEGIN_TEST(Core)
 
 	TEST("Advanced")
 	{
-		// TODO : Test View
 		class MyEntity : public oe::Entity
 		{
 		public:
@@ -557,10 +556,12 @@ BEGIN_TEST(Core)
 				: oe::State(application)
 				, mWorld(application)
 			{
+				// View
 				mApplication.getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
 				mApplication.getWindow().applyMainView();
 				mWorld.getRenderSystem().getView() = mApplication.getWindow().getMainView();
 
+				// Animation
 				oe::ResourceId an = mWorld.getTextures().create("soldier", "Assets/soldier.png");
 				mIdleAnimation.addFrame(an, sf::IntRect(0, 0, 64, 64), oe::seconds(5.f));
 				mAnimation.addFrame(an, sf::IntRect(0, 0, 64, 64), oe::seconds(0.2f));
@@ -568,10 +569,12 @@ BEGIN_TEST(Core)
 				mAnimation.addFrame(an, sf::IntRect(128, 0, 64, 64), oe::seconds(0.2f));
 				mAnimation.addFrame(an, sf::IntRect(192, 0, 64, 64), oe::seconds(0.2f));
 
+				// Entity
 				mEntity = mWorld.createEntity<MyEntity>();
 				MyEntity* ent = mEntity.getAs<MyEntity>();
 				ent->setPosition(400.f, 300.f, 0.f);
 
+				// Particles
 				oe::ResourceId pt = mWorld.getTextures().create("particle", "Assets/fx.png");
 				oe::ParticleComponent& p = ent->getParticle();
 				p.setTexture(pt);
@@ -586,6 +589,7 @@ BEGIN_TEST(Core)
 				a.play(&mIdleAnimation);
 				a.setPosition(-32, -60);
 
+				// Actions
 				oe::ActionSystem& actions = mWorld.getActionSystem();
 				mKeyZ.setKey(sf::Keyboard::Z);
 				mKeyS.setKey(sf::Keyboard::S);
@@ -604,6 +608,7 @@ BEGIN_TEST(Core)
 				actions.addOutput(moveLeft, [&]() { mEntity->move(oe::Vector2(-200.0f * mWorld.getUpdateTime().asSeconds(), 0.0f)); });
 				actions.addOutput(moveRight, [&]() { mEntity->move(oe::Vector2(200.0f * mWorld.getUpdateTime().asSeconds(), 0.0f)); });
 
+				// Map
 				mTileset.setImageSource("Assets/hexapointy2.png");
 				mTileset.setTileSize(oe::Vector2i(60, 80));
 				mTileset.setTileCount(3);
@@ -627,10 +632,13 @@ BEGIN_TEST(Core)
 						layer.setTileId(oe::Vector2i(c.x, c.y), 1);
 					}
 				}
+				
+				// GUI
 			}
 
 			bool handleEvent(const sf::Event& event)
 			{
+				mWorld.handleEvent(event);
 				return false;
 			}
 

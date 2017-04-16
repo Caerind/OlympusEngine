@@ -1,6 +1,6 @@
 #include "Log.hpp"
 #include "Date.hpp"
-#include <iostream> // TODO : Use own stream
+#include <iostream>
 
 namespace oe
 {

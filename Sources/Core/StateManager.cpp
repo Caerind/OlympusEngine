@@ -28,7 +28,7 @@ bool StateManager::handleEvent(const sf::Event& event)
 			break;
 		}
 	}
-	return applyPendingChanges(); // TODO : Apply for each events ?
+	return applyPendingChanges();
 }
 
 bool StateManager::update(Time dt)

@@ -1,4 +1,5 @@
 #include "RenderSystem.hpp"
+#include "../../System/Log.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 
 namespace oe
@@ -141,9 +142,7 @@ void RenderSystem::render()
 
 void RenderSystem::postRender(sf::RenderTarget& target)
 {
-	// TODO : Lights
-
-	// TODO : Shaders
+	// TODO : Add advanced graphics (Lights/Shaders)
 
 	if (mTexture.getSize() == target.getSize())
 	{
@@ -156,8 +155,7 @@ void RenderSystem::postRender(sf::RenderTarget& target)
 		target.draw(sf::Sprite(mTexture.getTexture()));
 		if (!mTexture.create(target.getSize().x, target.getSize().y))
 		{
-			// TODO : Error handling
-			printf("RenderSystem::postRender : Can't create sf::RenderTexture with size(%d, %d)", target.getSize().x, target.getSize().y);
+			error("RenderSystem::postRender : Can't create sf::RenderTexture with size(" + toString(target.getSize().x) + ", " + toString(target.getSize().y) + ")");
 		}
 	}
 }

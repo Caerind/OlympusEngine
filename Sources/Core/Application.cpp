@@ -24,6 +24,9 @@ Application::~Application()
 	{
 		mWindow.close();
 	}
+	#ifdef OE_PLATFORM_ANDROID
+		std::exit(0);
+	#endif
 }
 
 void Application::run()
@@ -79,9 +82,6 @@ void Application::run()
 void Application::stop()
 {
 	mRunning = false;
-	#ifdef OE_PLATFORM_ANDROID
-		// TODO : Android quit application
-	#endif
 }
 
 void Application::popState()
@@ -138,6 +138,11 @@ void Application::render()
 Window& Application::getWindow()
 {
 	return mWindow;
+}
+
+Localization& Application::getLocalization()
+{
+	return mLocalization;
 }
 
 } // namespace oe
