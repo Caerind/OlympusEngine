@@ -97,7 +97,6 @@ class Timer
 {
 	public:
 		Timer();
-		virtual ~Timer();
 
 		Time getLimit() const;
 		Time getRemainingTime() const;
@@ -118,8 +117,8 @@ class CallbackTimer : public Timer
 	public:
 		CallbackTimer();
 
-		virtual void reset(Time timeLimit);
-		virtual void restart(Time timeLimit);
+		virtual void reset(Time timeLimit); // Reset and stop
+		virtual void restart(Time timeLimit); // Reset and restart
 
 		void update();
 

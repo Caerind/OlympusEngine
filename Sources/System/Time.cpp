@@ -303,10 +303,6 @@ Timer::Timer()
 {
 }
 
-Timer::~Timer()
-{
-}
-
 Time Timer::getLimit() const
 {
 	return mLimit;

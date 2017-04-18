@@ -486,11 +486,11 @@ BEGIN_TEST(Core)
 					}
 					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
-						mMap.getAs<oe::Map>()->getLayer().setTileId(coords, mColor);
+						//mMap.getAs<oe::Map>()->getLayer().setTileId(coords, mColor);
 					}
 					if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 					{
-						mMap.getAs<oe::Map>()->getLayer().setTileId(coords, mColor2);
+						//mMap.getAs<oe::Map>()->getLayer().setTileId(coords, mColor2);
 					}
 					return false;
 				}
@@ -542,6 +542,13 @@ BEGIN_TEST(Core)
 			{
 				return mAnimator;
 			}
+
+			void test(oe::Time duration)
+			{
+				kill();
+			}
+
+			OeSlot(oe::TimeSystem::CTimer, onExpire, mSlot);
 
 		private:
 			oe::ParticleComponent mParticle;
@@ -639,12 +646,23 @@ BEGIN_TEST(Core)
 			bool handleEvent(const sf::Event& event)
 			{
 				mWorld.handleEvent(event);
+				if (event.type == sf::Event::KeyPressed)
+				{
+					MyEntity* m = mEntity.getAs<MyEntity>();
+					if (m != nullptr)
+					{
+						oe::TimerId id = mWorld.getTimeSystem().addTimer(oe::seconds(1.0f), m->mSlot, m, &MyEntity::test);
+					}
+				}
 				return false;
 			}
 
 			bool update(oe::Time dt)
 			{
-				mWorld.update();
+				// Not working yet
+				//ImGui::Begin("Test ImGui"); // begin window
+				//ImGui::End(); // end window
+
 				mWorld.update(dt);
 				mApplication.getWindow().setTitle("TestCore : " + oe::toString(mApplication.getFPSCount()));
 
@@ -665,18 +683,20 @@ BEGIN_TEST(Core)
 				{
 					mvt.x++;
 				}
-				mEntity.get()->move(mvt * dt.asSeconds() * 200.f);
-
-				oe::AnimatorComponent& a = mEntity.getAs<MyEntity>()->getAnimator();
-				if (mvt != oe::Vector2() && !a.isPlaying(&mAnimation))
+				if (mEntity.isValid())
 				{
-					a.play(&mAnimation);
-				}
-				else if (mvt == oe::Vector2() && !a.isPlaying(&mIdleAnimation))
-				{
-					a.play(&mIdleAnimation);
-				}
+					mEntity.get()->move(mvt * dt.asSeconds() * 200.f);
 
+					oe::AnimatorComponent& a = mEntity.getAs<MyEntity>()->getAnimator();
+					if (mvt != oe::Vector2() && !a.isPlaying(&mAnimation))
+					{
+						a.play(&mAnimation);
+					}
+					else if (mvt == oe::Vector2() && !a.isPlaying(&mIdleAnimation))
+					{
+						a.play(&mIdleAnimation);
+					}
+				}
 				return false;
 			}
 

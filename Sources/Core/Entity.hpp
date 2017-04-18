@@ -29,6 +29,8 @@ class Entity : public Node
 
 		bool isPlaying() const;
 
+		void kill();
+
 	private:
 		friend class World;
 		virtual void onCreate();

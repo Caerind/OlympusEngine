@@ -10,6 +10,7 @@
 #include "Systems/RenderSystem.hpp"
 #include "Systems/AudioSystem.hpp"
 #include "Systems/ActionSystem.hpp"
+#include "Systems/TimeSystem.hpp"
 
 #include "../System/ResourceHolder.hpp"
 #include "../System/SFMLResources.hpp"
@@ -38,15 +39,24 @@ class World
 		template <typename T = Entity>
 		EntityHandle createEntity();
 		void killEntity(const EntityHandle& handle);
+		void killEntity(const Entity* entity);
 		U32 getEntitiesCount() const; // Spawning & Playing
 		U32 getEntitiesPlaying() const; // Playing only
 
 		RenderSystem& getRenderSystem();
 		AudioSystem& getAudioSystem();
 		ActionSystem& getActionSystem();
+		TimeSystem& getTimeSystem();
 
 		TextureHolder& getTextures();
 		FontHolder& getFonts();
+
+		void play();
+		void pause();
+		void stop();
+		bool isPlaying() const;
+
+		void clear();
 
 	private:
 		U32 getFreeHandleIndex() const;
@@ -71,11 +81,13 @@ class World
 		EntityList mEntitiesPlaying;
 		EntityList mEntitiesKilled;
 
+		bool mPlaying;
 		Time mUpdateTime;
 
 		RenderSystem mRenderSystem;
 		AudioSystem mAudioSystem;
 		ActionSystem mActionSystem;
+		TimeSystem mTimeSystem;
 
 		TextureHolder mTextures;
 		FontHolder mFonts;

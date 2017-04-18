@@ -5,6 +5,8 @@ namespace oe
 
 World::World(Application& application)
 	: mApplication(application)
+	, mPlaying(false)
+	, mUpdateTime(Time::Zero)
 {
 	for (U32 i = 0; i < mMaxEntities; i++)
 	{
@@ -43,10 +45,25 @@ void World::handleEvent(const sf::Event& event)
 
 void World::update(Time dt)
 {
-	mUpdateTime = dt;
-	mRenderSystem.update(dt);
-	mAudioSystem.update();
-	mActionSystem.update();
+	update();
+
+	if (isPlaying())
+	{
+		// Apply speed factor
+		mUpdateTime = dt * mTimeSystem.getSpeedFactor();
+
+		// Update state of musics and sounds
+		mAudioSystem.update();
+
+		// Update input from the user
+		mActionSystem.update();
+
+		// Update timer
+		mTimeSystem.update(mUpdateTime);
+
+		// Update animations and particles
+		mRenderSystem.update(mUpdateTime);
+	}
 }
 
 void World::update()
@@ -84,6 +101,34 @@ void World::killEntity(const EntityHandle& handle)
 	}
 }
 
+void World::killEntity(const Entity* entity)
+{
+	for (const EntityHandle& h : mEntitiesPlaying)
+	{
+		if (h.getEntityId() == entity->getId())
+		{
+			killEntity(h);
+			return;
+		}
+	}
+	for (const EntityHandle& h : mEntitiesSpawning)
+	{
+		if (h.getEntityId() == entity->getId())
+		{
+			killEntity(h);
+			return;
+		}
+	}
+	for (const EntityHandle& h : mEntitiesKilled)
+	{
+		if (h.getEntityId() == entity->getId())
+		{
+			killEntity(h);
+			return;
+		}
+	}
+}
+
 U32 World::getEntitiesCount() const
 {
 	return mEntitiesSpawning.size() + mEntitiesPlaying.size();
@@ -109,6 +154,11 @@ ActionSystem& World::getActionSystem()
 	return mActionSystem;
 }
 
+TimeSystem& World::getTimeSystem()
+{
+	return mTimeSystem;
+}
+
 TextureHolder& World::getTextures()
 {
 	return mTextures;
@@ -117,6 +167,39 @@ TextureHolder& World::getTextures()
 FontHolder& World::getFonts()
 {
 	return mFonts;
+}
+
+void World::play()
+{
+	update();
+
+	mPlaying = true;
+}
+
+void World::pause()
+{
+	update();
+
+	mPlaying = false;
+}
+
+void World::stop()
+{
+	update();
+
+	clear();
+
+	mPlaying = false;
+}
+
+bool World::isPlaying() const
+{
+	return mPlaying;
+}
+
+void World::clear()
+{
+	// TODO : World::clear()
 }
 
 U32 World::getFreeHandleIndex() const

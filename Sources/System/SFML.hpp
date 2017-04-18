@@ -2,6 +2,7 @@
 #define OE_SFML_HPP
 
 #include "Color.hpp"
+#include "Time.hpp"
 #include "../Math/Matrix4.hpp"
 #include "../Math/Vector2.hpp"
 #include "../Math/Vector3.hpp"
@@ -11,6 +12,7 @@
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+#include <SFML/System/Time.hpp>
 
 #include "DebugDraw.hpp"
 
@@ -69,6 +71,15 @@ inline Vector3 toOE(const sf::Vector3f& vector)
 inline sf::Vector3f toSF(const Vector3& vector)
 {
 	return sf::Vector3f(vector.x, vector.y, vector.z);
+}
+
+inline oe::Time toOE(const sf::Time& time)
+{
+	return oe::microseconds(time.asMicroseconds());
+}
+inline sf::Time toSF(const oe::Time& time)
+{
+	return sf::microseconds(time.asMicroseconds());
 }
 
 } // namespace oe

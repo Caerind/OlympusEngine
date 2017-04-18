@@ -9,6 +9,9 @@
 #include "../System/Log.hpp"
 #include "../System/Localization.hpp"
 
+#include "../ExtLibs/imgui/imgui.h"
+#include "../ExtLibs/imgui/imgui-SFML.h"
+
 namespace oe
 {
 

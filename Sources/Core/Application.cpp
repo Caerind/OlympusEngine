@@ -16,6 +16,8 @@ Application::Application()
 	{
 		stop();
 	});
+
+	//ImGui::SFML::Init(mWindow.getHandle());
 }
 
 Application::~Application()
@@ -24,6 +26,9 @@ Application::~Application()
 	{
 		mWindow.close();
 	}
+
+	//ImGui::SFML::Shutdown();
+
 	#ifdef OE_PLATFORM_ANDROID
 		std::exit(0);
 	#endif

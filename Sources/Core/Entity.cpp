@@ -112,4 +112,9 @@ bool Entity::isPlaying() const
 	return mPlaying;
 }
 
+void Entity::kill()
+{
+	getWorld().killEntity(this);
+}
+
 } // namespace oe

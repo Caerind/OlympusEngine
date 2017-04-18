@@ -47,11 +47,6 @@ LayerComponent& Map::addLayer()
 	return mLayers.back();
 }
 
-LayerComponent& Map::getLayer()
-{
-	return mLayers.back();
-}
-
 const std::string& Map::getName() const
 {
 	return mName;
