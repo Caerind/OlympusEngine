@@ -7,3 +7,4 @@ Lists of 3rd party libraries :
 - pugixml : https://github.com/zeux/pugixml/
 - FastDynamicCast : https://github.com/tobspr/FastDynamicCast
 - any : https://github.com/PaulHowes/any
+- imgui : https://github.com/ocornut/imgui & https://github.com/eliasdaler/imgui
