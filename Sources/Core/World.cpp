@@ -5,7 +5,7 @@ namespace oe
 
 World::World(Application& application)
 	: mApplication(application)
-	, mPlaying(false)
+	, mPlaying(true)
 	, mUpdateTime(Time::Zero)
 {
 	for (U32 i = 0; i < mMaxEntities; i++)
