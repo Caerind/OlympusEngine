@@ -333,7 +333,7 @@ Vector3 Matrix4::transform(const Vector3& v, F32 w) const
 
 Vector2 Matrix4::transform(const Vector2& v, F32 z, F32 w) const
 {
-	return Vector2(m11 * v.x + m12 * v.y + m13 * z + m14 * w, 
+	return Vector2(m11 * v.x + m12 * v.y + m13 * z + m14 * w,
 		           m21 * v.x + m22 * v.y + m23 * z + m24 * w);
 }
 
@@ -732,15 +732,15 @@ Matrix4& Matrix4::makeLookAt(const Vector3& eye, const Vector3& target, const Ve
 	Vector3 c(a.crossProduct(b));
 	Vector3 d(b.dotProduct(eye), -c.dotProduct(eye), a.dotProduct(eye));
 	return set(-a.x, -b.x, c.x, d.x,
-		       -a.y, -b.y, c.y, d.y, 
+		       -a.y, -b.y, c.y, d.y,
 		       -a.z, -b.z, c.z, d.z,
 		       0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 Matrix4& Matrix4::makeOrtho(F32 left, F32 right, F32 top, F32 bottom, F32 zNear, F32 zFar)
 {
-	return set(2.0f / (right - left), 0.0f, 0.0f, 0.0f, 
-		       0.0f, 2.0f / (top - bottom), 0.0f, 0.0f, 
+	return set(2.0f / (right - left), 0.0f, 0.0f, 0.0f,
+		       0.0f, 2.0f / (top - bottom), 0.0f, 0.0f,
 		       0.0f, 0.0f, 2.0f / (zNear - zFar), 0.0f,
 		       (left + right) / (left - right), (top + bottom) / (bottom - top), (zFar + zNear) / (zNear - zFar), 1.0f);
 }
@@ -756,9 +756,9 @@ Matrix4& Matrix4::makePerspective(F32 angle, F32 ratio, F32 zNear, F32 zFar)
 	const F32 x = y / ratio;
 	const F32 zDist = (zNear - zFar);
 	const F32 zFarzDist = zFar / zDist;
-	return set(x, 0.0f, 0.0f, 0.0f, 
-		       0.0f, y, 0.0f, 0.0f, 
-		       0.0f, 0.0f, zFarzDist, -1.0f, 
+	return set(x, 0.0f, 0.0f, 0.0f,
+		       0.0f, y, 0.0f, 0.0f,
+		       0.0f, 0.0f, zFarzDist, -1.0f,
 		       0.0f, 0.0f, 2.0f * zNear * zFarzDist, 0.0f);
 }
 

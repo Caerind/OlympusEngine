@@ -8,8 +8,8 @@ AnimatorComponent::AnimatorComponent(Entity& entity)
 	: SpriteComponent(entity)
 	, mPlaying(false)
 	, mAnimation(nullptr)
-	, mTexture(0)
 	, mFrame(0)
+	, mTexture(0)
 	, mTimeElapsed()
 {
 }

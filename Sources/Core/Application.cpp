@@ -6,11 +6,13 @@ namespace oe
 {
 
 Application::Application()
-	: mStates(*this)
+	: mLog()
 	, mWindow(sf::VideoMode(800,600), "OlympusEngine")
-	, mRunning(true)
+	, mStates(*this)
+	, mLocalization()
 	, mFPSCounter(0)
 	, mUPSCounter(0)
+	, mRunning(true)
 {
 	mWindowClosedSlot.connect(mWindow.onWindowClosed, [this](const Window* window)
 	{

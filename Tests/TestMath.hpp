@@ -25,7 +25,6 @@ BEGIN_TEST(Math)
 	{
 		CHECK(oe::Math::inRange(3, 2, 5));
 		CHECK(oe::Math::equals(1.f, 1.001f, 0.01f));
-		CHECK(oe::Math::roundUpToPowerOf2(13) == 16);
 		CHECK(oe::Math::equals(oe::Math::cos(0.f), 1.f));
 		CHECK(oe::Math::equals(oe::Math::sin(0.f), 0.f));
 		CHECK(oe::Math::equals(oe::Math::tan(0.f), 0.f));

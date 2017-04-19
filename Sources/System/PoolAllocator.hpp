@@ -7,6 +7,8 @@
 namespace oe
 {
 
+/*
+
 template <U32 chunkSize>
 class PoolAllocator : private NonCopyable
 {
@@ -16,9 +18,9 @@ class PoolAllocator : private NonCopyable
 			ASSERT(BlockSizes < UCHAR_MAX);
 			mChunkSpace = ChunkArrayIncrement;
 			mChunkCount = 0;
-			mChunks = (Chunk*)malloc(mChunkSpace * sizeof(Chunk));
-			memset(mChunks, 0, mChunkSpace * sizeof(Chunk)); //-V575
-			memset(mFreeLists, 0, sizeof(mFreeLists));
+			mChunks = (Chunk*)std::malloc(mChunkSpace * sizeof(Chunk));
+			std::memset(mChunks, 0, mChunkSpace * sizeof(Chunk)); //-V575
+			std::memset(mFreeLists, 0, sizeof(mFreeLists));
 
 			static bool mBlockSizeLookupInitialized = false;
 			if (!mBlockSizeLookupInitialized)
@@ -45,9 +47,9 @@ class PoolAllocator : private NonCopyable
 		{
 			for (U32 i = 0; i < mChunkCount; i++)
 			{
-				::free(mChunks[i].blocks);
+				std::free(mChunks[i].blocks);
 			}
-			::free(mChunks);
+			std::free(mChunks);
 		}
 
 		/// Allocate memory. This will use alloc if the size is larger than MaxBlockSize.
@@ -148,10 +150,10 @@ class PoolAllocator : private NonCopyable
 				::free(mChunks[i].blocks);
 			}
 			mChunkCount = 0;
-			memset(mChunks, 0, mChunkSpace * sizeof(Chunk));
-			memset(mFreeLists, 0, sizeof(mFreeLists));
+			std::memset(mChunks, 0, mChunkSpace * sizeof(Chunk));
+			std::memset(mFreeLists, 0, sizeof(mFreeLists));
 		}
-		
+
 	private:
 		struct Block
 		{
@@ -163,7 +165,7 @@ class PoolAllocator : private NonCopyable
 			U32 blockSize;
 			Block* blocks;
 		};
-		
+
 		static const U32 MaxBlockSize = 640;
 		static const U32 BlockSizes = 14;
 		static const U32 ChunkArrayIncrement = 128;
@@ -201,6 +203,8 @@ template <U32 chunkSize>
 U8 PoolAllocator<chunkSize>::mBlockSizeLookup[MaxBlockSize + 1];
 
 using DefaultPoolAllocator = PoolAllocator<16 * 1024>;
+
+*/
 
 } // namespace oe
 

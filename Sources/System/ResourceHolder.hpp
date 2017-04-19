@@ -19,10 +19,8 @@ class ResourceHolder : private NonCopyable
 		template <typename ... Args>
 		ResourceId create(const std::string& name, Args&& ... args);
 
-		template <typename ... Args>
-		T& get(const std::string& name, Args&& ... args);
-		template <typename ... Args>
-		T& get(ResourceId index, Args&& ... args);
+		T& get(const std::string& name);
+		T& get(ResourceId index);
 
 		bool has(const std::string& name) const;
 		bool has(ResourceId index) const;
@@ -55,26 +53,21 @@ ResourceId ResourceHolder<T>::create(const std::string& name, Args&& ... args)
 	ResourceId index(StringHash::hash(name));
 	if (!has(index))
 	{
-		mResources.try_emplace(index, std::forward<Args>(args)...);
+	    mResources[index].loadFromFile(std::forward<Args>(args)...);
 	}
+	ASSERT(has(index));
 	return index;
 }
 
 template<typename T>
-template<typename ... Args>
-T& ResourceHolder<T>::get(const std::string& name, Args&& ... args)
+T& ResourceHolder<T>::get(const std::string& name)
 {
-	return get(StringHash::hash(name), std::forward<Args>(args)...);
+	return get(StringHash::hash(name));
 }
 
 template<typename T>
-template<typename ... Args>
-T& ResourceHolder<T>::get(ResourceId index, Args&& ... args)
+T& ResourceHolder<T>::get(ResourceId index)
 {
-	if (!has(index))
-	{
-		mResources.try_emplace(index, std::forward<Args>(args)...);
-	}
 	ASSERT(has(index));
 	return mResources.find(index)->second;
 }

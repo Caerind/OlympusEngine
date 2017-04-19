@@ -12,7 +12,12 @@ Random Random::mRandom;
 void Random::setSeed(const std::string& seed)
 {
 	mRandom.mSeed = seed;
+	#ifdef _MSC_VER
 	mRandom.mGenerator.seed(std::seed_seq(mRandom.mSeed.begin(), mRandom.mSeed.end()));
+	#else
+	static std::seed_seq seedSeq = std::seed_seq(mRandom.mSeed.begin(), mRandom.mSeed.end());
+	mRandom.mGenerator.seed(mRandom.mSeedSeq);
+	#endif
 }
 
 const std::string& Random::getSeed()

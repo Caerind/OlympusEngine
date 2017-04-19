@@ -1,9 +1,9 @@
 #ifndef OE_STATEMANAGER_HPP
 #define OE_STATEMANAGER_HPP
 
-#include "State.hpp"
-
 #include "../System/Time.hpp"
+
+#include <memory>
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -13,6 +13,33 @@ namespace oe
 {
 
 class Application;
+class StateManager;
+
+class State
+{
+	public:
+		State(StateManager& manager);
+		virtual ~State();
+
+		using Ptr = std::shared_ptr<State>;
+
+		virtual void onActivate();
+		virtual void onDeactivate();
+
+		virtual bool handleEvent(const sf::Event& event);
+		virtual bool update(Time dt);
+		virtual void render(sf::RenderTarget& target);
+
+		template <typename T, typename ... Args>
+		void pushState(Args&& ... args);
+		void popState();
+		void clearStates();
+
+		Application& getApplication();
+
+	private:
+		StateManager& mManager;
+};
 
 class StateManager
 {
@@ -30,6 +57,8 @@ class StateManager
 		void clearStates();
 
 		U32 getStateCount() const;
+
+		Application& getApplication();
 
 	private:
 		enum Action
@@ -56,9 +85,15 @@ class StateManager
 };
 
 template <typename T, typename ... Args>
+void State::pushState(Args&& ... args)
+{
+	mManager.pushState<T>(std::forward<Args>(args)...);
+}
+
+template <typename T, typename ... Args>
 void StateManager::pushState(Args&& ... args)
 {
-	mChanges.emplace_back(Action::Push, std::make_shared<T>(mApplication, std::forward<Args>(args)...));
+	mChanges.emplace_back(Action::Push, std::make_shared<T>(*this, std::forward<Args>(args)...));
 }
 
 } // namespace oe

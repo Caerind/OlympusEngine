@@ -4,6 +4,7 @@
 #include "../System/Prerequisites.hpp"
 
 #include <cmath>
+#include <cstring>
 
 namespace oe
 {
@@ -29,25 +30,6 @@ class Math
 		static inline bool equals(F32 a, F32 b, F32 epsilon = 1e-5f)
 		{
 			return fabs(a - b) < epsilon;
-		}
-
-		template <typename T>
-		static T roundUpToPowerOf2(T value)
-		{
-			return static_cast<T>(pow(static_cast<T>(2), ceil(log(value) / log(static_cast<T>(2)))));
-		}
-
-		template <>
-		static inline I32 roundUpToPowerOf2(I32 value)
-		{
-			value--;
-			value |= value >> 1;
-			value |= value >> 2;
-			value |= value >> 4;
-			value |= value >> 8;
-			value |= value >> 16;
-			value++;
-			return value;
 		}
 
 		static inline F32 sqrt(F32 value)

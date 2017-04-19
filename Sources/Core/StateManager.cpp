@@ -4,6 +4,52 @@
 namespace oe
 {
 
+State::State(StateManager& manager)
+	: mManager(manager)
+{
+}
+
+State::~State()
+{
+}
+
+void State::onActivate()
+{
+}
+
+void State::onDeactivate()
+{
+}
+
+bool State::handleEvent(const sf::Event& event)
+{
+	return false;
+}
+
+bool State::update(Time dt)
+{
+	return false;
+}
+
+void State::render(sf::RenderTarget& target)
+{
+}
+
+void State::popState()
+{
+	mManager.popState();
+}
+
+void State::clearStates()
+{
+	mManager.clearStates();
+}
+
+Application& State::getApplication()
+{
+	return mManager.getApplication();
+}
+
 StateManager::StateManager(Application& application)
 	: mApplication(application)
 {
@@ -64,6 +110,11 @@ void StateManager::clearStates()
 U32 StateManager::getStateCount() const
 {
 	return mStates.size();
+}
+
+Application& StateManager::getApplication()
+{
+	return mApplication;
 }
 
 bool StateManager::applyPendingChanges()

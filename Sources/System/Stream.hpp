@@ -4,6 +4,8 @@
 #include "Prerequisites.hpp"
 #include "Singleton.hpp"
 
+#include <iostream>
+
 namespace oe
 {
 
@@ -11,7 +13,7 @@ class OStream
 {
 	public:
 		OStream();
-	
+
 		virtual void write(const std::string& value) = 0;
 };
 
@@ -34,7 +36,7 @@ class OConsole : public OStream
 		friend OConsole& operator<<(OConsole& console, const T& value)
 		{
 			std::cout << value;
-			return file;
+			return console;
 		}
 };
 

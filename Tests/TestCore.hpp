@@ -3,7 +3,6 @@
 #include "../Sources/System/Profiler.hpp"
 
 #include "../Sources/Core/Application.hpp"
-#include "../Sources/Core/State.hpp"
 #include "../Sources/Core/World.hpp"
 #include "../Sources/Core/Entity.hpp"
 #include "../Sources/Core/Map.hpp"
@@ -50,9 +49,9 @@ BEGIN_TEST(Core)
 		class MyState : public oe::State
 		{
 			public:
-				MyState(oe::Application& application) 
-					: oe::State(application)
-					, mWorld(application)
+				MyState(oe::StateManager& manager) 
+					: oe::State(manager)
+					, mWorld(manager.getApplication())
 				{
 					oe::ResourceId hero = mWorld.getTextures().create("hero", "Assets/hero.png");
 					oe::ResourceId font = mWorld.getFonts().create("font", "Assets/font.ttf");
@@ -98,7 +97,7 @@ BEGIN_TEST(Core)
 				{
 					mWorld.update();
 					mWorld.update(dt);
-					mApplication.getWindow().setTitle("TestCore : " + oe::toString(mApplication.getFPSCount()));
+					getApplication().getWindow().setTitle("TestCore : " + oe::toString(getApplication().getFPSCount()));
 					return false;
 				}
 
@@ -147,15 +146,15 @@ BEGIN_TEST(Core)
 		class MyState : public oe::State
 		{
 			public:
-				MyState(oe::Application& application)
-					: oe::State(application)
-					, mWorld(application)
+				MyState(oe::StateManager& manager)
+					: oe::State(manager)
+					, mWorld(manager.getApplication())
 					, mMap()
 					, mMapState(0)
 					, mTileset()
 				{
-					mApplication.getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
-					mApplication.getWindow().applyMainView();
+					getApplication().getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
+					getApplication().getWindow().applyMainView();
 
 					oe::EntityHandle vch = mWorld.createEntity<MyEntity>();
 					MyEntity* vc = vch.getAs<MyEntity>();
@@ -476,9 +475,9 @@ BEGIN_TEST(Core)
 				{
 					mWorld.update();
 					mWorld.update(dt);
-					mApplication.getWindow().setTitle("TestCore : " + oe::toString(mApplication.getFPSCount()));
+					getApplication().getWindow().setTitle("TestCore : " + oe::toString(getApplication().getFPSCount()));
 
-					oe::Vector2i coords = mMap.getAs<oe::Map>()->worldToCoords(mApplication.getWindow().getCursorPosition());
+					oe::Vector2i coords = mMap.getAs<oe::Map>()->worldToCoords(getApplication().getWindow().getCursorPosition());
 					if (coords != mLastCoords)
 					{
 						mLastCoords = coords;
@@ -559,14 +558,14 @@ BEGIN_TEST(Core)
 		class MyState : public oe::State
 		{
 		public:
-			MyState(oe::Application& application)
-				: oe::State(application)
-				, mWorld(application)
+			MyState(oe::StateManager& manager)
+				: oe::State(manager)
+				, mWorld(manager.getApplication())
 			{
 				// View
-				mApplication.getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
-				mApplication.getWindow().applyMainView();
-				mWorld.getRenderSystem().getView() = mApplication.getWindow().getMainView();
+				getApplication().getWindow().setMainView(sf::View(sf::FloatRect(0.0f, 0.0f, 800.0f, 600.0f)));
+				getApplication().getWindow().applyMainView();
+				mWorld.getRenderSystem().getView() = getApplication().getWindow().getMainView();
 
 				// Animation
 				oe::ResourceId an = mWorld.getTextures().create("soldier", "Assets/soldier.png");
@@ -664,7 +663,7 @@ BEGIN_TEST(Core)
 				//ImGui::End(); // end window
 
 				mWorld.update(dt);
-				mApplication.getWindow().setTitle("TestCore : " + oe::toString(mApplication.getFPSCount()));
+				getApplication().getWindow().setTitle("TestCore : " + oe::toString(getApplication().getFPSCount()));
 
 				oe::Vector2 mvt;
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))

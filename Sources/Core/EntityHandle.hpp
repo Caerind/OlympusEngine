@@ -19,7 +19,7 @@ class EntityHandle
 		EntityHandle(const EntityHandle& handle);
 		void operator=(const EntityHandle& handle);
 
-		Entity* operator->() const 
+		Entity* operator->() const
 		{
 			return get();
 		}
@@ -48,12 +48,7 @@ template <typename T>
 T* EntityHandle::getAs() const
 {
 	ASSERT(mWorld != nullptr);
-	Entity* entity = mWorld->getEntityFromHandleIndex(mHandleIndex);
-	if (entity != nullptr && entity->getId() == mEntityId)
-	{
-		return fast_dynamic_cast<T*>(entity);
-	}
-	return nullptr;
+	return fast_dynamic_cast<T*>(get());
 }
 
 } // namespace oe

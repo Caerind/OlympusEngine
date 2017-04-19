@@ -291,7 +291,7 @@ Vector2& Vector2::setLength(F32 length, F32* oldLength)
 	const F32 actualLength = getLength();
 	ASSERT(actualLength > 0.0f);
 	*this *= (length / actualLength);
-	
+
 	if (oldLength != nullptr)
 	{
 		*oldLength = actualLength;

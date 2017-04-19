@@ -287,7 +287,7 @@ BEGIN_TEST(System)
 
 	TEST("PoolAllocator")
 	{
-		oe::PoolAllocator<1024> a;
+		//oe::PoolAllocator<1024> a;
 	}
 
 	TEST("Profiler")
@@ -354,7 +354,7 @@ BEGIN_TEST(System)
 
 	TEST("StackAllocator")
 	{
-		oe::StackAllocator<1024> a;
+		//oe::StackAllocator<1024> a;
 	}
 
 	TEST("String")

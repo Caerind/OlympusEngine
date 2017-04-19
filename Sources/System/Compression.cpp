@@ -3,6 +3,8 @@
 #define MINIZ_HEADER_FILE_ONLY
 #include "../ExtLibs/miniz/miniz.c"
 
+#include <cstring>
+
 namespace oe
 {
 
@@ -25,7 +27,7 @@ bool Compression::encode64(std::string& data)
             byte_array[1] = ((input_bytes[0] & 0x3) << 4) | (input_bytes[1] >> 4);
             byte_array[2] = ((input_bytes[1] & 0xf) << 2) | (input_bytes[2] >> 6);
             byte_array[3] = input_bytes[2] & 0x3f;
-            memset(input_bytes, '\0', 3);
+            std::memset(input_bytes, '\0', 3);
 			for (U32 j = 0; j < count + 1; j++)
 			{
 				result += mBase64Table[byte_array[j]];
@@ -64,7 +66,7 @@ bool Compression::decode64(std::string& data)
             byte_array[0] = (input_bytes[0] << 2) | ((input_bytes[1] & 0x30) >> 4);
             byte_array[1] = ((input_bytes[1] & 0xf) << 4) | ((input_bytes[2] & 0x3c) >> 2);
             byte_array[2] = ((input_bytes[2] & 0x3) << 6) | input_bytes[3];
-            memset(input_bytes, '\0', 4);
+            std::memset(input_bytes, '\0', 4);
 			for (U32 j = 0; j < count - 1; j++)
 			{
 				result += byte_array[j];
@@ -86,7 +88,7 @@ bool Compression::decode64(std::string& data)
 bool Compression::compress(std::string& data)
 {
     mz_stream zs; // z_stream is zlib's control structure
-    memset(&zs, 0, sizeof(zs));
+    std::memset(&zs, 0, sizeof(zs));
     if (mz_deflateInit(&zs, MZ_BEST_COMPRESSION) != MZ_OK)
     {
         return false;

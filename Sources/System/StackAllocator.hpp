@@ -6,6 +6,8 @@
 namespace oe
 {
 
+/*
+
 template <U32 maxBytes>
 class StackAllocator : private NonCopyable
 {
@@ -119,6 +121,8 @@ class DoubleBufferAllocator : private NonCopyable
 
 using DefaultStackAllocator = StackAllocator<100 * 1024>;
 using DefaultDoubleBufferAllocator = DoubleBufferAllocator<100 * 1024>;
+
+*/
 
 } // namespace oe
 

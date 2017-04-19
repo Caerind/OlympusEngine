@@ -94,8 +94,7 @@ const Time& World::getUpdateTime() const
 
 void World::killEntity(const EntityHandle& handle)
 {
-	Entity* entity = handle.get();
-	if (entity != nullptr)
+	if (handle.isValid())
 	{
 		mEntitiesKilled.insert(handle);
 	}
