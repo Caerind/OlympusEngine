@@ -16,16 +16,16 @@ World::World(Application& application)
 	#ifdef OE_PLATFORM_ANDROID
 	mWindowLostFocus.connect(mApplication.getWindow().onWindowLostFocus, [this](const Window* window)
 	{
-		if (mAudioSystem.getStatus() != sf::SoundSource::Status::Paused)
+		if (mApplication.getAudio().getStatus() != sf::SoundSource::Status::Paused)
 		{
-			mAudioSystem.pause();
+			mApplication.getAudio().pause();
 		}
 	});
 	mWindowGainedFocus.connect(mApplication.getWindow().onWindowGainedFocus, [this](const Window* window)
 	{
-		if (mAudioSystem.getStatus() == sf::SoundSource::Status::Paused)
+		if (mApplication.getAudio().getStatus() == sf::SoundSource::Status::Paused)
 		{
-			mAudioSystem.play();
+			mApplication.getAudio().play();
 		}
 	});
 	#endif
@@ -53,7 +53,7 @@ void World::update(Time dt)
 		mUpdateTime = dt * mTimeSystem.getSpeedFactor();
 
 		// Update state of musics and sounds
-		mAudioSystem.update();
+		mApplication.getAudio().update();
 
 		// Update input from the user
 		mActionSystem.update();
@@ -145,7 +145,7 @@ RenderSystem& World::getRenderSystem()
 
 AudioSystem& World::getAudioSystem()
 {
-	return mAudioSystem;
+	return mApplication.getAudio();
 }
 
 ActionSystem& World::getActionSystem()
@@ -160,12 +160,12 @@ TimeSystem& World::getTimeSystem()
 
 TextureHolder& World::getTextures()
 {
-	return mTextures;
+	return getApplication().getTextures();
 }
 
 FontHolder& World::getFonts()
 {
-	return mFonts;
+	return getApplication().getFonts();
 }
 
 void World::play()

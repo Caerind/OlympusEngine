@@ -37,6 +37,9 @@ class RenderSystem
 
 		View& getView();
 
+		void setBackgroundColor(const Color& color);
+		const Color& getBackgroundColor() const;
+
 	private:
 		void preRender();
 		void render();
@@ -55,6 +58,8 @@ class RenderSystem
 		DebugDraw mDebugDraw;
 
 		View mView;
+
+		Color mBackgroundColor;
 
 		bool mNeedUpdateOrderZ;
 		bool mNeedUpdateOrderY;

@@ -8,6 +8,9 @@
 #include "../System/Window.hpp"
 #include "../System/Log.hpp"
 #include "../System/Localization.hpp"
+#include "../System/ResourceHolder.hpp"
+#include "../System/SFMLResources.hpp"
+#include "../System/AudioSystem.hpp"
 
 #include "../ExtLibs/imgui/imgui.h"
 #include "../ExtLibs/imgui/imgui-SFML.h"
@@ -23,6 +26,9 @@ class Application
 
 		Window& getWindow();
 		Localization& getLocalization();
+		AudioSystem& getAudio();
+		TextureHolder& getTextures();
+		FontHolder& getFonts();
 
 		void run();
 		void stop();
@@ -44,9 +50,12 @@ class Application
 
 	private:
 		Log mLog;
-		Window mWindow;
 		StateManager mStates;
+		Window mWindow;
 		Localization mLocalization;
+		AudioSystem mAudioSystem;
+		TextureHolder mTextureHolder;
+		FontHolder mFontHolder;
 		U32 mFPSCounter;
 		U32 mUPSCounter;
 		bool mRunning;

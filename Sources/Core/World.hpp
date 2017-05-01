@@ -8,12 +8,9 @@
 #include "EntityList.hpp"
 
 #include "Systems/RenderSystem.hpp"
-#include "Systems/AudioSystem.hpp"
 #include "Systems/ActionSystem.hpp"
 #include "Systems/TimeSystem.hpp"
 
-#include "../System/ResourceHolder.hpp"
-#include "../System/SFMLResources.hpp"
 #include "../System/Time.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -37,19 +34,20 @@ class World
 		const Time& getUpdateTime() const;
 
 		template <typename T = Entity>
-		EntityHandle createEntity();
+		const EntityHandle& createEntity();
 		void killEntity(const EntityHandle& handle);
 		void killEntity(const Entity* entity);
 		U32 getEntitiesCount() const; // Spawning & Playing
 		U32 getEntitiesPlaying() const; // Playing only
 
 		RenderSystem& getRenderSystem();
-		AudioSystem& getAudioSystem();
+		AudioSystem& getAudioSystem(); // TODO : Move AudioSystem elsewhere
 		ActionSystem& getActionSystem();
 		TimeSystem& getTimeSystem();
 
 		TextureHolder& getTextures();
 		FontHolder& getFonts();
+		// TODO : Add functions to load/get/unload textures and fonts
 
 		void play();
 		void pause();
@@ -60,7 +58,7 @@ class World
 
 	private:
 		U32 getFreeHandleIndex() const;
-		EntityHandle createEntity(Entity* entity);
+		const EntityHandle& createEntity(Entity* entity);
 
 		void destroyEntities();
 		void spawnEntities();
@@ -88,9 +86,6 @@ class World
 		AudioSystem mAudioSystem;
 		ActionSystem mActionSystem;
 		TimeSystem mTimeSystem;
-
-		TextureHolder mTextures;
-		FontHolder mFonts;
 };
 
 template <typename T>

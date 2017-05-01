@@ -1,4 +1,4 @@
-#ifndef OE_ENTITYHANDLE_HPP
+ #ifndef OE_ENTITYHANDLE_HPP
 #define OE_ENTITYHANDLE_HPP
 
 #include "Entity.hpp"
@@ -34,6 +34,8 @@ class EntityHandle
 		bool operator==(const EntityHandle& handle) const;
 		bool operator!=(const EntityHandle& handle) const;
 
+		void invalidate();
+
 		// You should avoid using those two functions : Only used for debugging and internal management
 		UID getEntityId() const;
 		U32 getHandleIndex() const;
@@ -47,7 +49,6 @@ class EntityHandle
 template <typename T>
 T* EntityHandle::getAs() const
 {
-	ASSERT(mWorld != nullptr);
 	return fast_dynamic_cast<T*>(get());
 }
 

@@ -85,9 +85,9 @@ F32 Plane::getDistance(const Vector3& point) const
 Vector3 Plane::projectVector(const Vector3& vector) const
 {
 	// TODO : Plane::projectVector : Use Quaternion
-	F32 x = mNormal.x;
-	F32 y = mNormal.y;
-	F32 z = mNormal.z;
+	//F32 x = mNormal.x;
+	//F32 y = mNormal.y;
+	//F32 z = mNormal.z;
 	//Matrix3 m(1.f - x * x, -x * y, -x * z, -y * x, 1.f - y * y, -y * z, -z * x, -z * y, 1.f - z * z);
 	//return m * vector;
 	return Vector3();

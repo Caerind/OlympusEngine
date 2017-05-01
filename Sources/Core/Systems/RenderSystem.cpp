@@ -8,6 +8,7 @@ namespace oe
 RenderSystem::RenderSystem()
 	: mTexture()
 	, mRenderables()
+	, mBackgroundColor(Color::Black)
 	, mNeedUpdateOrderZ(true)
 	, mNeedUpdateOrderY(true)
 {
@@ -90,6 +91,16 @@ View& RenderSystem::getView()
 	return mView;
 }
 
+void RenderSystem::setBackgroundColor(const Color& color)
+{
+	mBackgroundColor = color;
+}
+
+const Color& RenderSystem::getBackgroundColor() const
+{
+	return mBackgroundColor;
+}
+
 void RenderSystem::preRender()
 {
 	// Reorder only on Z axis
@@ -126,7 +137,7 @@ void RenderSystem::preRender()
 
 void RenderSystem::render()
 {
-	mTexture.clear();
+	mTexture.clear(toSF(mBackgroundColor));
 	mTexture.setView(mView.getHandle());
 	for (RenderableComponent* renderable : mRenderables)
 	{

@@ -1,6 +1,11 @@
 #include "File.hpp"
 
+
+#ifdef OE_PLATFORM_WINDOWS
 #include "../ExtLibs/dirent/dirent.h"
+#else
+#include <dirent.h>
+#endif
 
 namespace oe
 {

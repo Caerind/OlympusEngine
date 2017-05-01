@@ -1,3 +1,5 @@
+#ifdef OE_PLATFORM_WINDOWS
+
 /*
  * Dirent interface for Microsoft Visual Studio
  * Version 1.21
@@ -926,4 +928,6 @@ dirent_set_errno(
 }
 #endif
 #endif /*DIRENT_H*/
+
+#endif // OE_PLATFORM_WINDOWS
 

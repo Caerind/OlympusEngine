@@ -1,8 +1,8 @@
 #ifndef OE_AUDIOSYSTEM_HPP
 #define OE_AUDIOSYSTEM_HPP
 
-#include "../../System/Prerequisites.hpp"
-#include "../../System/SFMLResources.hpp"
+#include "Prerequisites.hpp"
+#include "SFMLResources.hpp"
 
 #include <SFML/Audio.hpp>
 

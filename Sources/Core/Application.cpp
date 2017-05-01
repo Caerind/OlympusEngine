@@ -7,8 +7,8 @@ namespace oe
 
 Application::Application()
 	: mLog()
-	, mWindow(sf::VideoMode(800,600), "OlympusEngine")
 	, mStates(*this)
+	, mWindow(sf::VideoMode(800,600), "OlympusEngine")
 	, mLocalization()
 	, mFPSCounter(0)
 	, mUPSCounter(0)
@@ -24,9 +24,9 @@ Application::Application()
 
 Application::~Application()
 {
-	if (mWindow.isOpen())
+	if (mRunning)
 	{
-		mWindow.close();
+		stop();
 	}
 
 	//ImGui::SFML::Shutdown();
@@ -36,14 +36,39 @@ Application::~Application()
 	#endif
 }
 
+Window& Application::getWindow()
+{
+	return mWindow;
+}
+
+Localization& Application::getLocalization()
+{
+	return mLocalization;
+}
+
+AudioSystem& Application::getAudio()
+{
+	return mAudioSystem;
+}
+
+TextureHolder& Application::getTextures()
+{
+	return mTextureHolder;
+}
+
+FontHolder& Application::getFonts()
+{
+	return mFontHolder;
+}
+
 void Application::run()
 {
 	Clock clock;
 	Clock clockFPS;
 	Clock clockUPS;
-	Time timePerFrame(seconds(1.f / 60.f));
+	Time timePerFrame(seconds(1.0f / 60.0f));
 	Time timeSinceLastUpdate(Time::Zero);
-	Time second(seconds(1.f));
+	Time second(seconds(1.0f));
 	U32 tempFPS = 0;
 	mFPSCounter = 0;
 	U32 tempUPS = 0;
@@ -88,6 +113,10 @@ void Application::run()
 
 void Application::stop()
 {
+	mWindow.close();
+
+	mAudioSystem.stop();
+
 	mRunning = false;
 }
 
@@ -119,7 +148,7 @@ void Application::processEvents()
 	{
 		cont = mStates.handleEvent(event);
 	}
-	if (!cont)
+	if (!cont || !mWindow.isOpen())
 	{
 		stop();
 	}
@@ -140,16 +169,6 @@ void Application::render()
 	mStates.render(mWindow.getHandle());
 
 	mWindow.display();
-}
-
-Window& Application::getWindow()
-{
-	return mWindow;
-}
-
-Localization& Application::getLocalization()
-{
-	return mLocalization;
 }
 
 } // namespace oe
