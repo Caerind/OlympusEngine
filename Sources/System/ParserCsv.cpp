@@ -18,12 +18,12 @@ ParserCsv::ParserCsv(const U32 elementsPerLine, const std::string& filename)
 
 bool ParserCsv::loadFromFile(const std::string& filename)
 {
-	IFile file(filename);
+	std::ifstream file(filename);
 	if (file)
 	{
 		mFilename = filename;
 		std::string line;
-		while (file.read(line))
+		while (std::getline(file, line))
 		{
 			std::stringstream ss(line);
 			std::string value;
@@ -41,7 +41,7 @@ bool ParserCsv::loadFromFile(const std::string& filename)
 
 bool ParserCsv::saveToFile(const std::string& filename)
 {
-	OFile file((!filename.empty()) ? filename : mFilename);
+	std::ofstream file((!filename.empty()) ? filename : mFilename);
 	if (file)
 	{
 		for (U32 i = 0; i < mValues.size(); i++)

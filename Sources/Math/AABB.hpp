@@ -60,7 +60,7 @@ class AABB
 		bool intersects(const Plane& plane) const;
 		bool intersects(const Sphere& sphere) const;
 
-		AABB intersection(const AABB&& box) const;
+		AABB intersection(const AABB& box) const;
 
 		bool contains(const AABB& box) const;
 

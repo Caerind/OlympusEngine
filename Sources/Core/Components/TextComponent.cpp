@@ -4,8 +4,8 @@
 namespace oe
 {
 
-TextComponent::TextComponent(Entity& entity)
-	: RenderableComponent(entity)
+TextComponent::TextComponent(Entity& entity, bool attachedToEntity)
+	: RenderableComponent(entity, attachedToEntity)
 	, mText()
 	, mString("")
 {
@@ -13,14 +13,13 @@ TextComponent::TextComponent(Entity& entity)
 
 void TextComponent::setFont(ResourceId font)
 {
-	mText.setFont(getWorld().getFonts().get(font));
-	mLocalAABB = mText.getLocalBounds();
+	setFont(getWorld().getFonts().get(font));
 }
 
 void TextComponent::setFont(sf::Font& font)
 {
 	mText.setFont(font);
-	mLocalAABB = mText.getLocalBounds();
+	setLocalAABB(toOE(mText.getLocalBounds()));
 }
 
 const sf::Font* TextComponent::getFont() const
@@ -32,7 +31,7 @@ void TextComponent::setString(const std::string& string)
 {
 	mString = string;
 	mText.setString(string);
-	mLocalAABB = mText.getLocalBounds();
+	setLocalAABB(toOE(mText.getLocalBounds()));
 }
 
 const std::string& TextComponent::getString() const
@@ -73,7 +72,7 @@ const sf::Color& TextComponent::getOutlineColor() const
 void TextComponent::setOutlineThickness(F32 thickness)
 {
 	mText.setOutlineThickness(thickness);
-	mLocalAABB = mText.getLocalBounds();
+	setLocalAABB(toOE(mText.getLocalBounds()));
 }
 
 F32 TextComponent::getOutlineThickness() const
@@ -84,7 +83,7 @@ F32 TextComponent::getOutlineThickness() const
 void TextComponent::setCharacterSize(U32 size)
 {
 	mText.setCharacterSize(size);
-	mLocalAABB = mText.getLocalBounds();
+	setLocalAABB(toOE(mText.getLocalBounds()));
 }
 
 U32 TextComponent::getCharacterSize() const

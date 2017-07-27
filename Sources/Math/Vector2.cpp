@@ -1,7 +1,7 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
-#include "../System/Vector2i.hpp"
+#include "Vector2i.hpp"
 
 namespace oe
 {
@@ -264,6 +264,11 @@ Vector3 Vector2::toVector3() const
 Vector4 Vector2::toVector4() const
 {
 	return Vector4(x, y, 0.0f, 1.0f);
+}
+
+Vector2i Vector2::toVector2i() const
+{
+	return Vector2i((I32)x, (I32)y);
 }
 
 bool Vector2::isZero() const

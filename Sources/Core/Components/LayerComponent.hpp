@@ -3,8 +3,8 @@
 
 #include "../RenderableComponent.hpp"
 
-#include "../../System/Tileset.hpp"
-#include "../../System/MapUtility.hpp"
+#include "../../Graphics/Tileset.hpp"
+#include "../MapUtility.hpp"
 
 #include <SFML/Graphics/VertexArray.hpp>
 
@@ -14,19 +14,26 @@ namespace oe
 class LayerComponent : public RenderableComponent
 {
 	public:
-		LayerComponent(Entity& entity);
+		LayerComponent(Entity& entity, bool attachedToEntity = true);
 
 		std::vector<Vector2i> getNeighboors(const Vector2i& coords, bool diag = false);
 		Vector2i worldToCoords(const Vector2& world);
 		Vector2 coordsToWorld(const Vector2i& coords);
+		Vector2i getSize();
 
 		void create(Tileset* tileset = nullptr, const Vector2i& size = Vector2i::zero(), const Vector2i& tileSize = Vector2i::zero(), MapUtility::Orientation orientation = MapUtility::Orientation::Orthogonal, MapUtility::StaggerAxis staggerAxis = MapUtility::StaggerAxis::Y, MapUtility::StaggerIndex staggerIndex = MapUtility::StaggerIndex::Odd, U32 hexSideLength = 0);
 
+		std::string getCode();
+		bool loadFromCode(const std::string& code);
+		
 		TileId getTileId(const Vector2i& coords);
 		void setTileId(const Vector2i& coords, TileId id);
 
 		const std::string& getName() const;
 		void setName(const std::string& name);
+		
+		const F32& getOpacity() const;
+		void setOpacity(const F32& opacity);
 		
 		Tileset* getTileset() const;
 		void setTileset(Tileset* tileset);
@@ -55,10 +62,15 @@ class LayerComponent : public RenderableComponent
 		bool isGeometryUpdated() const;
 		void ensureUpdateGeometry();
 
+		void updateRender();
+		bool isRenderUpdated() const;
+		void ensureUpdateRender();
+
 	private:
 		sf::VertexArray mVertices;
 
 		bool mGeometryUpdated;
+		bool mRenderUpdated;
 
 		std::vector<TileId> mTileGrid;
 
@@ -70,6 +82,7 @@ class LayerComponent : public RenderableComponent
 		MapUtility::StaggerAxis mStaggerAxis;
 		MapUtility::StaggerIndex mStaggerIndex;
 		U32 mHexSideLength;
+		F32 mOpacity;
 };
 
 } // namespace oe

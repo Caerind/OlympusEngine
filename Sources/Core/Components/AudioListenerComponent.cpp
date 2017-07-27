@@ -3,8 +3,8 @@
 namespace oe
 {
 
-AudioListenerComponent::AudioListenerComponent(Entity& entity)
-	: SceneComponent(entity)
+AudioListenerComponent::AudioListenerComponent(Entity& entity, bool attachedToEntity)
+	: SceneComponent(entity, attachedToEntity)
 {
 }
 
@@ -51,12 +51,13 @@ Vector3 AudioListenerComponent::getUpVector() const
 void AudioListenerComponent::onCreate()
 {
 	mInvalidationSlot.connect(onNodeInvalidation, this, &AudioListenerComponent::onNodeInvalidated);
-	mInvalidationZSlot.connect(onNodeInvalidation, this, &AudioListenerComponent::onNodeInvalidated);
 }
 
 void AudioListenerComponent::onNodeInvalidated(const oe::Node* node)
 {
-	sf::Listener::setPosition(toSF(getGlobalPosition()));
+	// TODO : If 3D change this
+	const oe::Vector2& pos = getGlobalPosition();
+	sf::Listener::setPosition(pos.x, 0.0f, pos.y);
 }
 
 } // namespace oe

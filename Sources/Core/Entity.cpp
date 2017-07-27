@@ -1,14 +1,17 @@
 #include "Entity.hpp"
 #include "World.hpp"
+#include "EntityManager.hpp"
 
 namespace oe
 {
 
-Entity::Entity(World& world)
-	: mWorld(world)
+Entity::Entity(EntityManager& manager)
+	: Node()
+	, mManager(manager)
 	, mId(Id::generate<Entity>())
-	, mComponents()
-	, mSceneComponents()
+	, mName(nullptr)
+	, mState(Entity::Constructed)
+	, mVisible(true)
 {
 }
 
@@ -16,14 +19,139 @@ Entity::~Entity()
 {
 }
 
-World& Entity::getWorld()
+Application& Entity::getApplication()
 {
-	return mWorld;
+	return getWorld().getApplication();
 }
 
-UID Entity::getId() const
+World& Entity::getWorld()
+{
+	return mManager.getWorld();
+}
+
+const UID& Entity::getId() const
 {
 	return mId;
+}
+
+void Entity::setName(char* name)
+{
+	mName = name;
+}
+
+const char* Entity::getName() const
+{
+	return mName;
+}
+
+bool Entity::hasName() const
+{
+	return mName != nullptr;
+}
+
+const Entity::State& Entity::getState() const
+{
+	return mState;
+}
+
+EntityHandle Entity::getHandle() const
+{
+	return mManager.getHandleFromEntity(this);
+}
+
+void Entity::kill() const
+{
+	mManager.killEntity(this);
+}
+
+const ComponentList& Entity::getComponents() const
+{
+	return mComponents;
+}
+
+const SceneComponentList& Entity::getSceneComponents() const
+{
+	return mSceneComponents;
+}
+
+const RenderableComponentList& Entity::getRenderableComponents() const
+{
+	return mRenderableComponents;
+}
+
+const Rect& Entity::getAABB() const
+{
+	if (!mAABBUpdated)
+	{
+		updateAABB();
+	}
+	return mAABB;
+}
+
+void Entity::updateAABB() const
+{
+	bool set = false;
+	for (auto itr = mSceneComponents.cbegin(); itr != mSceneComponents.cend(); ++itr)
+	{
+		Rect aabb = (*itr)->getGlobalAABB();
+		if (set)
+		{
+			mAABB.merge(aabb);
+		}
+		else
+		{
+			if (aabb.isValid())
+			{
+				mAABB = aabb;
+				set = true;
+			}
+		}
+	}
+	if (!set)
+	{
+		mAABB = Rect();
+	}
+	mAABBUpdated = true;
+}
+
+void Entity::invalidateAABB()
+{
+	mAABBUpdated = false;
+}
+
+bool Entity::isAABBUpdated() const
+{
+	return mAABBUpdated;
+}
+
+bool Entity::isVisible() const
+{
+	return mVisible;
+}
+
+void Entity::setVisible(bool visible)
+{
+	mVisible = visible;
+}
+
+void Entity::render(sf::RenderTarget& target, const Rect& viewAABB)
+{
+	if (isVisible())
+	{
+		if (mNeedOrderComponents)
+		{
+			mRenderableComponents.sort(Entity::sortComponents);
+			mNeedOrderComponents = false;
+		}
+
+		for (RenderableComponent* renderable : mRenderableComponents)
+		{
+			if (renderable->isVisible() && renderable->getGlobalAABB().intersects(viewAABB))
+			{
+				renderable->render(target);
+			}
+		}
+	}
 }
 
 void Entity::onCreate()
@@ -62,59 +190,64 @@ void Entity::destroyComponents()
 	}
 }
 
-void Entity::update(Time dt)
+void Entity::setState(const Entity::State& state)
 {
-}
-
-void Entity::setPlaying(bool playing)
-{
-	mPlaying = playing;
+	mState = state;
 }
 
 void Entity::registerComponent(Component* component)
 {
 	ASSERT(component != nullptr);
-	if (mComponents.insert(component))
-	{
-		SceneComponent* sc = fast_dynamic_cast<SceneComponent*>(component);
-		if (sc != nullptr)
-		{
-			mSceneComponents.insert(sc);
-		}
-	}
+	mComponents.insert(component);
 }
 
 void Entity::unregisterComponent(Component* component)
 {
 	ASSERT(component != nullptr);
-	if (mComponents.remove(component))
+	mComponents.remove(component);
+}
+
+void Entity::registerSceneComponent(SceneComponent* sceneComponent)
+{
+	ASSERT(sceneComponent != nullptr);
+	mSceneComponents.insert(sceneComponent);
+}
+
+void Entity::unregisterSceneComponent(SceneComponent* sceneComponent)
+{
+	ASSERT(sceneComponent != nullptr);
+	mSceneComponents.remove(sceneComponent);
+}
+
+void Entity::registerRenderableComponent(RenderableComponent* renderableComponent)
+{
+	ASSERT(renderableComponent != nullptr);
+	mRenderableComponents.insert(renderableComponent);
+}
+
+void Entity::unregisterRenderableComponent(RenderableComponent* renderableComponent)
+{
+	ASSERT(renderableComponent != nullptr);
+	mRenderableComponents.remove(renderableComponent);
+}
+
+void Entity::invalidateComponentsOrder()
+{
+	mNeedOrderComponents = true;
+}
+
+bool Entity::sortComponents(const RenderableComponent* a, const RenderableComponent* b)
+{
+	ASSERT(a != nullptr);
+	ASSERT(b != nullptr);
+	if (Math::equals(a->getGlobalZ(), b->getGlobalZ()))
 	{
-		SceneComponent* sc = fast_dynamic_cast<SceneComponent*>(component);
-		if (sc != nullptr)
-		{
-			mSceneComponents.remove(sc);
-		}
+		return a->getGlobalPosition().y < b->getGlobalPosition().y;
 	}
-}
-
-const ComponentList& Entity::getComponents() const
-{
-	return mComponents;
-}
-
-const SceneComponentList& Entity::getSceneComponents() const
-{
-	return mSceneComponents;
-}
-
-bool Entity::isPlaying() const
-{
-	return mPlaying;
-}
-
-void Entity::kill()
-{
-	getWorld().killEntity(this);
+	else
+	{
+		return a->getGlobalZ() < b->getGlobalZ();
+	}
 }
 
 } // namespace oe

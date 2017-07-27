@@ -1,6 +1,7 @@
 #include "Time.hpp"
 
 #include <chrono>
+#include <thread>
 
 #if defined(OE_PLATFORM_MACOS) || defined(OE_PLATFORM_IOS)
 	#include <mach/mach_time.h>
@@ -23,6 +24,7 @@ namespace oe
 {
 
 const Time Time::Zero;
+const Time Time::Second = seconds(1.0f);
 
 Time Time::getCurrentTime()
 {
@@ -231,6 +233,11 @@ Time operator %(Time left, Time right)
 Time& operator %=(Time& left, Time right)
 {
 	return left = left % right;
+}
+
+void sleep(Time duration)
+{
+	std::this_thread::sleep_for(std::chrono::microseconds(duration.asMicroseconds()));
 }
 
 Clock::Clock() : mStart(Time::getCurrentTime())

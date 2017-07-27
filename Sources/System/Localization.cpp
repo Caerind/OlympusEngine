@@ -91,7 +91,7 @@ bool Localization::loadLanguageFromFile(LanguageTable& table, const std::string&
 		U32 size = iniParser.getSize();
 		for (U32 i = 0; i < size; i++)
 		{
-			table.add(iniParser.getValue(i));
+			table.add(iniParser.getProperty(i).value);
 		}
 		return true;
 	}

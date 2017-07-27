@@ -1,94 +1,45 @@
 #include "RenderSystem.hpp"
-#include "../../System/Log.hpp"
+#include "../../System/Logger.hpp"
+#include "../../Graphics/SFMLWrapper.hpp"
 #include <SFML/Graphics/Sprite.hpp>
+#include "../World.hpp"
 
 namespace oe
 {
 
-RenderSystem::RenderSystem()
-	: mTexture()
-	, mRenderables()
+RenderSystem::RenderSystem(World& world)
+	: mWorld(world)
+	, mTexture()
 	, mBackgroundColor(Color::Black)
-	, mNeedUpdateOrderZ(true)
-	, mNeedUpdateOrderY(true)
 {
+	mWorld.getEntityManager().addQuery(&mQuery);
 }
 
-void RenderSystem::registerRenderable(RenderableComponent* renderable)
+RenderSystem::~RenderSystem()
 {
-	ASSERT(renderable != nullptr);
-	mRenderables.insert(renderable);
-
-	// Reorder the sprite
-	mNeedUpdateOrderZ = true;
-	mNeedUpdateOrderY = true;
-} 
-
-void RenderSystem::unregisterRenderable(RenderableComponent* renderable)
-{
-	ASSERT(renderable != nullptr);
-	mRenderables.remove(renderable);
-
-	// Don't need to reorder here
+	mWorld.getEntityManager().removeQuery(&mQuery);
 }
 
-void RenderSystem::registerParticle(ParticleComponent* particle)
-{
-	registerRenderable(particle);
-	mParticles.insert(particle);
-}
-
-void RenderSystem::unregisterParticle(ParticleComponent* particle)
-{
-	mParticles.remove(particle);
-	unregisterRenderable(particle);
-}
-
-void RenderSystem::registerAnimator(AnimatorComponent* animator)
-{
-	registerRenderable(animator);
-	mAnimators.insert(animator);
-}
-
-void RenderSystem::unregisterAnimator(AnimatorComponent* animator)
-{
-	mAnimators.remove(animator);
-	unregisterRenderable(animator);
-}
-
-void RenderSystem::update(Time dt)
+void RenderSystem::clearDebugDraw()
 {
 	mDebugDraw.clear();
-	for (auto& particle : mParticles)
-	{
-		particle->update(dt);
-	}
-	for (auto& animator : mAnimators)
-	{
-		animator->update(dt);
-	}
 }
 
 void RenderSystem::render(sf::RenderTarget& target)
 {
-	preRender();
+	preRender(target.getSize());
 	render();
 	postRender(target);
-}
-
-void RenderSystem::needUpdateOrderZ()
-{
-	mNeedUpdateOrderZ = true;
-}
-
-void RenderSystem::needUpdateOrderY()
-{
-	mNeedUpdateOrderY = true;
 }
 
 View& RenderSystem::getView()
 {
 	return mView;
+}
+
+void RenderSystem::setView(const View& view)
+{
+	mView = view;
 }
 
 void RenderSystem::setBackgroundColor(const Color& color)
@@ -101,88 +52,82 @@ const Color& RenderSystem::getBackgroundColor() const
 	return mBackgroundColor;
 }
 
-void RenderSystem::preRender()
+void RenderSystem::setQuerySelector(EntityQuery::Selector selector)
 {
-	// Reorder only on Z axis
-	if (mNeedUpdateOrderZ)
-	{
-		std::sort(mRenderables.begin(), mRenderables.end(), RenderSystem::orderZ);
-		mNeedUpdateOrderZ = false;
+	mQuery.setSelector(selector);
+}
 
-		// As we reordered Z we need to reorder Y
-		mNeedUpdateOrderY = true;
-	}
+void RenderSystem::setDebugVisible(bool visible)
+{
+	mDebugDraw.setVisible(visible);
+}
 
-	// Reorder only on Y axis
-	if (mNeedUpdateOrderY)
+bool RenderSystem::isDebugVisible() const
+{
+	return mDebugDraw.isVisible();
+}
+
+void RenderSystem::preRender(const sf::Vector2u& size)
+{
+	OE_PROFILE_FUNCTION("RenderSystem::preRender");
+
+	// Resize texture
+	if (size != mTexture.getSize())
 	{
-		auto begin = mRenderables.begin();
-		float currentZ = -99999.f;
-		for (auto itr = mRenderables.begin(); itr != mRenderables.end(); ++itr)
+		if (!mTexture.create(size.x, size.y))
 		{
-			RenderableComponent* r = (*itr);
-			ASSERT(r != nullptr);
-			F32 z = r->getGlobalZ();
-			ASSERT(currentZ <= z);
-			if (currentZ < z)
-			{
-				std::sort(begin, itr, RenderSystem::orderY);
-				currentZ = z;
-				begin = itr + 1;
-			}
+			error("RenderSystem::postRender : Can't create sf::RenderTexture with size(" + toString(size.x) + ", " + toString(size.y) + ")");
 		}
-		mNeedUpdateOrderY = false;
 	}
+
+	// Order entities
+	mQuery.getEntities().sort(RenderSystem::sortEntities);
 }
 
 void RenderSystem::render()
 {
+	OE_PROFILE_FUNCTION("RenderSystem::render");
+
 	mTexture.clear(toSF(mBackgroundColor));
+
 	mTexture.setView(mView.getHandle());
-	for (RenderableComponent* renderable : mRenderables)
+	Rect viewAABB = mView.getBounds();
+
+	for (Entity* entity : mQuery.getEntities())
 	{
-		ASSERT(renderable != nullptr);
-		if (renderable->isVisible())
+		if ((entity->isAABBUpdated() && entity->getAABB().intersects(viewAABB)) || !entity->isAABBUpdated())
 		{
-			renderable->render(mTexture);
+			entity->render(mTexture, viewAABB);
 		}
 	}
-	mDebugDraw.render(mTexture);
+
 	mTexture.display();
 }
 
 void RenderSystem::postRender(sf::RenderTarget& target)
 {
+	OE_PROFILE_FUNCTION("RenderSystem::postRender");
+
 	// TODO : Add advanced graphics (Lights/Shaders)
 
-	if (mTexture.getSize() == target.getSize())
+	static sf::Sprite sprite(mTexture.getTexture());
+
+	target.draw(sprite);
+
+	sf::View old = target.getView();
+	target.setView(mView.getHandle());
+	if (mDebugDraw.isVisible())
 	{
-		target.draw(sf::Sprite(mTexture.getTexture()));
+		mDebugDraw.render(target);
 	}
-	else
-	{
-		sf::Transform transform;
-		transform.scale(target.getSize().x / ((F32)mTexture.getSize().x), target.getSize().y / ((F32)mTexture.getSize().y));
-		target.draw(sf::Sprite(mTexture.getTexture()));
-		if (!mTexture.create(target.getSize().x, target.getSize().y))
-		{
-			error("RenderSystem::postRender : Can't create sf::RenderTexture with size(" + toString(target.getSize().x) + ", " + toString(target.getSize().y) + ")");
-		}
-	}
+	target.setView(old);
 }
 
-bool RenderSystem::orderZ(RenderableComponent* a, RenderableComponent* b)
+bool RenderSystem::sortEntities(const Entity* a, const Entity* b)
 {
 	ASSERT(a != nullptr);
 	ASSERT(b != nullptr);
 	return a->getGlobalZ() < b->getGlobalZ();
-}
-
-bool RenderSystem::orderY(RenderableComponent* a, RenderableComponent* b)
-{
-	ASSERT(a != nullptr);
-	ASSERT(b != nullptr);
-	return a->getGlobalPosition().y < b->getGlobalPosition().y;
 }
 
 } // namespace oe

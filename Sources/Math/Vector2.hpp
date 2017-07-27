@@ -63,6 +63,7 @@ class Vector2
 		Vector2 toVector2() const;
 		Vector3 toVector3() const;
 		Vector4 toVector4() const;
+		Vector2i toVector2i() const;
 
 		bool isZero() const;
 		F32 getSquaredLength() const;

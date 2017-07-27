@@ -4,8 +4,8 @@
 namespace oe
 {
 
-Map::Map(World& world)
-	: Entity(world)
+Map::Map(EntityManager& manager)
+	: Entity(manager)
 	, mName("")
 	, mTileset(nullptr)
 	, mSize()
@@ -36,15 +36,29 @@ Vector2 Map::coordsToWorld(const Vector2i& coords)
 	return MapUtility::coordsToWorld(coords, mOrientation, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength) + getPosition();
 }
 
-LayerComponent& Map::addLayer()
+Vector2i Map::getSize()
 {
-	mLayers.emplace_back(*this);
-	mLayers.back().create(mTileset, mSize, mTileSize, mOrientation, mStaggerAxis, mStaggerIndex, mHexSideLength);
-	if (isPlaying())
+	return MapUtility::getSize(mOrientation, mSize, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength);
+}
+
+LayerComponent& Map::addLayer(const std::string& name)
+{
+	mLayers.push_back(new LayerComponent(*this));
+	if (name != "")
 	{
-		mLayers.back().onSpawn();
+		mLayers.back()->setName(name);
 	}
-	return mLayers.back();
+	mLayers.back()->create(mTileset, mSize, mTileSize, mOrientation, mStaggerAxis, mStaggerIndex, mHexSideLength);
+	return *mLayers.back();
+}
+
+void Map::clearLayers()
+{
+	for (U32 i = 0; i < mLayers.size(); i++)
+	{
+		delete mLayers[i];
+	}
+	mLayers.clear();
 }
 
 const std::string& Map::getName() const

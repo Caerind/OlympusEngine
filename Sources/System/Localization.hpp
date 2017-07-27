@@ -3,6 +3,7 @@
 
 #include "Prerequisites.hpp"
 #include "Singleton.hpp"
+#include "Hash.hpp"
 
 #include <functional>
 #include <vector>

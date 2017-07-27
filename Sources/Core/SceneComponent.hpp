@@ -2,9 +2,8 @@
 #define OE_SCENECOMPONENT_HPP
 
 #include "Component.hpp"
-#include "../System/Node.hpp"
-
-#include "../System/SFMLResources.hpp"
+#include "Node.hpp"
+#include "../Graphics/Rect.hpp"
 
 namespace oe
 {
@@ -12,7 +11,26 @@ namespace oe
 class SceneComponent : public Component, public Node
 {
 	public:
-		SceneComponent(Entity& entity);
+		SceneComponent(Entity& entity, bool attachToEntity = true);
+		virtual ~SceneComponent();
+
+		const Rect& getLocalAABB() const;
+		const Rect& getGlobalAABB() const;
+
+		virtual void onCreate();
+
+		void setLocalAABB(const Rect& rect);
+		void invalidateGlobalAABB();
+		void onSceneComponentInvalidated(const Node* node);
+		OeSlot(oe::Node, onNodeInvalidation, mSceneComponentInvalidationSlot);
+
+		virtual void registerComponent();
+		virtual void unregisterComponent();
+
+	protected:
+		Rect mLocalAABB;
+		mutable Rect mGlobalAABB;
+		mutable bool mGlobalAABBUpdated;
 };
 
 } // namespace oe

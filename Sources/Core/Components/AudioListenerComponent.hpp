@@ -11,7 +11,7 @@ namespace oe
 class AudioListenerComponent : public SceneComponent
 {
     public:
-		AudioListenerComponent(Entity& entity);
+		AudioListenerComponent(Entity& entity, bool attachedToEntity = true);
 
 		void setGlobalVolume(float volume);
 		float getGlobalVolume() const;
@@ -29,7 +29,6 @@ class AudioListenerComponent : public SceneComponent
 		void onNodeInvalidated(const oe::Node* node);
 
 		OeSlot(oe::Node, onNodeInvalidation, mInvalidationSlot);
-		OeSlot(oe::Node, onNodeInvalidationZ, mInvalidationZSlot);
 };
 
 } // namespace oe

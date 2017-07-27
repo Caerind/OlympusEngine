@@ -2,8 +2,7 @@
 #define OE_TEXTCOMPONENT_HPP
 
 #include "../RenderableComponent.hpp"
-
-#include "../../System/Color.hpp"
+#include "../../Graphics/SFMLResources.hpp"
 
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -14,7 +13,7 @@ namespace oe
 class TextComponent : public RenderableComponent
 {
 	public:
-		TextComponent(Entity& entity);
+		TextComponent(Entity& entity, bool attachedToEntity = true);
 
 		void setFont(ResourceId font);
 		void setFont(sf::Font& font);

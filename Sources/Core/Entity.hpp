@@ -1,46 +1,78 @@
 #ifndef OE_ENTITY_HPP
 #define OE_ENTITY_HPP
 
-#include "Component.hpp"
-#include "SceneComponent.hpp"
-#include "ComponentList.hpp"
-
 #include "../System/Id.hpp"
-#include "../System/Node.hpp"
-#include "../System/Time.hpp"
+#include "../System/Type.hpp"
 
-#include "../ExtLibs/FastDynamicCast/fast_dynamic_cast.h"
+#include "Component.hpp"
+#include "ComponentList.hpp"
+#include "SceneComponent.hpp"
+#include "RenderableComponent.hpp"
+#include "Node.hpp"
 
 namespace oe
 {
 
+class Application;
 class World;
+class EntityManager;
+class EntityHandle;
+
 class Entity : public Node
 {
 	public:
-		Entity(World& world);
+		enum State
+		{
+			Constructed,
+			Created,
+			Playing,
+			Killed,
+			Destroyed
+		};
+
+		TYPE(Entity);
+
+	public:
+		Entity(EntityManager& manager);
 		virtual ~Entity();
 
+		Application& getApplication();
 		World& getWorld();
-		UID getId() const;
+
+		const UID& getId() const;
+
+		void setName(char* name);
+		const char* getName() const;
+		bool hasName() const;
+
+		const Entity::State& getState() const;
+
+		EntityHandle getHandle() const;
+		void kill() const;
 
 		const ComponentList& getComponents() const;
 		const SceneComponentList& getSceneComponents() const;
+		const RenderableComponentList& getRenderableComponents() const;
 
-		bool isPlaying() const;
+		const Rect& getAABB() const;
+		void updateAABB() const;
+		void invalidateAABB();
+		bool isAABBUpdated() const;
 
-		void kill();
+		bool isVisible() const;
+		void setVisible(bool visible);
+
+		void render(sf::RenderTarget& target, const Rect& viewAABB);
 
 	private:
-		friend class World;
-		virtual void onCreate();
-		void createComponents();
-		virtual void onSpawn();
-		void spawnComponents();
-		virtual void onDestroy();
-		void destroyComponents();
-		virtual void update(Time dt);
-		void setPlaying(bool playing);
+		friend class EntityManager;
+		virtual void onCreate(); // Call after the entity creation
+		void createComponents(); // Call onCreate for each components
+		virtual void onSpawn(); // Call after the entity spawn
+		void spawnComponents(); // Call onSpawn for each components
+		virtual void onDestroy(); // Call before being destroyed
+		void destroyComponents(); // Call onDestory for each components
+		void setState(const Entity::State& state);
 
 	private:
 		friend class Component;
@@ -48,11 +80,31 @@ class Entity : public Node
 		void unregisterComponent(Component* component);
 
 	private:
-		World& mWorld;
+		friend class SceneComponent;
+		void registerSceneComponent(SceneComponent* sceneComponent);
+		void unregisterSceneComponent(SceneComponent* sceneComponent);
+		
+	private:
+		friend class RenderableComponent;
+		void registerRenderableComponent(RenderableComponent* renderableComponent);
+		void unregisterRenderableComponent(RenderableComponent* renderableComponent);
+		void invalidateComponentsOrder();
+		static bool sortComponents(const RenderableComponent* a, const RenderableComponent* b);
+
+	private:
+		EntityManager& mManager;
 		UID mId;
-		bool mPlaying;
+		char* mName;
+		Entity::State mState;
 		ComponentList mComponents;
 		SceneComponentList mSceneComponents;
+		RenderableComponentList mRenderableComponents;
+		bool mVisible;
+
+		mutable bool mAABBUpdated;
+		mutable Rect mAABB;
+
+		mutable bool mNeedOrderComponents;
 };
 
 } // namespace oe

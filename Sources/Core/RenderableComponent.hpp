@@ -12,12 +12,9 @@ class RenderSystem;
 class RenderableComponent : public SceneComponent
 {
 	public:
-		RenderableComponent(Entity& entity);
+		RenderableComponent(Entity& entity, bool attachedToEntity = true);
 		
 		virtual void render(sf::RenderTarget& target);
-
-		const sf::FloatRect& getLocalAABB() const;
-		const sf::FloatRect& getGlobalAABB() const;
 
 		bool isVisible() const;
 		void setVisible(bool visible);
@@ -25,19 +22,16 @@ class RenderableComponent : public SceneComponent
 		RenderSystem& getRenderSystem();
 
 		virtual void onCreate();
-		virtual void onSpawn();
-		virtual void onDestroy();
 
-		void onNodeInvalidated(const Node* node);
-		void onNodeInvalidatedZ(const Node* node);
+		void onRenderableComponentInvalidated(const Node* node);
+		void onRenderableComponentInvalidatedZ(const Node* node);
+		OeSlot(oe::Node, onNodeInvalidation, mRenderableComponentInvalidationSlot);
+		OeSlot(oe::Node, onNodeInvalidationZ, mRenderableComponentInvalidationZSlot);
 
-		OeSlot(oe::Node, onNodeInvalidation, mInvalidationSlot);
-		OeSlot(oe::Node, onNodeInvalidationZ, mInvalidationZSlot);
+		virtual void registerComponent();
+		virtual void unregisterComponent();
 
 	protected:
-		sf::FloatRect mLocalAABB;
-		mutable sf::FloatRect mGlobalAABB;
-		mutable bool mGlobalAABBUpdated;
 		bool mVisible;
 };
 

@@ -6,10 +6,12 @@ namespace oe
 
 class Entity;
 class World;
+
 class Component
 {
 	public:
 		Component(Entity& entity);
+		virtual ~Component();
 
 		virtual void onCreate();
 		virtual void onSpawn();
@@ -18,9 +20,8 @@ class Component
 		Entity& getEntity();
 		World& getWorld();
 
-	protected:
-		void registerComponent();
-		void unregisterComponent();
+		virtual void registerComponent();
+		virtual void unregisterComponent();
 
 	protected:
 		Entity& mEntity;

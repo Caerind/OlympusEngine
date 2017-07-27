@@ -1,8 +1,9 @@
 #ifndef OE_PARSERPURE_HPP
 #define OE_PARSERPURE_HPP
 
+#include <fstream>
+
 #include "Prerequisites.hpp"
-#include "File.hpp"
 
 namespace oe
 {
@@ -32,7 +33,7 @@ class ParserPure
 				void set(const std::string& name, const std::string& value);
 				const std::string& get(const std::string& name) const;
 
-				void write(OFile& file, U32 space) const;
+				void write(std::ofstream& file, U32 space) const;
 
 				const std::string& getName() const;
 				const std::string& getValue() const;

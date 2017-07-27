@@ -2,6 +2,7 @@
 #define OE_SPRITECOMPONENT_HPP
 
 #include "../RenderableComponent.hpp"
+#include "../../Graphics/SFMLResources.hpp"
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -12,7 +13,7 @@ namespace oe
 class SpriteComponent : public RenderableComponent
 {
 	public:
-		SpriteComponent(Entity& entity);
+		SpriteComponent(Entity& entity, bool attachedToEntity = true);
 
 		void setTexture(ResourceId texture);
 		void setTexture(sf::Texture& texture);

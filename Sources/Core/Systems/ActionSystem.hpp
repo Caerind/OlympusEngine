@@ -39,7 +39,6 @@ class ActionInput
 		friend class ActionSystem;
 		virtual void update();
 		void reset();
-		void setSystem(ActionSystem& system);
 		
 	private:
 		U32 mId;

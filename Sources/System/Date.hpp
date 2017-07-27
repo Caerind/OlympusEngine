@@ -1,9 +1,10 @@
 #ifndef OE_DATE_HPP
 #define OE_DATE_HPP
 
+#include <ctime>
+
 #include "Prerequisites.hpp"
 #include "Time.hpp"
-#include <ctime>
 
 namespace oe
 {

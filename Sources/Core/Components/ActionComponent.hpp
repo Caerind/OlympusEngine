@@ -28,4 +28,4 @@ class ActionComponent : public Component
 
 } // namespace oe
 
-#endif // OE_ANIMATIORCOMPONENT_HPP
+#endif // OE_ACTIONCOMPONENT_HPP

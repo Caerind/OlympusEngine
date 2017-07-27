@@ -1,15 +1,17 @@
-#ifndef OE_AUDIOLISTENERCOMPONENT_HPP
-#define OE_AUDIOLISTENERCOMPONENT_HPP
+#ifndef OE_VIEWCOMPONENT_HPP
+#define OE_VIEWCOMPONENT_HPP
 
 #include "../SceneComponent.hpp"
 
 namespace oe
 {
+	
+// TODO : Choose the view
 
 class ViewComponent : public SceneComponent
 {
     public:
-		ViewComponent(Entity& entity);
+		ViewComponent(Entity& entity, bool attachedToEntity = true);
 
 		virtual void onCreate();
 
@@ -20,4 +22,4 @@ class ViewComponent : public SceneComponent
 
 } // namespace oe
 
-#endif // OE_AUDIOLISTENERCOMPONENT_HPP
+#endif // OE_VIEWCOMPONENT_HPP

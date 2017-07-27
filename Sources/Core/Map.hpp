@@ -5,7 +5,7 @@
 
 #include "Components/LayerComponent.hpp"
 
-#include "../System/MapUtility.hpp"
+#include "MapUtility.hpp"
 
 namespace oe
 {
@@ -13,17 +13,22 @@ namespace oe
 // TODO : Read from .tmx
 
 class World;
+
 class Map : public Entity
 {
 	public:
-		Map(World& world);
+		TYPE(Map);
+
+		Map(EntityManager& manager);
 		virtual ~Map();
 
 		std::vector<Vector2i> getNeighboors(const Vector2i& coords, bool diag = false);
 		Vector2i worldToCoords(const Vector2& world);
 		Vector2 coordsToWorld(const Vector2i& coords);
+		Vector2i getSize();
 
-		LayerComponent& addLayer();
+		LayerComponent& addLayer(const std::string& name = "");
+		void clearLayers();
 		// TODO : Improve Layer usage
 
 		const std::string& getName() const;
@@ -51,7 +56,7 @@ class Map : public Entity
 		void setHexSideLength(U32 hexSideLength);
 
 	private:
-		std::vector<LayerComponent> mLayers;
+		std::vector<LayerComponent*> mLayers;
 
 		std::string mName;
 		Tileset* mTileset;

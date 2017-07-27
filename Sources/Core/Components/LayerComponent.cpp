@@ -1,10 +1,11 @@
 #include "LayerComponent.hpp"
+#include "../../System/Compression.hpp"
 
 namespace oe
 {
 
-LayerComponent::LayerComponent(Entity& entity)
-	: RenderableComponent(entity)
+LayerComponent::LayerComponent(Entity& entity, bool attachedToEntity)
+	: RenderableComponent(entity, attachedToEntity)
 	, mVertices(sf::Quads)
 	, mGeometryUpdated(false)
 	, mTileGrid()
@@ -16,6 +17,7 @@ LayerComponent::LayerComponent(Entity& entity)
 	, mStaggerAxis(MapUtility::StaggerAxis::Y)
 	, mStaggerIndex(MapUtility::StaggerIndex::Odd)
 	, mHexSideLength(0)
+	, mOpacity(1.0f)
 {
 }
 
@@ -34,6 +36,11 @@ Vector2 LayerComponent::coordsToWorld(const Vector2i& coords)
 	return MapUtility::coordsToWorld(coords, mOrientation, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength) + getGlobalPosition();
 }
 
+Vector2i LayerComponent::getSize()
+{
+	return MapUtility::getSize(mOrientation, mSize, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength);
+}
+
 void LayerComponent::create(Tileset* tileset, const Vector2i& size, const Vector2i& tileSize, MapUtility::Orientation orientation, MapUtility::StaggerAxis staggerAxis, MapUtility::StaggerIndex staggerIndex, U32 hexSideLength)
 {
 	mTileset = tileset;
@@ -45,6 +52,78 @@ void LayerComponent::create(Tileset* tileset, const Vector2i& size, const Vector
 	mHexSideLength = hexSideLength;
 
 	updateGeometry();
+}
+
+std::string LayerComponent::getCode()
+{
+	std::string data;
+	data.reserve(mSize.x * mSize.y * 4);
+	ensureUpdateGeometry();
+	Vector2i coords;
+	for (coords.y = 0; coords.y < mSize.y; coords.y++)
+	{
+		for (coords.x = 0; coords.x < mSize.x; coords.x++)
+		{
+			TileId id = mTileGrid[coords.x + coords.y * mSize.x];
+			data.push_back((U8)(id));
+			data.push_back((U8)(id >> 8));
+			data.push_back((U8)(id >> 16));
+			data.push_back((U8)(id >> 24));
+		}
+	}
+	if (!Compression::compress64(data))
+	{
+		return "";
+	}
+	return data;
+}
+
+bool LayerComponent::loadFromCode(const std::string& code)
+{
+	Vector2i coords;
+	const U32 FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+	const U32 FLIPPED_VERTICALLY_FLAG = 0x40000000;
+	const U32 FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+	std::string data;
+	std::stringstream ss;
+	ss << code;
+	ss >> data;
+	if (!Compression::decompress64(data))
+	{
+		return false;
+	}
+	std::vector<U8> byteVector;
+	byteVector.reserve(mSize.x * mSize.y * 4);
+	for (std::string::iterator i = data.begin(); i != data.end(); ++i)
+	{
+		byteVector.push_back(*i);
+	}
+	ensureUpdateGeometry();
+	for (U32 i = 0; i < byteVector.size() - 3; i += 4)
+	{
+		TileId gid = byteVector[i] | byteVector[i + 1] << 8 | byteVector[i + 2] << 16 | byteVector[i + 3] << 24;
+		gid &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
+		
+		U32 index(coords.x + coords.y * mSize.x);
+		mTileGrid[index] = gid;
+		if (mTileset != nullptr)
+		{
+			sf::Vertex* vertex(&mVertices[index * 4]);
+			sf::Vector2f pos(mTileset->toPos(gid));
+			Vector2 texSize(mTileset->getTileSize());
+			vertex[0].texCoords = pos;
+			vertex[1].texCoords = sf::Vector2f(pos.x + texSize.x, pos.y);
+			vertex[2].texCoords = sf::Vector2f(pos.x + texSize.x, pos.y + texSize.y);
+			vertex[3].texCoords = sf::Vector2f(pos.x, pos.y + texSize.y);
+		}
+		
+		coords.x = (coords.x + 1) % mSize.x;
+		if (coords.x == 0)
+		{
+			coords.y++;
+		}
+	}
+	return true;
 }
 
 TileId LayerComponent::getTileId(const Vector2i& coords)
@@ -89,6 +168,17 @@ const std::string& LayerComponent::getName() const
 void LayerComponent::setName(std::string const& name)
 {
 	mName = name;
+}
+
+const F32& LayerComponent::getOpacity() const
+{
+	return mOpacity;
+}
+
+void LayerComponent::setOpacity(const F32& opacity)
+{
+	mOpacity = opacity;
+	mRenderUpdated = false;
 }
 
 Tileset* LayerComponent::getTileset() const
@@ -205,6 +295,7 @@ void LayerComponent::render(sf::RenderTarget& target)
 {
 	if (mTileset != nullptr)
 	{
+		ensureUpdateRender();
 		sf::RenderStates states;
 		states.texture = &mTileset->getTexture();
 		states.transform = getGlobalTransform();
@@ -236,6 +327,8 @@ void LayerComponent::updateGeometry()
 			vertex[3].position = sf::Vector2f(pos.x, pos.y + mTileSize.y);
 		}
 	}
+	setLocalAABB(Rect(Vector2(), getSize().toVector2()));
+
 	mGeometryUpdated = true;
 }
 
@@ -249,6 +342,32 @@ void LayerComponent::ensureUpdateGeometry()
 	if (!mGeometryUpdated)
 	{
 		updateGeometry();
+	}
+}
+
+void LayerComponent::updateRender()
+{
+	sf::Color color = sf::Color(255, 255, 255, static_cast<U8>(255.0f * mOpacity));
+	U32 size = mVertices.getVertexCount();
+	for (U32 i = 0; i < size; i++)
+	{
+		mVertices[i].color = color;
+	}
+
+	mRenderUpdated = true;
+}
+
+bool LayerComponent::isRenderUpdated() const
+{
+	return mRenderUpdated;
+}
+
+void LayerComponent::ensureUpdateRender()
+{
+	ensureUpdateGeometry();
+	if (!mRenderUpdated)
+	{
+		updateRender();
 	}
 }
 

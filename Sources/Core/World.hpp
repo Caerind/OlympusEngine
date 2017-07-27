@@ -1,20 +1,15 @@
 #ifndef OE_WORLD_HPP
 #define OE_WORLD_HPP
 
-#include "Application.hpp"
+#include "../Application/Application.hpp"
+#include "../System/Signal.hpp"
 
-#include "Entity.hpp"
-#include "EntityHandle.hpp"
-#include "EntityList.hpp"
-
+#include "EntityManager.hpp"
 #include "Systems/RenderSystem.hpp"
 #include "Systems/ActionSystem.hpp"
 #include "Systems/TimeSystem.hpp"
-
-#include "../System/Time.hpp"
-
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Window/Event.hpp>
+#include "Systems/ParticleSystem.hpp"
+#include "Systems/AnimationSystem.hpp"
 
 namespace oe
 {
@@ -25,75 +20,46 @@ class World
 		World(Application& application);
 
 		Application& getApplication();
+		TextureManager& getTextures();
+		FontManager& getFonts();
 
 		void handleEvent(const sf::Event& event);
 		void update(Time dt);
-		void update();
 		void render(sf::RenderTarget& target);
-
-		const Time& getUpdateTime() const;
-
-		template <typename T = Entity>
-		const EntityHandle& createEntity();
-		void killEntity(const EntityHandle& handle);
-		void killEntity(const Entity* entity);
-		U32 getEntitiesCount() const; // Spawning & Playing
-		U32 getEntitiesPlaying() const; // Playing only
-
-		RenderSystem& getRenderSystem();
-		AudioSystem& getAudioSystem(); // TODO : Move AudioSystem elsewhere
-		ActionSystem& getActionSystem();
-		TimeSystem& getTimeSystem();
-
-		TextureHolder& getTextures();
-		FontHolder& getFonts();
-		// TODO : Add functions to load/get/unload textures and fonts
 
 		void play();
 		void pause();
-		void stop();
 		bool isPlaying() const;
+		OeSignal(onWorldPlay, const World*);
+		OeSignal(onWorldPause, const World*);
 
 		void clear();
 
-	private:
-		U32 getFreeHandleIndex() const;
-		const EntityHandle& createEntity(Entity* entity);
+		EntityManager& getEntityManager();
+		RenderSystem& getRenderSystem();
+		ActionSystem& getActionSystem();
+		TimeSystem& getTimeSystem();
+		ParticleSystem& getParticleSystem();
+		AnimationSystem& getAnimationSystem();
 
-		void destroyEntities();
-		void spawnEntities();
-
-		friend class EntityHandle;
-		Entity* getEntityFromHandleIndex(U32 handleIndex) const;
-
-	private:
-		static const U32 mMaxEntities = 1024;
-
-		OeSlot(oe::Window, onWindowLostFocus, mWindowLostFocus);
-		OeSlot(oe::Window, onWindowGainedFocus, mWindowGainedFocus);
+		const Time& getUpdateTime() const;
 
 	private:
 		Application& mApplication;
-		Entity* mEntities[mMaxEntities];
-		EntityList mEntitiesSpawning;
-		EntityList mEntitiesPlaying;
-		EntityList mEntitiesKilled;
 
 		bool mPlaying;
 		Time mUpdateTime;
 
+		TextureManager mTextures;
+		FontManager mFonts;
+
+		EntityManager mEntityManager;
 		RenderSystem mRenderSystem;
-		AudioSystem mAudioSystem;
 		ActionSystem mActionSystem;
 		TimeSystem mTimeSystem;
+		ParticleSystem mParticleSystem;
+		AnimationSystem mAnimationSystem;
 };
-
-template <typename T>
-EntityHandle World::createEntity()
-{
-	Entity* entity = new T(*this); // TODO : Allocator
-	return createEntity(entity);
-}
 
 } // namespace oe
 

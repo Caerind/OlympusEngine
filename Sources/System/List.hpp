@@ -1,9 +1,10 @@
 #ifndef OE_LIST_HPP
 #define OE_LIST_HPP
 
-#include "../System/Prerequisites.hpp"
-
+#include <functional>
 #include <vector>
+
+#include "Prerequisites.hpp"
 
 namespace oe
 {
@@ -45,13 +46,11 @@ class List
 
 		bool remove(T item)
 		{
-			for (auto itr = mList.begin(); itr != mList.end(); ++itr)
+			auto itr = std::find(mList.begin(), mList.end(), item);
+			if (itr != mList.end())
 			{
-				if (item == *itr)
-				{
-					mList.erase(itr);
-					return true;
-				}
+				mList.erase(itr);
+				return true;
 			}
 			return false;
 		}
@@ -61,14 +60,12 @@ class List
 
 		iterator find(T item)
 		{
-			for (auto itr = begin(); itr != end(); ++itr)
-			{
-				if (item == *itr)
-				{
-					return itr;
-				}
-			}
-			return end();
+			return std::find(mList.begin(), mList.end(), item);
+		}
+
+		void sort(std::function<bool(T a, T b)> sortingFunction)
+		{
+			std::sort(mList.begin(), mList.end(), sortingFunction);
 		}
 
 		iterator begin()

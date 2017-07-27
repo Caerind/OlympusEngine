@@ -1,36 +1,20 @@
 #include "RenderableComponent.hpp"
 #include "Systems/RenderSystem.hpp"
 #include "World.hpp"
+#include "Entity.hpp"
 
 namespace oe
 {
 
-RenderableComponent::RenderableComponent(Entity& entity)
-	: SceneComponent(entity)
-	, mLocalAABB()
-	, mGlobalAABB()
-	, mGlobalAABBUpdated(false)
+RenderableComponent::RenderableComponent(Entity& entity, bool attachedToEntity)
+	: SceneComponent(entity, attachedToEntity)
 	, mVisible(true)
 {
+	mEntity.registerRenderableComponent(this);
 }
 
 void RenderableComponent::render(sf::RenderTarget& target)
 {
-}
-
-const sf::FloatRect& RenderableComponent::getLocalAABB() const
-{
-	return mLocalAABB;
-}
-
-const sf::FloatRect& RenderableComponent::getGlobalAABB() const
-{
-	if (!mGlobalAABBUpdated)
-	{
-		mGlobalAABB = getGlobalTransform().transformRect(mLocalAABB);
-		mGlobalAABBUpdated = true;
-	}
-	return mGlobalAABB;
 }
 
 bool RenderableComponent::isVisible() const
@@ -50,29 +34,31 @@ RenderSystem& RenderableComponent::getRenderSystem()
 
 void RenderableComponent::onCreate()
 {
-	mInvalidationSlot.connect(onNodeInvalidation, this, &RenderableComponent::onNodeInvalidated);
-	mInvalidationZSlot.connect(onNodeInvalidationZ, this, &RenderableComponent::onNodeInvalidatedZ);
+	SceneComponent::onCreate();
+	mRenderableComponentInvalidationSlot.connect(onNodeInvalidation, this, &RenderableComponent::onRenderableComponentInvalidated);
+	mRenderableComponentInvalidationZSlot.connect(onNodeInvalidationZ, this, &RenderableComponent::onRenderableComponentInvalidatedZ);
 }
 
-void RenderableComponent::onSpawn()
+void RenderableComponent::onRenderableComponentInvalidated(const Node* node)
 {
-	getRenderSystem().registerRenderable(this);
+	mEntity.invalidateComponentsOrder();
 }
 
-void RenderableComponent::onDestroy()
+void RenderableComponent::onRenderableComponentInvalidatedZ(const Node* node)
 {
-	getRenderSystem().unregisterRenderable(this);
+	mEntity.invalidateComponentsOrder();
 }
 
-void RenderableComponent::onNodeInvalidated(const Node* node)
+void RenderableComponent::registerComponent()
 {
-	getRenderSystem().needUpdateOrderY();
-	mGlobalAABBUpdated = false;
+	SceneComponent::registerComponent();
+	mEntity.registerRenderableComponent(this);
 }
 
-void RenderableComponent::onNodeInvalidatedZ(const Node* node)
+void RenderableComponent::unregisterComponent()
 {
-	getRenderSystem().needUpdateOrderZ();
+	mEntity.unregisterRenderableComponent(this);
+	SceneComponent::unregisterComponent();
 }
 
 } // namespace oe

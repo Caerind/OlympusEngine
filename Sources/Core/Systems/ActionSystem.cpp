@@ -1,4 +1,6 @@
 #include "ActionSystem.hpp"
+#include "../../System/Hash.hpp"
+#include "../../System/Profiler.hpp"
 
 namespace oe
 {
@@ -29,11 +31,6 @@ void ActionInput::update()
 void ActionInput::reset()
 {
 	mActive = false;
-}
-
-void ActionInput::setSystem(ActionSystem& system)
-{
-	mSystem = &system;
 }
 
 ActionSystem* ActionInput::getSystem()
@@ -207,6 +204,8 @@ void ActionSystem::addEvent(const sf::Event& event)
 
 void ActionSystem::update()
 {
+	OE_PROFILE_FUNCTION("ActionSystem::update");
+
 	for (auto itr = mInputs.begin(); itr != mInputs.end(); ++itr)
 	{
 		itr->second->reset();
@@ -233,7 +232,7 @@ bool ActionSystem::hasEvent(std::function<bool(const sf::Event& event)> eventVal
 
 ActionId ActionSystem::addAction(const std::string& name)
 {
-	ActionId id = StringHash::hash(name); 
+	ActionId id = hash(name); 
 	if (mActions.find(id) == mActions.end())
 	{
 		mActions[id] = Action();
@@ -245,12 +244,12 @@ void ActionSystem::setInput(ActionId id, ActionInput* input)
 {
 	mActions[id].setInput(input);
 	mInputs[input->getId()] = input;
-	input->setSystem(*this);
+	input->mSystem = this;
 }
 
 void ActionSystem::setInput(const std::string& name, ActionInput* input)
 {
-	setInput(StringHash::hash(name), input);
+	setInput(hash(name), input);
 }
 
 void ActionSystem::addOutput(ActionId id, const ActionOutput& output)
@@ -260,7 +259,7 @@ void ActionSystem::addOutput(ActionId id, const ActionOutput& output)
 
 void ActionSystem::addOutput(const std::string& name, const ActionOutput& output)
 {
-	addOutput(StringHash::hash(name), output);
+	addOutput(hash(name), output);
 }
 
 bool ActionSystem::isActive(ActionId id) const
@@ -270,7 +269,7 @@ bool ActionSystem::isActive(ActionId id) const
 
 bool ActionSystem::isActive(const std::string& name) const
 {
-	return isActive(StringHash::hash(name));
+	return isActive(hash(name));
 }
 
 ActionSystem::Action::Action()

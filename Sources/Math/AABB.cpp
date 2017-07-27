@@ -251,7 +251,7 @@ bool AABB::intersects(const Sphere& sphere) const
 	return sphere.intersects(*this);
 }
 
-AABB AABB::intersection(const AABB&& box) const
+AABB AABB::intersection(const AABB& box) const
 {
 	Vector3 min(mMin);
 	Vector3 max(mMax);

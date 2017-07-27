@@ -18,6 +18,7 @@ class Time
 		I64 asMicroseconds() const;
 
 		static const Time Zero;
+		static const Time Second;
 
 	private:
 		friend Time seconds(F32);
@@ -62,6 +63,8 @@ Time& operator /=(Time& left, U32 right);
 F32 operator /(Time left, Time right);
 Time operator %(Time left, Time right);
 Time& operator %=(Time& left, Time right);
+
+void sleep(Time duration);
 
 class Clock
 {

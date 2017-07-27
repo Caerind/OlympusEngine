@@ -6,7 +6,9 @@
 
 #include <SFML/Graphics/VertexArray.hpp>
 
-#include "../../System/Distribution.hpp"
+#include "../../Math/Distribution.hpp"
+
+#include "../../Graphics/SFMLResources.hpp"
 
 #include "../RenderableComponent.hpp"
 
@@ -38,7 +40,7 @@ class ParticleComponent : public RenderableComponent
 		using Affector = std::function<void(Particle&, Time)>;
 
 	public:
-		ParticleComponent(Entity& entity);
+		ParticleComponent(Entity& entity, bool attachedToEntity = true);
 
 		void setTexture(ResourceId texture);
 		void setTexture(sf::Texture& texture);
@@ -70,10 +72,10 @@ class ParticleComponent : public RenderableComponent
 
 		void addGravity(F32 gravityFactor);
 
-		virtual void onSpawn(); // override RenderableComponent::onSpawn to register as ParticleComponent
-		virtual void onDestroy(); // override RenderableComponent::onDestrop to unregister as ParticleComponent
-
 		virtual void render(sf::RenderTarget& target);
+
+		virtual void onSpawn(); // register to the ParticleSystem
+		virtual void onDestroy(); // unregister to the ParticleSystem
 
 	private:
 		U32 computeParticleCount(Time dt);

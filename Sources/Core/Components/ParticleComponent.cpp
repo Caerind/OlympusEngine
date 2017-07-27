@@ -4,8 +4,8 @@
 namespace oe
 {
 
-ParticleComponent::ParticleComponent(Entity& entity)
-	: RenderableComponent(entity)
+ParticleComponent::ParticleComponent(Entity& entity, bool attachedToEntity)
+	: RenderableComponent(entity, attachedToEntity)
 	, mParticles()
 	, mAffectors()
 	, mTexture(nullptr)
@@ -30,7 +30,7 @@ ParticleComponent::ParticleComponent(Entity& entity)
 
 void ParticleComponent::setTexture(ResourceId id)
 {
-	mTexture = &getWorld().getTextures().get(id);
+	setTexture(getWorld().getTextures().get(id));
 }
 
 void ParticleComponent::setTexture(sf::Texture& texture)
@@ -178,16 +178,6 @@ void ParticleComponent::addGravity(F32 gravityFactor)
 	});
 }
 
-void ParticleComponent::onSpawn()
-{
-	getRenderSystem().registerParticle(this);
-}
-
-void ParticleComponent::onDestroy()
-{
-	getRenderSystem().unregisterParticle(this);
-}
-
 void ParticleComponent::render(sf::RenderTarget& target)
 {
 	if (mTexture != nullptr)
@@ -209,6 +199,16 @@ void ParticleComponent::render(sf::RenderTarget& target)
 		states.transform = getGlobalTransform();
 		target.draw(mVertices, states);
 	}
+}
+
+void ParticleComponent::onSpawn()
+{
+	getWorld().getParticleSystem().registerParticleComponent(this);
+}
+
+void ParticleComponent::onDestroy()
+{
+	getWorld().getParticleSystem().unregisterParticleComponent(this);
 }
 
 U32 ParticleComponent::computeParticleCount(Time dt)

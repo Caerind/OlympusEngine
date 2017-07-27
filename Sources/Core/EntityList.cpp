@@ -3,27 +3,15 @@
 namespace oe
 {
 
-EntityList::EntityList() : List<EntityHandle>()
+EntityList::EntityList() 
+	: List<EntityHandle>()
 {
 }
 
 const EntityHandle& EntityList::get(U32 index)
 {
 	ASSERT(index < size());
-	U32 i = 0;
-	auto itr = begin();
-	for (; itr != end(); ++itr)
-	{
-		if (i == index)
-		{
-			break;
-		}
-		else
-		{
-			i++;
-		}
-	}
-	return *itr;
+	return *(begin() + index);
 }
 
 Entity* EntityList::getEntity(U32 index)

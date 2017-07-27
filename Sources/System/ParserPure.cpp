@@ -20,7 +20,7 @@ ParserPure::ParserPure(const std::string& filename)
 
 bool ParserPure::loadFromFile(const std::string& filename)
 {
-	IFile file(filename);
+	std::ifstream file(filename);
 	if (file)
 	{
 		mFilename = filename;
@@ -28,7 +28,7 @@ bool ParserPure::loadFromFile(const std::string& filename)
 		U32 space;
 		U32 actualSpace(0);
 		std::string actualProperty("");
-		while (file.read(line))
+		while (std::getline(file, line))
 		{
 			// Remove and count spaces
 			space = 0;
@@ -115,7 +115,7 @@ bool ParserPure::loadFromFile(const std::string& filename)
 
 bool ParserPure::saveToFile(const std::string& filename)
 {
-	OFile file(((!filename.empty()) ? mFilename : filename));
+	std::ofstream file(((!filename.empty()) ? mFilename : filename));
 	if (file)
 	{
 		for (const PureProperty& p : mProperties)
@@ -262,7 +262,7 @@ const std::string& ParserPure::PureProperty::get(const std::string& name) const
 	return mValue;
 }
 
-void ParserPure::PureProperty::write(OFile& file, U32 space) const
+void ParserPure::PureProperty::write(std::ofstream& file, U32 space) const
 {
 	for (U32 i = 0; i < space; ++i)
 	{

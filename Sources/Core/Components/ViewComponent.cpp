@@ -4,8 +4,8 @@
 namespace oe
 {
 
-ViewComponent::ViewComponent(Entity& entity)
-	: SceneComponent(entity)
+ViewComponent::ViewComponent(Entity& entity, bool attachedToEntity)
+	: SceneComponent(entity, attachedToEntity)
 {
 }
 

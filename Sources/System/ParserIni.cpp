@@ -13,23 +13,24 @@ ParserIni::ParserIni(const std::string& filename)
 	: mValues()
 	, mFilename("")
 {
+	loadFromFile(filename);
 }
 
 bool ParserIni::loadFromFile(const std::string& filename)
 {
-	IFile file(filename);
+	std::ifstream file(filename);
 	if (file)
 	{
 		mFilename = filename;
 		std::string currentSection = "";
 		std::string line;
-		while (file.read(line))
+		while (std::getline(file, line))
 		{
 			if (line.size() > 0 && line[0] == '[' && line.back() == ']')
 			{
 				currentSection = line.substr(1, line.size() - 2);
 			}
-			else
+			else if (line.size() > 0)
 			{
 				std::string index;
 				std::string value;
@@ -38,12 +39,7 @@ bool ParserIni::loadFromFile(const std::string& filename)
 				{
 					index = line.substr(0, found);
 					value = line.substr(found + 1);
-					if (!currentSection.empty())
-					{
-						index.insert(0, 1, ':');
-						index.insert(0, currentSection);
-					}
-					mValues[index] = value;
+					mValues.emplace_back(value, index, currentSection);
 				}
 			}
 		}
@@ -55,31 +51,40 @@ bool ParserIni::loadFromFile(const std::string& filename)
 
 bool ParserIni::saveToFile(const std::string& filename)
 {
-	OFile file((!filename.empty()) ? filename : mFilename);
-	if (file)
+	std::ofstream file((!filename.empty()) ? filename : mFilename);
+	if (file && mValues.size() > 0)
 	{
-		std::string currentSection("");
-		for (auto itr = mValues.begin(); itr != mValues.end(); itr++)
+		for (U32 i = 0; i < mValues.size(); i++)
 		{
-			U32 found(itr->first.find_first_of(':'));
-			if (found != std::string::npos)
+			mValues[i].saved = false;
+		}
+
+		bool writedLine = false;
+
+		std::string currentSection("");
+		for (U32 j = 0; j < mValues.size(); j++)
+		{
+			if (!mValues[j].saved)
 			{
-				std::string section(itr->first.substr(0, found));
-				std::string index(itr->first.substr(found + 1));
-				if (section != currentSection)
+				currentSection = mValues[j].section;
+				if (writedLine && currentSection.size() > 0)
 				{
-					file << '\n' << '[' << section << ']' << '\n';
-					file << index << '=' << itr->second << '\n';
-					currentSection = section;
+					file << '\n';
 				}
-				else
+				if (currentSection.size() > 0)
 				{
-					file << index << '=' << itr->second << '\n';
+					file << '[' << currentSection << "]\n";
+					writedLine = true;
 				}
-			}
-			else
-			{
-				file << itr->first << '=' << itr->second << '\n';
+				for (U32 i = 0; i < mValues.size(); i++)
+				{
+					if (mValues[i].section == currentSection && !mValues[i].saved)
+					{
+						file << mValues[i].index << "=" << mValues[i].value << '\n';
+						mValues[i].saved = true;
+						writedLine = true;
+					}
+				}
 			}
 		}
 		file.close();
@@ -88,56 +93,49 @@ bool ParserIni::saveToFile(const std::string& filename)
 	return false;
 }
 
-void ParserIni::set(const std::string& index, const std::string& value, const std::string& section)
+void ParserIni::set(const std::string& value, const std::string& index, const std::string& section)
 {
-	if (!section.empty())
+	StringId key = hash(section + ":" + index);
+	bool found = false;
+	for (U32 i = 0; i < mValues.size(); i++)
 	{
-		mValues[index] = value;
+		if (mValues[i].key == key)
+		{
+			found = true;
+			mValues[i].value = value;
+			return;
+		}
 	}
-	else
+	if (!found)
 	{
-		mValues[section + ':' + index] = value;
+		mValues.emplace_back(value, index, section);
+		return;
 	}
 }
 
 std::string ParserIni::get(const std::string& index, const std::string& section)
 {
-	if (!section.empty())
+	StringId key = hash(section + ":" + index);
+	for (U32 i = 0; i < mValues.size(); i++)
 	{
-		return mValues[index];
-	}
-	else
-	{
-		return mValues[section + ':' + index];
-	}
-}
-
-std::string ParserIni::getKey(U32 index)
-{
-	U32 i = 0;
-	for (auto itr = mValues.begin(); itr != mValues.end(); itr++)
-	{
-		if (i == index)
+		if (mValues[i].key == key)
 		{
-			return itr->first;
+			return mValues[i].value;
 		}
-		i++;
 	}
 	return "";
 }
 
-std::string ParserIni::getValue(U32 index)
+ParserIni::IniProperty& ParserIni::getProperty(U32 index)
 {
-	U32 i = 0;
-	for (auto itr = mValues.begin(); itr != mValues.end(); itr++)
-	{
-		if (i == index)
-		{
-			return itr->second;
-		}
-		i++;
-	}
-	return "";
+	ASSERT(index < mValues.size());
+	return mValues[index];
+}
+
+const ParserIni::IniProperty& ParserIni::getProperty(U32 index) const
+{
+	ASSERT(index < mValues.size());
+	return mValues[index];
 }
 
 U32 ParserIni::getSize() const

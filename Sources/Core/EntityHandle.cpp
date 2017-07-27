@@ -1,44 +1,44 @@
 #include "EntityHandle.hpp"
-#include "World.hpp"
+#include "EntityManager.hpp"
 
 namespace oe
 {
 
 EntityHandle::EntityHandle()
-	: mEntityId(0)
+	: mManager(nullptr)
+	, mEntityId(0)
 	, mHandleIndex(0)
-	, mWorld(nullptr)
 {
 }
 
-EntityHandle::EntityHandle(World* world, const Entity& entity, U32 handleIndex)
-	: mEntityId(entity.getId())
+EntityHandle::EntityHandle(EntityManager* manager, const Entity& entity, U32 handleIndex)
+	: mManager(manager)
+	, mEntityId(entity.getId())
 	, mHandleIndex(handleIndex)
-	, mWorld(world)
 {
 }
 
 EntityHandle::EntityHandle(const EntityHandle& handle)
-	: mEntityId(handle.mEntityId)
+	: mManager(handle.mManager)
+	, mEntityId(handle.mEntityId)
     , mHandleIndex(handle.mHandleIndex)
-	, mWorld(handle.mWorld)
 {
 }
 
 void EntityHandle::operator=(const EntityHandle& handle)
 {
+	mManager = handle.mManager;
 	mEntityId = handle.mEntityId;
 	mHandleIndex = handle.mHandleIndex;
-	mWorld = handle.mWorld;
 }
 
 Entity* EntityHandle::get() const
 {
-	if (mWorld == nullptr)
+	if (mManager == nullptr)
 	{
 		return nullptr;
 	}
-	Entity* entity = mWorld->getEntityFromHandleIndex(mHandleIndex);
+	Entity* entity = mManager->getEntityFromHandleIndex(mHandleIndex);
 	if (entity != nullptr && entity->getId() == mEntityId)
 	{
 		return entity;
@@ -46,13 +46,18 @@ Entity* EntityHandle::get() const
 	return nullptr;
 }
 
+Entity* EntityHandle::operator->() const
+{
+	return get();
+}
+
 bool EntityHandle::isValid() const
 {
-	if (mEntityId == 0 || mWorld == nullptr)
+	if (mEntityId == 0 || mManager == nullptr)
 	{
 		return false;
 	}
-	Entity* entity = mWorld->getEntityFromHandleIndex(mHandleIndex);
+	Entity* entity = mManager->getEntityFromHandleIndex(mHandleIndex);
 	return entity != nullptr && entity->getId() == mEntityId;
 }
 

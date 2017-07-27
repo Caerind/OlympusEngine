@@ -8,7 +8,11 @@ namespace oe
 Component::Component(Entity& entity)
 	: mEntity(entity)
 {
-	registerComponent();
+	mEntity.registerComponent(this);
+}
+
+Component::~Component()
+{
 }
 
 void Component::onCreate()

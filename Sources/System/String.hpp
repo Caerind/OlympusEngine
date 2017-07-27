@@ -10,22 +10,6 @@
 namespace oe
 {
 
-using StringId = U32;
-
-class StringHash
-{
-	public:
-		static const StringId hash(const std::string& str);
-
-		static const std::string& get(const StringId& id);
-
-	private:
-		static std::map<StringId, std::string> mStrings;
-
-	private:
-		static const U32 hashCalc(const std::string& str, U32 i);
-};
-
 void toLower(std::string& str);
 void toUpper(std::string& str);
 
@@ -40,7 +24,6 @@ bool contains(const std::string& str, const std::string& c);
 std::string limitSize(const std::string& str, U32 size);
 
 std::string toBoolString(const bool& value);
-bool fromBoolString(const std::string& string);
 
 template <typename T>
 std::string toString(const T& value)
