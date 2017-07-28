@@ -1,7 +1,7 @@
 #include "Compression.hpp"
 
 #define MINIZ_HEADER_FILE_ONLY
-#include "../ExtLibs/miniz/miniz.c"
+#include <miniz/miniz.c>
 
 #include <cstring>
 
