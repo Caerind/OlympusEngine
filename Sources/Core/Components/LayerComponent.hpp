@@ -19,7 +19,7 @@ class LayerComponent : public RenderableComponent
 		std::vector<Vector2i> getNeighboors(const Vector2i& coords, bool diag = false);
 		Vector2i worldToCoords(const Vector2& world);
 		Vector2 coordsToWorld(const Vector2i& coords);
-		Vector2i getSize();
+		Vector2i getRealSize(); // TODO : Improve naming
 
 		void create(Tileset* tileset = nullptr, const Vector2i& size = Vector2i::zero(), const Vector2i& tileSize = Vector2i::zero(), MapUtility::Orientation orientation = MapUtility::Orientation::Orthogonal, MapUtility::StaggerAxis staggerAxis = MapUtility::StaggerAxis::Y, MapUtility::StaggerIndex staggerIndex = MapUtility::StaggerIndex::Odd, U32 hexSideLength = 0);
 

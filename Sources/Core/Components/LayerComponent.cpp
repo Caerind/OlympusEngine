@@ -36,7 +36,7 @@ Vector2 LayerComponent::coordsToWorld(const Vector2i& coords)
 	return MapUtility::coordsToWorld(coords, mOrientation, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength) + getGlobalPosition();
 }
 
-Vector2i LayerComponent::getSize()
+Vector2i LayerComponent::getRealSize()
 {
 	return MapUtility::getSize(mOrientation, mSize, mTileSize, mStaggerIndex, mStaggerAxis, mHexSideLength);
 }
@@ -327,7 +327,7 @@ void LayerComponent::updateGeometry()
 			vertex[3].position = sf::Vector2f(pos.x, pos.y + mTileSize.y);
 		}
 	}
-	setLocalAABB(Rect(Vector2(), getSize().toVector2()));
+	setLocalAABB(Rect(Vector2(), getRealSize().toVector2()));
 
 	mGeometryUpdated = true;
 }
