@@ -11,7 +11,7 @@ namespace ImGuiWrapper
 static bool s_mousePressed[3] = { false, false, false };
 static sf::Texture* s_fontTexture = nullptr;
 
-void ImGuiWrapper::init()
+void init()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -40,7 +40,7 @@ void ImGuiWrapper::init()
 	io.KeyMap[ImGuiKey_Z] = sf::Keyboard::Z;
 
 	// init texture
-	if (s_fontTexture == nullptr) 
+	if (s_fontTexture == nullptr)
 	{
 		s_fontTexture = new sf::Texture();
 		unsigned char* pixels;
@@ -54,10 +54,10 @@ void ImGuiWrapper::init()
 	}
 }
 
-void ImGuiWrapper::handleEvent(sf::RenderWindow& window, const sf::Event& event)
+void handleEvent(sf::RenderWindow& window, const sf::Event& event)
 {
 	ImGuiIO& io = ImGui::GetIO();
-	if (window.hasFocus()) 
+	if (window.hasFocus())
 	{
 		switch (event.type)
 		{
@@ -65,7 +65,7 @@ void ImGuiWrapper::handleEvent(sf::RenderWindow& window, const sf::Event& event)
 			case sf::Event::MouseButtonReleased:
 			{
 				int button = event.mouseButton.button;
-				if (event.type == sf::Event::MouseButtonPressed && button >= 0 && button < 3) 
+				if (event.type == sf::Event::MouseButtonPressed && button >= 0 && button < 3)
 				{
 					s_mousePressed[event.mouseButton.button] = true;
 				}
@@ -85,7 +85,7 @@ void ImGuiWrapper::handleEvent(sf::RenderWindow& window, const sf::Event& event)
 				break;
 
 			case sf::Event::TextEntered:
-				if (event.text.unicode > 0 && event.text.unicode < 0x10000) 
+				if (event.text.unicode > 0 && event.text.unicode < 0x10000)
 				{
 					io.AddInputCharacter(static_cast<ImWchar>(event.text.unicode));
 				}
@@ -96,7 +96,7 @@ void ImGuiWrapper::handleEvent(sf::RenderWindow& window, const sf::Event& event)
 	}
 }
 
-void ImGuiWrapper::update(sf::RenderWindow& window, sf::Time dt)
+void update(sf::RenderWindow& window, sf::Time dt)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = static_cast<sf::Vector2f>(window.getSize());
@@ -115,15 +115,15 @@ void ImGuiWrapper::update(sf::RenderWindow& window, sf::Time dt)
 	ImGui::NewFrame();
 }
 
-void ImGuiWrapper::updateRender()
+void updateRender()
 {
 	ImGui::Render();
 }
 
-void ImGuiWrapper::render()
+void render()
 {
 	ImDrawData* draw_data = ImGui::GetDrawData();
-	if (draw_data == nullptr || draw_data->CmdListsCount == 0) 
+	if (draw_data == nullptr || draw_data->CmdListsCount == 0)
 	{
 		return;
 	}
@@ -165,7 +165,7 @@ void ImGuiWrapper::render()
 	glPushMatrix();
 	glLoadIdentity();
 
-	for (int n = 0; n < draw_data->CmdListsCount; n++) 
+	for (int n = 0; n < draw_data->CmdListsCount; n++)
 	{
 		const ImDrawList* cmd_list = draw_data->CmdLists[n];
 		const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->VtxBuffer.front();
@@ -175,14 +175,14 @@ void ImGuiWrapper::render()
 		glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void*)(vtx_buffer + offsetof(ImDrawVert, uv)));
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (void*)(vtx_buffer + offsetof(ImDrawVert, col)));
 
-		for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.size(); cmd_i++) 
+		for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.size(); cmd_i++)
 		{
 			const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
 			if (pcmd->UserCallback)
 			{
 				pcmd->UserCallback(cmd_list, pcmd);
 			}
-			else 
+			else
 			{
 				GLuint tex_id = (GLuint)*((unsigned int*)&pcmd->TextureId);
 				glBindTexture(GL_TEXTURE_2D, tex_id);
@@ -206,12 +206,12 @@ void ImGuiWrapper::render()
 	glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
 
-void ImGuiWrapper::shutdown()
+void shutdown()
 {
 	ImGui::GetIO().Fonts->TexID = nullptr;
 
 	// if internal texture was created, we delete it
-	if (s_fontTexture != nullptr) 
+	if (s_fontTexture != nullptr)
 	{
 		delete s_fontTexture;
 		s_fontTexture = nullptr;
@@ -390,7 +390,11 @@ void ImGuiConsole::draw()
 		if (ImGui::InputText("Input", mInputBuf, 256, ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			sendCommand(std::string(mInputBuf));
-			strcpy_s(mInputBuf, "");
+			#ifdef _MSC_VER
+                strcpy_s(mInputBuf, "");
+            #else
+                strcpy(mInputBuf, "");
+            #endif
 		}
 
 		// Keep auto focus on the input box
@@ -404,8 +408,8 @@ void ImGuiConsole::draw()
 }
 
 ImGuiProfiler::ImGuiProfiler(F32 x, F32 y, F32 w, F32 h)
-	: ProfilerDisplay()
-	, ImGuiWindow("Profiler", x, y, w, h)
+	: ImGuiWindow("Profiler", x, y, w, h)
+	, ProfilerDisplay()
 	, mPaused(false)
 	, mImportant(true)
 {
@@ -443,7 +447,7 @@ void ImGuiProfiler::play()
 void ImGuiProfiler::draw()
 {
 	OE_PROFILE_FUNCTION("ImGuiProfiler::draw");
-	
+
 	if (isVisible())
 	{
 		ImGuiWindow::Begin(320, 10, 500, 300);
@@ -490,9 +494,9 @@ void ImGuiProfiler::draw()
 void ImGuiProfiler::drawFunctionCall(const ProfilerFunctionCall& fc)
 {
 	const std::vector<ProfilerFunctionCall>& calls(mFrame.getCalls());
-	
+
 	std::string str = fc.getName() + ", duration : " + toString(fc.getDuration().asMicroseconds()) + "us, percent : " + toString(fc.getPercent(mFrame.getDuration()));
-	
+
 	if (fc.hasChildren())
 	{
 		if (ImGui::TreeNode(str.c_str()))
@@ -517,8 +521,8 @@ void ImGuiProfiler::drawFunctionCall(const ProfilerFunctionCall& fc)
 }
 
 ImGuiDataViewer::ImGuiDataViewer(F32 x, F32 y, F32 w, F32 h)
-	: DataViewer()
-	, ImGuiWindow("DataViewer", x, y, w, h)
+	: ImGuiWindow("DataViewer", x, y, w, h)
+	, DataViewer()
 {
 }
 

@@ -1,4 +1,6 @@
 
+#include "../System/Hash.hpp"
+
 namespace oe
 {
 
@@ -43,7 +45,7 @@ inline ResourceId ResourceManager<T>::create(const std::string& name, std::funct
 {
 	if (!isMain())
 	{
-		ResourceId index(hash(name));
+		ResourceId index(oe::hash(name));
 		if (!mOther->has(index))
 		{
 			mOther->create(name, loader);
@@ -53,7 +55,7 @@ inline ResourceId ResourceManager<T>::create(const std::string& name, std::funct
 	}
 	else
 	{
-		ResourceId index(hash(name));
+		ResourceId index(oe::hash(name));
 		if (!has(index))
 		{
 			loader(mResources[index]);
@@ -84,7 +86,7 @@ inline bool ResourceManager<T>::has(ResourceId resource) const
 template<typename T>
 inline T& ResourceManager<T>::get(const std::string& name)
 {
-	return get(hash(name));
+	return get(oe::hash(name));
 }
 
 template<typename T>
@@ -103,7 +105,7 @@ inline T& ResourceManager<T>::get(ResourceId resource)
 template<typename T>
 inline void ResourceManager<T>::release(const std::string& name)
 {
-	release(hash(name));
+	release(oe::hash(name));
 }
 
 template<typename T>

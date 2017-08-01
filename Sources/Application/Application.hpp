@@ -32,9 +32,10 @@ class Application
 		AudioSystem& getAudio();
 		TextureManager& getTextures();
 		FontManager& getFonts();
+		DataManager& getData();
 
 		template <typename State, typename ... Args>
-		void start();
+		void start(Args&& ... args);
 
 		void stop();
 
@@ -45,7 +46,7 @@ class Application
 
 		const U32& getFPS() const;
 
-	private:	
+	private:
 		void run();
 		void events();
 		void preUpdate();
@@ -55,13 +56,14 @@ class Application
 
 	private:
 		Logger mLogger;
+
+		StateManager mStates;
+		Window mWindow;
+
 		Localization mLocalization;
 		Profiler mProfiler;
 		Console mConsole;
 		DataManager mDataManager;
-
-		StateManager mStates;
-		Window mWindow;
 
 		AudioSystem mAudioSystem;
 
@@ -75,7 +77,7 @@ class Application
 };
 
 template <typename State, typename ... Args>
-void Application::start()
+void Application::start(Args&& ... args)
 {
 	pushState<State>(std::forward<Args>(args)...);
 

@@ -10,7 +10,9 @@ Application::Application()
 	, mStates(*this)
 	, mWindow(sf::VideoMode(800,600), "OlympusEngine")
 	, mLocalization()
+	, mProfiler()
 	, mConsole()
+	, mDataManager()
 	, mFpsAccumulator(Time::Zero)
 	, mFpsTemp(0)
 	, mFps(0)
@@ -33,6 +35,8 @@ Application::~Application()
 	{
 		mWindow.close();
 	}
+
+	mAudioSystem.stop();
 
 	#ifdef OE_PLATFORM_ANDROID
 	std::exit(0);
@@ -74,9 +78,15 @@ FontManager& Application::getFonts()
 	return mFontManager;
 }
 
+DataManager& Application::getData()
+{
+	return mDataManager;
+}
+
 void Application::stop()
 {
 	mRunning = false;
+	mAudioSystem.stop();
 }
 
 void Application::popState()
@@ -158,7 +168,9 @@ void Application::run()
 			mFps = mFpsTemp;
 			mFpsTemp = 0;
 
+			#ifdef OE_DEBUG
 			mWindow.setTitle("FPS : " + toString(mFps));
+			#endif
 		}
 
 		// Stop ?
@@ -222,7 +234,7 @@ void Application::render()
 	#ifdef OE_IMGUI
 	mWindow.draw(sf::RectangleShape()); // This fix a bug when rendering with the World
 	ImGuiWrapper::render();
-	#endif 
+	#endif
 
 	mWindow.display();
 }

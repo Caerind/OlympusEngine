@@ -28,7 +28,7 @@ void shutdown();
 class ImGuiWindow
 {
 	public:
-		ImGuiWindow(const std::string& name, F32 x = -1.0f, F32 y = 1.0f, F32 w = -1.0f, F32 h = -1.0f);
+		ImGuiWindow(const std::string& name, F32 x = -1.0f, F32 y = -1.0f, F32 w = -1.0f, F32 h = -1.0f);
 
 		void show();
 		void hide();
@@ -44,10 +44,10 @@ class ImGuiWindow
 		F32 mX, mY, mW, mH;
 };
 
-class ImGuiLogger : public LogReceiver, public ImGuiWindow
+class ImGuiLogger : public ImGuiWindow, public LogReceiver
 {
 	public:
-		ImGuiLogger(F32 x = -1.0f, F32 y = 1.0f, F32 w = -1.0f, F32 h = -1.0f);
+		ImGuiLogger(F32 x = -1.0f, F32 y = -1.0f, F32 w = -1.0f, F32 h = -1.0f);
 		virtual ~ImGuiLogger();
 
 		virtual void onReceive(const Log& log);
@@ -60,10 +60,10 @@ class ImGuiLogger : public LogReceiver, public ImGuiWindow
 		std::vector<std::string> mLines;
 };
 
-class ImGuiConsole : public ConsoleInstance, public ImGuiWindow
+class ImGuiConsole : public ImGuiWindow, public ConsoleInstance
 {
 	public:
-		ImGuiConsole(F32 x = -1.0f, F32 y = 1.0f, F32 w = -1.0f, F32 h = -1.0f);
+		ImGuiConsole(F32 x = -1.0f, F32 y = -1.0f, F32 w = -1.0f, F32 h = -1.0f);
 		virtual ~ImGuiConsole();
 
 		void clearLines();
@@ -77,10 +77,10 @@ class ImGuiConsole : public ConsoleInstance, public ImGuiWindow
 		std::vector<std::string> mLines;
 };
 
-class ImGuiProfiler : public ProfilerDisplay, public ImGuiWindow
+class ImGuiProfiler : public ImGuiWindow, public ProfilerDisplay
 {
 	public:
-		ImGuiProfiler(F32 x = -1.0f, F32 y = 1.0f, F32 w = -1.0f, F32 h = -1.0f);
+		ImGuiProfiler(F32 x = -1.0f, F32 y = -1.0f, F32 w = -1.0f, F32 h = -1.0f);
 		virtual ~ImGuiProfiler();
 
 		virtual void displayFrame(const ProfilerFrame& frame);
@@ -92,17 +92,17 @@ class ImGuiProfiler : public ProfilerDisplay, public ImGuiWindow
 
 	private:
 		void drawFunctionCall(const ProfilerFunctionCall& fc);
-	
+
 	private:
 		ProfilerFrame mFrame;
 		bool mPaused;
 		bool mImportant;
 };
 
-class ImGuiDataViewer : public DataViewer, public ImGuiWindow
+class ImGuiDataViewer : public ImGuiWindow, public DataViewer
 {
 	public:
-		ImGuiDataViewer(F32 x = -1.0f, F32 y = 1.0f, F32 w = -1.0f, F32 h = -1.0f);
+		ImGuiDataViewer(F32 x = -1.0f, F32 y = -1.0f, F32 w = -1.0f, F32 h = -1.0f);
 		virtual ~ImGuiDataViewer();
 
 		virtual void setData(const std::string& key, const std::string& value);
