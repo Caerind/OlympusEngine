@@ -4,8 +4,9 @@
 namespace oe
 {
 
-ViewComponent::ViewComponent(Entity& entity, bool attachedToEntity)
+ViewComponent::ViewComponent(Entity& entity, bool attachedToEntity, bool focus)
 	: SceneComponent(entity, attachedToEntity)
+	, mFocusing(focus)
 {
 }
 
@@ -16,7 +17,20 @@ void ViewComponent::onCreate()
 
 void ViewComponent::onNodeInvalidated(const oe::Node* node)
 {
-	getWorld().getRenderSystem().getView().setCenter(getGlobalPosition());
+	if (mFocusing)
+	{
+		getWorld().getRenderSystem().getView().setCenter(getGlobalPosition());
+	}
+}
+
+void ViewComponent::setFocus(bool focus)
+{
+	mFocusing = focus;
+}
+
+bool ViewComponent::isFocusing() const
+{
+	return mFocusing;
 }
 
 } // namespace oe
