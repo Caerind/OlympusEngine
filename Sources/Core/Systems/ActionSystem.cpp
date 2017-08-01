@@ -133,6 +133,16 @@ void ActionInputKey::setType(ActionType type)
 	updateValidation();
 }
 
+const sf::Keyboard::Key& ActionInputKey::getKey() const
+{
+	return mKey;
+}
+
+const ActionType& ActionInputKey::getType() const
+{
+	return mType;
+}
+
 void ActionInputKey::update()
 {
 	if (mType == ActionType::Hold)
@@ -171,6 +181,16 @@ void ActionInputMouse::setType(ActionType type)
 {
 	mType = type;
 	updateValidation();
+}
+
+const sf::Mouse::Button& ActionInputMouse::getButton() const
+{
+	return mButton;
+}
+
+const ActionType& ActionInputMouse::getType() const
+{
+	return mType;
 }
 
 void ActionInputMouse::update()

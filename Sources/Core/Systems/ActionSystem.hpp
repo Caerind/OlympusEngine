@@ -108,6 +108,9 @@ class ActionInputKey : public ActionInput
 		
 		void setKey(sf::Keyboard::Key key);
 		void setType(ActionType type);
+
+		const sf::Keyboard::Key& getKey() const;
+		const ActionType& getType() const;
 		
 	private:
 		friend class ActionSystem;
@@ -129,6 +132,9 @@ class ActionInputMouse : public ActionInput
 		
 		void setButton(sf::Mouse::Button button);
 		void setType(ActionType type);
+
+		const sf::Mouse::Button& getButton() const;
+		const ActionType& getType() const;
 		
 	private:
 		friend class ActionSystem;
