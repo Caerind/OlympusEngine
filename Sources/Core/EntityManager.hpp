@@ -19,8 +19,10 @@ class EntityManager
 
 		void update();
 
-		template <typename T = Entity>
-		EntityHandle createEntity();
+		void update(oe::Time dt);
+
+		template <typename T = Entity, typename ... Args>
+		EntityHandle createEntity(Args&& ... args);
 
 		void killEntity(const EntityHandle& handle);
 		void killEntity(const Entity* entity);
@@ -62,10 +64,10 @@ class EntityManager
 		List<EntityQuery*> mQueries;
 };
 
-template <typename T>
-EntityHandle EntityManager::createEntity()
+template <typename T, typename ... Args>
+EntityHandle EntityManager::createEntity(Args&& ... args)
 {
-	Entity* entity = new T(*this); // TODO : Allocator
+	Entity* entity = new T(*this, std::forward<Args>(args)...); // TODO : Allocator
 	return createEntity(entity);
 }
 

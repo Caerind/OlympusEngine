@@ -4,6 +4,8 @@
 #include "../System/Id.hpp"
 #include "../System/Type.hpp"
 
+#include "../ExtLibs/FastDynamicCast/fast_dynamic_cast.h"
+
 #include "Component.hpp"
 #include "ComponentList.hpp"
 #include "SceneComponent.hpp"
@@ -38,6 +40,7 @@ class Entity : public Node
 
 		Application& getApplication();
 		World& getWorld();
+		EntityManager& getManager();
 
 		const UID& getId() const;
 
@@ -64,6 +67,11 @@ class Entity : public Node
 
 		void render(sf::RenderTarget& target, const Rect& viewAABB);
 
+		virtual void update(oe::Time dt);
+
+		template <typename T>
+		T* getAs();
+
 	private:
 		friend class EntityManager;
 		virtual void onCreate(); // Call after the entity creation
@@ -83,7 +91,7 @@ class Entity : public Node
 		friend class SceneComponent;
 		void registerSceneComponent(SceneComponent* sceneComponent);
 		void unregisterSceneComponent(SceneComponent* sceneComponent);
-		
+
 	private:
 		friend class RenderableComponent;
 		void registerRenderableComponent(RenderableComponent* renderableComponent);
@@ -106,6 +114,12 @@ class Entity : public Node
 
 		mutable bool mNeedOrderComponents;
 };
+
+template <typename T>
+inline T* Entity::getAs()
+{
+	return fast_dynamic_cast<T*>(this);
+}
 
 } // namespace oe
 

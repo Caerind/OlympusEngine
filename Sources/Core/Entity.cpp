@@ -29,6 +29,11 @@ World& Entity::getWorld()
 	return mManager.getWorld();
 }
 
+EntityManager& Entity::getManager()
+{
+	return mManager;
+}
+
 const UID& Entity::getId() const
 {
 	return mId;
@@ -154,6 +159,10 @@ void Entity::render(sf::RenderTarget& target, const Rect& viewAABB)
 	}
 }
 
+void Entity::update(oe::Time dt)
+{
+}
+
 void Entity::onCreate()
 {
 }
@@ -211,24 +220,28 @@ void Entity::registerSceneComponent(SceneComponent* sceneComponent)
 {
 	ASSERT(sceneComponent != nullptr);
 	mSceneComponents.insert(sceneComponent);
+	invalidateAABB();
 }
 
 void Entity::unregisterSceneComponent(SceneComponent* sceneComponent)
 {
 	ASSERT(sceneComponent != nullptr);
 	mSceneComponents.remove(sceneComponent);
+	invalidateAABB();
 }
 
 void Entity::registerRenderableComponent(RenderableComponent* renderableComponent)
 {
 	ASSERT(renderableComponent != nullptr);
 	mRenderableComponents.insert(renderableComponent);
+	invalidateAABB();
 }
 
 void Entity::unregisterRenderableComponent(RenderableComponent* renderableComponent)
 {
 	ASSERT(renderableComponent != nullptr);
 	mRenderableComponents.remove(renderableComponent);
+	invalidateAABB();
 }
 
 void Entity::invalidateComponentsOrder()

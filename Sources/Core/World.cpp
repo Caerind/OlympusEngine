@@ -54,6 +54,9 @@ void World::update(Time dt)
 		// Update timers
 		mTimeSystem.update(mUpdateTime);
 
+		// Update entities
+		mEntityManager.update(mUpdateTime);
+
 		// Update particles
 		mParticleSystem.update(mUpdateTime);
 
