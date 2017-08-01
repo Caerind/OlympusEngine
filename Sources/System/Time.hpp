@@ -30,6 +30,8 @@ class Time
 		I64 mMicroseconds;
 };
 
+Time hours(U32 amount);
+Time minutes(U32 amount);
 Time seconds(F32 amount);
 Time milliseconds(I32 amount);
 Time microseconds(I64 amount);

@@ -347,8 +347,11 @@ ConsoleProfiler::~ConsoleProfiler()
 
 void ConsoleProfiler::displayFrame(const ProfilerFrame& frame)
 {
-	system("cls");
-	//printf("\e[1;1H\e[2J"); // Should work on ANSI
+    #ifdef _MSC_VER
+        system("cls");
+	#else
+        printf("\e[1;1H\e[2J"); // Should work on ANSI
+	#endif
 
 	printf("Frame %u, duration : %I64dus\n", frame.getFrameNumber(), frame.getDuration().asMicroseconds());
 	for (const auto& fu : frame.getCalls())
@@ -359,7 +362,7 @@ void ConsoleProfiler::displayFrame(const ProfilerFrame& frame)
 			printf(" ");
 		}
 		printf("-%s, duration : %I64dus, percent : %f\n", fu.getName().c_str(), fu.getDuration().asMicroseconds(), fu.getPercent(frame.getDuration()));
-		
+
 	}
 }
 

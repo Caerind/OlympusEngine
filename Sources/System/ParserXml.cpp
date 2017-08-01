@@ -14,6 +14,12 @@ ParserXml::ParserXml(const std::string& filename)
 	loadFromFile(filename);
 }
 
+void ParserXml::newFile()
+{
+	mDocument.reset();
+	mCurrentNode = mDocument.root();
+}
+
 bool ParserXml::loadFromFile(const std::string& filename)
 {
 	if (mDocument.load_file(filename.c_str()))
@@ -61,14 +67,18 @@ void ParserXml::closeNode()
 	mCurrentNode = mCurrentNode.parent();
 }
 
-void ParserXml::createChild(const std::string& nodeName)
+bool ParserXml::createChild(const std::string& nodeName)
 {
-	mCurrentNode.append_child(nodeName.c_str());
+	if (mCurrentNode.append_child(nodeName.c_str()))
+	{
+		return true;
+	}
+	return false;
 }
 
-void ParserXml::removeChild(const std::string& nodeName)
+bool ParserXml::removeChild(const std::string& nodeName)
 {
-	mCurrentNode.remove_child(nodeName.c_str());
+	return mCurrentNode.remove_child(nodeName.c_str());
 }
 
 void ParserXml::setAttribute(const std::string& attributeName, const std::string& value)
@@ -91,9 +101,32 @@ void ParserXml::getAttribute(const std::string& attributeName, std::string& valu
 	{
 		value = mCurrentNode.attribute(n).as_string();
 	}
-	else
+}
+
+void ParserXml::getAttribute(const std::string& attributeName, I32& value)
+{
+	const char* n = attributeName.c_str();
+	if (mCurrentNode.attribute(n))
 	{
-		value.clear();
+		value = mCurrentNode.attribute(n).as_int();
+	}
+}
+
+void ParserXml::getAttribute(const std::string& attributeName, U32& value)
+{
+	const char* n = attributeName.c_str();
+	if (mCurrentNode.attribute(n))
+	{
+		value = mCurrentNode.attribute(n).as_uint();
+	}
+}
+
+void ParserXml::getAttribute(const std::string& attributeName, F32& value)
+{
+	const char* n = attributeName.c_str();
+	if (mCurrentNode.attribute(n))
+	{
+		value = mCurrentNode.attribute(n).as_float();
 	}
 }
 

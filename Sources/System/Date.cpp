@@ -125,6 +125,11 @@ Date Date::getCurrentDate()
 	return Date();
 }
 
+std::tm Date::getInternalData() const
+{
+	return mTime;
+}
+
 void Date::update()
 {
 	mktime(&mTime);
@@ -220,6 +225,15 @@ Date operator+(const Time& left, const Date& right)
 	Date date(right);
 	date.setSeconds(right.getSeconds() + (U32)left.asSeconds());
 	return date;
+}
+
+Time operator-(const Date& left, const Date& right)
+{
+    std::tm tm1 = left.getInternalData();
+    std::tm tm2 = right.getInternalData();
+    std::time_t t1 = mktime(&tm1);
+    std::time_t t2 = mktime(&tm2);
+	return seconds((F32)difftime(t1, t2));
 }
 
 Date& operator+=(Date& left, const Time& right)

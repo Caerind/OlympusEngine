@@ -41,6 +41,8 @@ class Date
 
 		static Date getCurrentDate();
 
+		std::tm getInternalData() const;
+
 	private:
 		void update();
 
@@ -58,6 +60,7 @@ bool operator<=(const Date& left, const Date& right);
 Date operator+(const Date& left, const Time& right);
 Date operator-(const Date& left, const Time& right);
 Date operator+(const Time& left, const Date& right);
+Time operator-(const Date& left, const Date& right);
 Date& operator+=(Date& left, const Time& right);
 Date& operator-=(Date& left, const Time& right);
 

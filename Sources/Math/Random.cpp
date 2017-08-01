@@ -16,7 +16,7 @@ void Random::setSeed(const std::string& seed)
 	mRandom.mGenerator.seed(std::seed_seq(mRandom.mSeed.begin(), mRandom.mSeed.end()));
 	#else
 	static std::seed_seq seedSeq = std::seed_seq(mRandom.mSeed.begin(), mRandom.mSeed.end());
-	mRandom.mGenerator.seed(mRandom.mSeedSeq);
+	mRandom.mGenerator.seed(seedSeq);
 	#endif
 }
 

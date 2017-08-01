@@ -13,6 +13,7 @@ class ParserXml
 		ParserXml();
 		ParserXml(const std::string& filename);
 
+		void newFile();
 		bool loadFromFile(const std::string& filename);
 		bool saveToFile(const std::string& filename = "");
 
@@ -20,11 +21,14 @@ class ParserXml
 		bool nextSibling(const std::string& sibling = "");
 		void closeNode();
 
-		void createChild(const std::string& nodeName);
-		void removeChild(const std::string& nodeName);
+		bool createChild(const std::string& nodeName);
+		bool removeChild(const std::string& nodeName);
 		
 		void setAttribute(const std::string& attributeName, const std::string& value);
 		void getAttribute(const std::string& attributeName, std::string& value);
+		void getAttribute(const std::string& attributeName, I32& value);
+		void getAttribute(const std::string& attributeName, U32& value);
+		void getAttribute(const std::string& attributeName, F32& value);
 		void createAttribute(const std::string& attributeName);
 		void removeAttribute(const std::string& attributeName);
 
@@ -35,10 +39,11 @@ class ParserXml
 
 		const std::string& getFilename() const;
 
+		pugi::xml_node mCurrentNode; // TODO : Temp LD
+
 	private:
 		std::string mFilename;
 		pugi::xml_document mDocument;
-		pugi::xml_node mCurrentNode;
 };
 
 } // namespace oe

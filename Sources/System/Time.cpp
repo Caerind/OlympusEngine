@@ -75,6 +75,16 @@ Time::Time(I64 microseconds) : mMicroseconds(microseconds)
 {
 }
 
+Time hours(U32 amount)
+{
+	return seconds(amount * 3600.0f);
+}
+
+Time minutes(U32 amount)
+{
+	return seconds(amount * 60.0f);
+}
+
 Time seconds(F32 amount)
 {
 	return Time(static_cast<I64>(amount * 1000000));
