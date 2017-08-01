@@ -62,25 +62,44 @@ void ParticleComponent::update(Time dt)
 		emitParticles(computeParticleCount(dt));
 	}
 
-	mNeedsVertexUpdate = true;
-
 	U32 psize = mParticles.size();
-	for (U32 i = 0; i < psize; )
+	if (psize > 0)
 	{
-		updateParticle(mParticles[i], dt); // lifetime, move, rotate
-		if (mParticles[i].passedLifetime < mParticles[i].totalLifetime)
+		mNeedsVertexUpdate = true;
+
+		oe::Vector2 min;
+		oe::Vector2 max;
+
+		for (U32 i = 0; i < psize; )
 		{
-			for (auto& affector : mAffectors)
+			if (i == 0)
 			{
-				affector(mParticles[i], dt);
+				min = mParticles[i].position;
+				max = mParticles[i].position;
 			}
-			i++;
+			else
+			{
+				min.minimize(mParticles[i].position);
+				max.maximize(mParticles[i].position);
+			}
+
+			updateParticle(mParticles[i], dt); // lifetime, move, rotate
+			if (mParticles[i].passedLifetime < mParticles[i].totalLifetime)
+			{
+				for (auto& affector : mAffectors)
+				{
+					affector(mParticles[i], dt);
+				}
+				i++;
+			}
+			else
+			{
+				mParticles.erase(mParticles.begin() + i);
+				psize--;
+			}
 		}
-		else
-		{
-			mParticles.erase(mParticles.begin() + i);
-			psize--;
-		}
+
+		setLocalAABB(oe::Rect(min, max));
 	}
 }
 
