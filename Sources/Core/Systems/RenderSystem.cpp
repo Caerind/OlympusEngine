@@ -127,7 +127,11 @@ bool RenderSystem::sortEntities(const Entity* a, const Entity* b)
 {
 	ASSERT(a != nullptr);
 	ASSERT(b != nullptr);
-	return a->getGlobalZ() < b->getGlobalZ();
+	if (Math::equals(a->getPositionZ(), b->getPositionZ()))
+	{
+		return a->getPosition().y < b->getPosition().y;
+	}
+	return a->getPositionZ() < b->getPositionZ();
 }
 
 } // namespace oe
