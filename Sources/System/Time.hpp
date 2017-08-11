@@ -1,7 +1,7 @@
 #ifndef OE_TIME_HPP
 #define OE_TIME_HPP
 
-#include "Signal.hpp"
+#include "Macros.hpp"
 
 namespace oe
 {
@@ -10,7 +10,7 @@ class Time
 {
 	public:
 		static Time getCurrentTime();
-	
+
 		Time();
 
 		F32 asSeconds() const;
@@ -19,6 +19,7 @@ class Time
 
 		static const Time Zero;
 		static const Time Second;
+		static const Time Tick;
 
 	private:
 		friend Time seconds(F32);
@@ -33,6 +34,7 @@ class Time
 Time hours(U32 amount);
 Time minutes(U32 amount);
 Time seconds(F32 amount);
+Time ticks(F32 amount);
 Time milliseconds(I32 amount);
 Time microseconds(I64 amount);
 
@@ -127,7 +129,7 @@ class CallbackTimer : public Timer
 
 		void update();
 
-		OeSignal(onExpire, Time /*duration*/);
+
 
 	private:
 		bool mJustExpired;

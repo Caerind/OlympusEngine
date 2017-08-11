@@ -1,8 +1,10 @@
 #ifndef OE_UNITTEST_HPP
 #define OE_UNITTEST_HPP
 
-#include "Prerequisites.hpp"
-#include "Time.hpp"
+#include <cstdio> // Printf
+#include <vector> // Vector
+
+#include "Macros.hpp"
 
 #define RUN_TEST(name) Test##name();
 
@@ -10,6 +12,7 @@
 #define END_TEST unitTest.print(); }
 
 #define TEST(title) unitTest.start(title);
+#define ECHO(format, ...) printf("[%s] ", unitTest.getTitle()); printf(format, __VA_ARGS__); printf("\n");
 #define CHECK(expr) unitTest.check(expr, #expr, __FILE__, __LINE__);
 
 namespace oe
@@ -23,9 +26,12 @@ class UnitTest
 
 		void start(char* title);
 
-		void check(bool passed, const char* expr, const char* file, int line);
+		void check(bool passed, const char* expr, const char* file, I32 line);
 
 		void print();
+
+		char* getName();
+		char* getTitle();
 
 	private:
 		struct Test
@@ -38,6 +44,7 @@ class UnitTest
 		};
 
 		char* mName;
+		char* mCurrentTitle;
 		std::vector<Test> mTests;
 };
 

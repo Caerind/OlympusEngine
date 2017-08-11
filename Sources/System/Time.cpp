@@ -3,15 +3,15 @@
 #include <chrono>
 #include <thread>
 
-#if defined(OE_PLATFORM_MACOS) || defined(OE_PLATFORM_IOS)
-	#include <mach/mach_time.h>
-#elif defined(OE_PLATFORM_WINDOWS)
-	#include <windows.h>
+#if OE_PLATFORM_MACOS || OE_PLATFORM_IOS
+#include <mach/mach_time.h>
+#elif OE_PLATFORM_WINDOWS
+#include <windows.h>
 #else
-	#include <time.h>
+#include <time.h>
 #endif
 
-#if defined(OE_PLATFORM_WINDOWS)
+#if OE_PLATFORM_WINDOWS
 LARGE_INTEGER getFrequency()
 {
 	LARGE_INTEGER frequency;
@@ -25,19 +25,20 @@ namespace oe
 
 const Time Time::Zero;
 const Time Time::Second = seconds(1.0f);
+const Time Time::Tick = ticks(1.0f);
 
 Time Time::getCurrentTime()
 {
-	#if defined(OE_PLATFORM_MACOS) || defined(OE_PLATFORM_IOS)
+	#if OE_PLATFORM_MACOS || OE_PLATFORM_IOS
 		// Mac OS X specific implementation (it doesn't support clock_gettime)
 		static mach_timebase_info_data_t frequency = { 0, 0 };
 		if (frequency.denom == 0)
 			mach_timebase_info(&frequency);
 		U64 nanoseconds = mach_absolute_time() * frequency.numer / frequency.denom;
 		return microseconds(nanoseconds / 1000);
-	#elif defined(OE_PLATFORM_WINDOWS)
+	#elif OE_PLATFORM_WINDOWS
 		HANDLE currentThread = GetCurrentThread(); // Force the following code to run on first core (see http://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx)
-		DWORD_PTR previousMask = SetThreadAffinityMask(currentThread, 1); 
+		DWORD_PTR previousMask = SetThreadAffinityMask(currentThread, 1);
 		static LARGE_INTEGER frequency = getFrequency(); // Get the frequency of the performance counter (it is constant across the program lifetime)
 		LARGE_INTEGER time; // Get the current time
 		QueryPerformanceCounter(&time);
@@ -51,7 +52,7 @@ Time Time::getCurrentTime()
 	#endif
 }
 
-Time::Time() 
+Time::Time()
 	: mMicroseconds(0)
 {
 }
@@ -88,6 +89,11 @@ Time minutes(U32 amount)
 Time seconds(F32 amount)
 {
 	return Time(static_cast<I64>(amount * 1000000));
+}
+
+Time ticks(F32 amount)
+{
+	return seconds(1.0f / 60.0f);
 }
 
 Time milliseconds(I32 amount)

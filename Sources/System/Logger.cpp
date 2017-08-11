@@ -1,66 +1,181 @@
 #include "Logger.hpp"
-#include "Date.hpp"
 
+#if OE_COMPILER_MSVC
+	#include <windows.h>
+#endif
 
 namespace oe
 {
 
-template <> Logger* Singleton<Logger>::mSingleton = nullptr;
-
-LogReceiver::LogReceiver() : mConnected(false)
+LogReceiver::LogReceiver()
+	: mChannelFilter((I32)LogChannel::All)
+	, mTypeFilter((I32)LogType::All)
+	, mVerbosity(100)
+	, mConnected(false)
 {
-	if (!isConnected())
-	{
-		connect();
-	}
+	connect();
 }
 
 LogReceiver::~LogReceiver()
 {
-	if (isConnected())
-	{
-		disconnect();
-	}
+	disconnect();
+}
+
+void LogReceiver::setChannelFilter(I32 channelFilter)
+{
+	mChannelFilter = channelFilter;
+}
+
+I32 LogReceiver::getChannelFilter() const
+{
+	return mChannelFilter;
+}
+
+bool LogReceiver::passChannelFilter(LogChannel channel) const
+{
+	return (mChannelFilter == (I32)LogType::All) || (((I32)channel & mChannelFilter) != 0);
+}
+
+void LogReceiver::setTypeFilter(I32 typeFilter)
+{
+	mTypeFilter = typeFilter;
+}
+
+I32 LogReceiver::getTypeFilter() const
+{
+	return mTypeFilter;
+}
+
+bool LogReceiver::passTypeFilter(LogType type) const
+{
+	return (mTypeFilter == (I32)LogType::All) || (((I32)type & mTypeFilter) != 0);
+}
+
+void LogReceiver::setVerbosity(U32 verbosity)
+{
+	mVerbosity = verbosity;
+}
+
+U32 LogReceiver::getVerbosity() const
+{
+	return mVerbosity;
+}
+
+bool LogReceiver::passVerbosityFilter(U32 v) const
+{
+	return mVerbosity >= v;
 }
 
 void LogReceiver::connect()
 {
-	if (mConnected)
-	{
-		return;
-	}
-	if (Logger::getSingletonPtr() != nullptr)
+	#if OE_BUILD_ENABLE_LOG
+	if (!mConnected && Logger::connectReceiver(this))
 	{
 		mConnected = true;
-		Logger::getSingleton().connectReceiver(this);
 	}
 	else
 	{
-		error("Can't connect LogReceiver if Logger hasn't been created");
+		LoggerWarning(LogChannel::System, 2, "LogReceiver connection"); // TODO : Update verbosity
 	}
+	#endif
 }
 
 void LogReceiver::disconnect()
 {
-	if (!mConnected)
-	{
-		return;
-	}
-	if (Logger::getSingletonPtr() != nullptr)
+	#if OE_BUILD_ENABLE_LOG
+	if (mConnected && Logger::disconnectReceiver(this))
 	{
 		mConnected = false;
-		Logger::getSingleton().disconnectReceiver(this);
 	}
 	else
 	{
-		error("Can't disconnect LogReceiver if Logger hasn't been created");
+		LoggerWarning(LogChannel::System, 2, "LogReceiver disconnection"); // TODO : Update verbosity
+	}
+	#endif
+}
+
+
+#if OE_BUILD_ENABLE_LOG
+
+std::vector<LogReceiver*> Logger::mLogReceivers;
+
+void Logger::error(LogChannel channel, U32 verbosity, const char* message, ...)
+{
+	va_list argList;
+	va_start(argList, message);
+	internalLog(channel, LogType::Error, verbosity, message, argList);
+	va_end(argList);
+}
+
+void Logger::warning(LogChannel channel, U32 verbosity, const char* message, ...)
+{
+	va_list argList;
+	va_start(argList, message);
+	internalLog(channel, LogType::Warning, verbosity, message, argList);
+	va_end(argList);
+}
+
+void Logger::info(LogChannel channel, U32 verbosity, const char* message, ...)
+{
+	va_list argList;
+	va_start(argList, message);
+	internalLog(channel, LogType::Info, verbosity, message, argList);
+	va_end(argList);
+}
+
+void Logger::internalLog(LogChannel channel, LogType type, U32 verbosity, const char* message, va_list argList)
+{
+	static const U32 mBufferSize = 256;
+	static char mBuffer[mBufferSize];
+
+	std::string output;
+	U32 size = std::vsnprintf(mBuffer, mBufferSize, message, argList);
+	if (size < mBufferSize)
+	{
+		output = { mBuffer, size };
+	}
+	else
+	{
+		output = { mBuffer, mBufferSize };
+	}
+
+	if (mLogReceivers.size() > 0)
+	{
+		for (const auto& receiver : mLogReceivers)
+		{
+			if (receiver->passChannelFilter(channel) && receiver->passTypeFilter(type) && receiver->passVerbosityFilter(verbosity))
+			{
+				receiver->onReceive(channel, type, verbosity, output);
+			}
+		}
+	}
+	else
+	{
+		printf("[%s][%s][V=%d] %s\n", logChannelToString(channel), logTypeToString(type), verbosity, output.c_str());
 	}
 }
 
-bool LogReceiver::isConnected() const
+bool Logger::connectReceiver(LogReceiver* receiver)
 {
-	return mConnected;
+	mLogReceivers.push_back(receiver);
+	return true;
 }
+
+bool Logger::disconnectReceiver(LogReceiver* receiver)
+{
+	U32 size = mLogReceivers.size();
+	for (U32 i = 0; i < size; i++)
+	{
+		if (mLogReceivers[i] == receiver)
+		{
+			mLogReceivers.erase(mLogReceivers.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+
+#endif // OE_BUILD_ENABLE_LOG
 
 ConsoleLogger::ConsoleLogger()
 	: LogReceiver()
@@ -69,15 +184,12 @@ ConsoleLogger::ConsoleLogger()
 
 ConsoleLogger::~ConsoleLogger()
 {
-	if (isConnected())
-	{
-		disconnect();
-	}
+	disconnect();
 }
 
-void ConsoleLogger::onReceive(const Log& log)
+void ConsoleLogger::onReceive(LogChannel channel, LogType type, U32 verbosity, const std::string& message)
 {
-	printf("[%s]: %s\n", log.type.c_str(), log.message.c_str());
+	printf("[%s][%s][V=%d] %s\n", logChannelToString(channel), logTypeToString(type), verbosity, message.c_str());
 }
 
 FileLogger::FileLogger(const std::string& filename)
@@ -88,23 +200,28 @@ FileLogger::FileLogger(const std::string& filename)
 
 FileLogger::~FileLogger()
 {
-	if (isConnected())
-	{
-		disconnect();
-	}
-	mFile.close();
+	disconnect();
 }
 
 void FileLogger::setFilename(const std::string& filename)
 {
-	mFile.open(filename);
-	if (mFile.is_open())
+	if (!empty(filename))
 	{
-		mFilename = filename;
-	}
-	else
-	{
-		mFilename = "";
+		if (mFile.is_open())
+		{
+			mFile.close();
+		}
+
+		mFile.open(filename);
+
+		if (mFile.is_open())
+		{
+			mFilename = filename;
+		}
+		else
+		{
+			mFilename.clear();
+		}
 	}
 }
 
@@ -113,179 +230,39 @@ const std::string& FileLogger::getFilename() const
 	return mFilename;
 }
 
-void FileLogger::onReceive(const Log& log)
+void FileLogger::onReceive(LogChannel channel, LogType type, U32 verbosity, const std::string& message)
 {
 	if (mFile.is_open())
 	{
-		mFile << "[" << log.date << "][" << log.type << "]: " << log.message << "\n";
+		mFile << "[" << logChannelToString(channel) << "][" << logTypeToString(type) << "][V=" << verbosity << "] " << message << '\n';
 		mFile.flush();
 	}
 }
 
-Logger::Logger()
-	: mConsoleLogger(nullptr)
-	, mFileLogger(nullptr)
+#if OE_COMPILER_MSVC
+
+VisualStudioLogger::VisualStudioLogger()
+	: LogReceiver()
 {
 }
 
-Logger::~Logger()
+VisualStudioLogger::~VisualStudioLogger()
 {
-	if (mConsoleLogger != nullptr)
-	{
-		delete mConsoleLogger;
-	}
-	if (mFileLogger != nullptr)
-	{
-		delete mFileLogger;
-	}
+	disconnect();
 }
 
-Logger& Logger::getSingleton()
+void VisualStudioLogger::onReceive(LogChannel channel, LogType type, U32 verbosity, const std::string& message)
 {
-	ASSERT(mSingleton != nullptr);
-	return *mSingleton;
+	static const U32 mDebugBufferSize = 256;
+	static char mDebugBuffer[mDebugBufferSize];
+
+	U32 size = sprintf_s(mDebugBuffer, "[%s][%s][V=%d] %s\n", logChannelToString(channel), logTypeToString(type), verbosity, message.c_str());
+
+	printf("t ?");
+
+	OutputDebugStringA(mDebugBuffer);
 }
 
-Logger* Logger::getSingletonPtr()
-{
-	return mSingleton;
-}
-
-std::string Logger::stringFromType(Type type)
-{
-	switch (type)
-	{
-		case Type::Error:
-			return "ERROR";
-			break;
-		case Type::Warning:
-			return "WARNING";
-			break;
-		case Type::Info:
-		default:
-			break;
-	}
-	return "INFO";
-}
-
-void Logger::log(const std::string& message, Type type)
-{
-	std::string dateString = Date().toString();
-	std::string typeString = stringFromType(type);
-
-	mLogs.emplace_back(dateString, typeString, message);
-
-	for (LogReceiver* receiver : mLogReceivers)
-	{
-		if (receiver != nullptr)
-		{
-			receiver->onReceive(mLogs.back());
-		}
-	}
-}
-
-void Logger::info(const std::string& message)
-{
-	log(message, Type::Info);
-}
-
-void Logger::warning(const std::string& message)
-{
-	log(message, Type::Warning);
-}
-
-void Logger::error(const std::string& message)
-{
-	log(message, Type::Error);
-}
-
-void Logger::connectReceiver(LogReceiver* receiver)
-{
-	if (receiver == nullptr)
-	{
-		return;
-	}
-	bool found = false;
-	for (U32 i = 0; i < mLogReceivers.size(); i++)
-	{
-		if (mLogReceivers[i] == receiver)
-		{
-			found = true;
-		}
-	}
-	if (!found)
-	{
-		for (const auto& log : mLogs)
-		{
-			receiver->onReceive(log);
-		}
-		mLogReceivers.push_back(receiver);
-	}
-}
-
-void Logger::disconnectReceiver(LogReceiver* receiver)
-{
-	for (auto itr = mLogReceivers.begin(); itr != mLogReceivers.end(); ++itr)
-	{
-		if (receiver == *itr)
-		{
-			mLogReceivers.erase(itr);
-			return;
-		}
-	}
-}
-
-void Logger::useConsoleLogger(bool consoleLogger)
-{
-	if (mConsoleLogger == nullptr && consoleLogger)
-	{
-		mConsoleLogger = new ConsoleLogger();
-	}
-	else if (mConsoleLogger != nullptr && !consoleLogger)
-	{
-		delete mConsoleLogger;
-		mConsoleLogger = nullptr;
-	}
-}
-
-void Logger::useFileLogger(const std::string& filename)
-{
-	if (mFileLogger == nullptr && filename.size() > 0)
-	{
-		mFileLogger = new FileLogger(filename);
-	}
-	else if (mFileLogger != nullptr && filename.size() == 0)
-	{
-		delete mFileLogger;
-		mFileLogger = nullptr;
-	}
-}
-
-void log(const std::string& message, Logger::Type type)
-{
-	if (Logger::getSingletonPtr() != nullptr)
-	{
-		Logger::getSingleton().log(message, type);
-	}
-	else
-	{
-		printf("[%s]: %s\n", Logger::stringFromType(type).c_str(), message.c_str());
-	}
-}
-
-void info(const std::string& message)
-{
-	oe::log(message, Logger::Type::Info);
-}
-
-void warning(const std::string& message)
-{
-	oe::log(message, Logger::Type::Warning);
-}
-
-void error(const std::string& message)
-{
-	oe::log(message, Logger::Type::Error);
-}
+#endif // OE_COMPILER_MSVC
 
 } // namespace oe

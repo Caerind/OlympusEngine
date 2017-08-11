@@ -1,102 +1,116 @@
 #include "String.hpp"
 
+#include <algorithm> // std::transform
+
 namespace oe
 {
 
-void toLower(std::string& str)
+std::map<U32, std::string> StringId::gStrings;
+
+void toLower(std::string& string)
 {
+	std::transform(string.begin(), string.end(), string.begin(), ::tolower);
 }
 
-void toUpper(std::string& str)
+void toUpper(std::string& string)
 {
+	std::transform(string.begin(), string.end(), string.begin(), ::toupper);
 }
 
-std::string split(std::string& base, char separator)
+void toLower(const std::string& string, std::string& result)
+{
+	result = string;
+	toLower(result);
+}
+
+void toUpper(const std::string& string, std::string& result)
+{
+	result = string;
+	toUpper(result);
+}
+
+bool split(std::string& base, std::string& result, char separator)
 {
 	U32 found = base.find_first_of(separator);
 	if (found != std::string::npos)
 	{
-		std::string ret = base.substr(0, found);
+		result = base.substr(0, found);
 		base = base.substr(found + 1);
-		return ret;
+		return true;
 	}
-	return "";
+	return false;
 }
 
-std::string split(std::string& base, const std::string& separator)
+bool split(std::string& base, std::string& result, const std::string& separator)
 {
 	U32 found = base.find_first_of(separator);
 	if (found != std::string::npos)
 	{
-		std::string ret = base.substr(0, found);
+		result = base.substr(0, found);
 		base = base.substr(found + separator.size());
-		return ret;
+		return true;
 	}
-	return "";
+	return false;
 }
 
-std::vector<std::string> splitVector(const std::string& str, char separator)
+bool contains(const std::string& string, char c)
 {
-	std::vector<std::string> vector;
-	std::string temp = str;
-	U32 found;
-	do
+	return string.find(c) != std::string::npos;
+}
+
+bool contains(const std::string& string, const std::string& c)
+{
+	return string.find(c) != std::string::npos;
+}
+
+bool limitSize(std::string& string, U32 size)
+{
+	if (string.size() > size)
 	{
-		found = temp.find_first_of(separator);
-		if (found != std::string::npos)
-		{
-			vector.push_back(temp.substr(0, found));
-			temp = temp.substr(found + 1);
-		}
-	} while (found != std::string::npos);
-	vector.push_back(temp);
-	return vector;
+		string = string.substr(0, size);
+		return true;
+	}
+	return false;
 }
 
-std::vector<std::string> splitVector(const std::string& str, const std::string& separator)
+bool limitSize(const std::string& string, std::string& result, U32 size)
 {
-	std::vector<std::string> vector;
-	std::string temp = str;
-	U32 found;
-	U32 sepSize = separator.size();
-	do
+	if (string.size() > size)
 	{
-		found = temp.find_first_of(separator);
-		if (found != std::string::npos)
-		{
-			vector.push_back(temp.substr(0, found));
-			temp = temp.substr(found + sepSize);
-		}
-	} while (found != std::string::npos);
-	vector.push_back(temp);
-	return vector;
-}
-
-bool contains(const std::string& str, char c)
-{
-	return str.find(c) != std::string::npos;
-}
-
-bool contains(const std::string& str, const std::string& c)
-{
-	return str.find(c) != std::string::npos;
-}
-
-std::string limitSize(const std::string& str, U32 size)
-{
-	if (str.size() <= size)
-	{
-		return str;
+		result = string.substr(0, size);
+		return true;
 	}
 	else
 	{
-		return str.substr(0, size);
+		result = string;
+		return false;
 	}
 }
 
-std::string toBoolString(const bool& value)
+void trimWhitespace(std::string& string)
 {
-	return (value) ? "true" : "false";
+	string = string.substr(0, string.find_last_not_of(" \t") + 1).substr(string.find_first_not_of(" \t"));
+}
+
+bool StringId::getString(std::string& string) const
+{
+	auto itr = gStrings.find(mStringId);
+	if (itr != gStrings.end())
+	{
+		string = itr->second;
+		return true;
+	}
+	return false;
+}
+
+U32 StringId::hash(const std::string& string, bool store)
+{
+	U32 h = StringId::hashRuntime(string, 0);
+	if (store && gStrings.find(h) == gStrings.end())
+	{
+		gStrings[h] = string;
+	}
+	return h;
 }
 
 } // namespace oe

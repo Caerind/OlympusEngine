@@ -1,17 +1,28 @@
 #ifndef OE_SINGLETON_HPP
 #define OE_SINGLETON_HPP
 
-#include "NonCopyable.hpp"
+#include "Macros.hpp" // NonCopyable & NonMovable
 
-#ifdef _MSC_VER
-#pragma warning (disable: 4661)
+#ifdef OE_COMPILER_MSVC
+	#pragma warning (disable: 4661)
 #endif
+
+#define OE_SINGLETON_GETSINGLETON_DEF(Type) \
+		inline static Type& getSingleton() \
+		{ \
+			ASSERT(mSingleton); \
+			return *mSingleton; \
+		} \
+		inline static Type* getSingletonPtr() \
+		{ \
+			return mSingleton; \
+		} \
 
 namespace oe
 {
 
-template <typename T> 
-class Singleton : private NonCopyable
+template <typename T>
+class Singleton
 {
 	public:
 		Singleton()
@@ -19,26 +30,20 @@ class Singleton : private NonCopyable
 			ASSERT(mSingleton == nullptr);
 			mSingleton = static_cast<T*>(this);
 		}
-		
+
 		~Singleton()
-		{  
-			ASSERT(mSingleton != nullptr);  
-			mSingleton = nullptr;  
-		}
-		
-		static T& getSingleton()
-		{   
-		    ASSERT(mSingleton);  
-			return *mSingleton; 
-		}
-		
-		static T* getSingletonPtr()
-		{ 
-			return mSingleton; 
+		{
+			ASSERT(mSingleton != nullptr);
+			mSingleton = nullptr;
 		}
 
+		OE_NON_COPYABLE(Singleton);
+		OE_NON_MOVABLE(Singleton);
+
+		OE_SINGLETON_GETSINGLETON_DEF(T);
+
 	protected:
-		static T* mSingleton;	
+		static T* mSingleton;
 };
 
 } // namespace oe
